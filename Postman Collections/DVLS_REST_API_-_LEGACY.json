@@ -9,12 +9,6 @@
       "name": "Authentication",
       "item": [
         {
-          "name": "Vaults",
-          "item": [],
-          "_postman_id": "810a3dbf-91c6-4833-963d-3a1858a88a76",
-          "_postman_isSubFolder": true
-        },
-        {
           "name": "GetServerInfo",
           "_postman_id": "473d779d-759a-4e88-bdb4-d8854627ecd1",
           "protocolProfileBehavior": {
@@ -56,6 +50,11 @@
         }
       ],
       "_postman_id": "7239e009-b91a-4a47-b0a8-b06ac665bba9"
+    },
+    {
+      "name": "Vaults",
+      "item": [],
+      "_postman_id": "810a3dbf-91c6-4833-963d-3a1858a88a76"
     }
   ]
 }
