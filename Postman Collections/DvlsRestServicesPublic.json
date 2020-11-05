@@ -501,6 +501,11 @@
         }
       ],
       "_postman_id": "affb83b5-a4ab-412f-9c34-3be85509e228"
+    },
+    {
+      "name": "Vaults",
+      "item": [],
+      "_postman_id": "1c5f9f72-e18c-4878-a215-fd709b6596bd"
     }
   ]
 }
