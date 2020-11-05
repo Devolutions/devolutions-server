@@ -485,7 +485,21 @@
     },
     {
       "name": "Connections",
-      "item": [],
+      "item": [
+        {
+          "name": "GetConnectionSensitiveData",
+          "_postman_id": "08705054-3198-4091-bdc9-554182f1270f",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": ""
+          },
+          "response": []
+        }
+      ],
       "_postman_id": "affb83b5-a4ab-412f-9c34-3be85509e228"
     }
   ]
