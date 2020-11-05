@@ -7,22 +7,36 @@
   "item": [
     {
       "name": "Authentication",
-      "item": [],
+      "item": [
+        {
+          "name": "GetServerInfo",
+          "_postman_id": "473d779d-759a-4e88-bdb4-d8854627ecd1",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "",
+            "description": "Obtains server basic information and encryption artefacts"
+          },
+          "response": []
+        },
+        {
+          "name": "Login",
+          "_postman_id": "231c902f-34bb-4c5f-bccb-5d48f4c279e2",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": ""
+          },
+          "response": []
+        }
+      ],
       "_postman_id": "7239e009-b91a-4a47-b0a8-b06ac665bba9"
-    },
-    {
-      "name": "GetServerInfo",
-      "_postman_id": "473d779d-759a-4e88-bdb4-d8854627ecd1",
-      "protocolProfileBehavior": {
-        "disableBodyPruning": true
-      },
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": "",
-        "description": "Obtains server basic information and encryption artefacts"
-      },
-      "response": []
     }
   ]
 }
