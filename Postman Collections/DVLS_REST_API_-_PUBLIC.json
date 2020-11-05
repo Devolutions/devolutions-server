@@ -1,7 +1,7 @@
 {
   "info": {
     "_postman_id": "4cd30733-b4ad-4ae2-90ae-e8b9aba4f450",
-    "name": "DVLS REST API - PUBLIC",
+    "name": "Devolutions Server REST Services (Public)",
     "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
   },
   "item": [
@@ -23,6 +23,12 @@
           "name": "Providers",
           "item": [],
           "_postman_id": "39e97997-3530-4b39-ad24-25c35c27a509",
+          "_postman_isSubFolder": true
+        },
+        {
+          "name": "Requests",
+          "item": [],
+          "_postman_id": "8311917b-6c4a-4f84-ae24-d5635d8a8da9",
           "_postman_isSubFolder": true
         }
       ],
