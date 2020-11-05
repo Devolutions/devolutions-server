@@ -1,0 +1,28 @@
+{
+  "info": {
+    "_postman_id": "f01b80dc-4fcc-4423-a1c6-6b5b623ed6dc",
+    "name": "DVLS REST API - LEGACY",
+    "schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [],
+      "_postman_id": "7239e009-b91a-4a47-b0a8-b06ac665bba9"
+    },
+    {
+      "name": "GetServerInfo",
+      "_postman_id": "473d779d-759a-4e88-bdb4-d8854627ecd1",
+      "protocolProfileBehavior": {
+        "disableBodyPruning": true
+      },
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": "",
+        "description": "Obtains server basic information and encryption artefacts"
+      },
+      "response": []
+    }
+  ]
+}
