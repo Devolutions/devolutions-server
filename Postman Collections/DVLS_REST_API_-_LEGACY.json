@@ -34,6 +34,19 @@
             "url": ""
           },
           "response": []
+        },
+        {
+          "name": "Logout",
+          "_postman_id": "8291f0ce-c179-41dd-b6e9-febcaa94e9f7",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": ""
+          },
+          "response": []
         }
       ],
       "_postman_id": "7239e009-b91a-4a47-b0a8-b06ac665bba9"
