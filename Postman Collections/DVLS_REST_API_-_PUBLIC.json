@@ -9,6 +9,11 @@
       "name": "Authentication",
       "item": [],
       "_postman_id": "0f9b69f4-2600-4b3f-9af4-5df483a8d599"
+    },
+    {
+      "name": "PAM",
+      "item": [],
+      "_postman_id": "a6cdef07-45a7-41aa-a396-59125c52dabe"
     }
   ]
 }
