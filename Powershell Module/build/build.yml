@@ -1,0 +1,40 @@
+trigger:
+- master
+
+variables:
+  - name: major
+    value: 2020
+  - name: minor
+    value: 3
+  - name: revision
+    value: 999
+  # Prefix and build are used to produce a auto-incrementing, yet resettable, build number
+  - name: prefix 
+    value: 202003
+  - name: build
+    value: $[counter(variables['prefix'], 1)]
+  - name: buildVer
+    value: $(major).$(minor).$(build).$(revision))
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- script: echo $(buildVer)
+  displayName: 'Run $(buildVer)'
+
+- script: |
+    echo Add other tasks to build, test, and deploy your project.
+    echo See https://aka.ms/yaml
+  workingDirectory: DevolutionsServer
+  
+
+#- task: GitHubRelease@1
+#  inputs:
+#    repositoryName: '$(Build.Repository.Name)'
+#    action: 'create'
+#    target: '$(Build.SourceVersion)'
+#    tagSource: 'gitTag'
+#    changeLogCompareToRelease: 'lastFullRelease'
+#    changeLogType: 'commitBased'
+#  displayName: 'Run a multi-line script'
