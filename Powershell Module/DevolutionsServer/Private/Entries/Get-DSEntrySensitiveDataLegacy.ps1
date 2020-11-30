@@ -1,7 +1,7 @@
-function Set-DSVaultsContext{
+function Get-DSEntrySensitiveDataLegacy{
     <#
     .SYNOPSIS
-    The Legacy API still has a "current" Vault in context.
+    
     .DESCRIPTION
     
     .EXAMPLE
@@ -14,13 +14,13 @@ function Set-DSVaultsContext{
         [OutputType([ServerResponse])]
         param(			
             [Parameter(Mandatory)]
-            [string]$vaultId
+            [string]$EntryId
         )
-        
+      
         BEGIN {
-            Write-Verbose '[Set-DSVaultsContext] begin...'
+            Write-Verbose '[Get-DSEntrySensitiveDataLegacy] begin...'
     
-            $URI = "$Script:DSBaseURI/api/security/vaults/change"
+            $URI = "$Script:DSBaseURI/api/Connections/partial/$($EntryID)/sensitive-data"
 
     		if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken))
 			{
@@ -30,33 +30,34 @@ function Set-DSVaultsContext{
     
         PROCESS {
             try
-            {   	
+            {   
                 $params = @{
-                    Uri         = $URI
-                    Method      = 'PUT'
-                    Body = """$vaultId"""
+                    Uri = $URI
+                    Method = 'POST' #???
+                    LegacyResponse = $true
                 }
 
-                Write-Verbose "[Set-DSVaultsContext] about to call with $params.Uri"
+                Write-Verbose "[Get-DSEntrySensitiveDataLegacy] about to call $Uri"
 
                 [ServerResponse] $response = Invoke-DS @params
 
                 if ($response.isSuccess)
                 { 
-                    $content = $response.originalResponse.Content | ConvertFrom-Json
-                    Write-Verbose "[Set-DSVaultsContext] $($content)"
+                    Write-Verbose "[Get-DSEntrySensitiveDataLegacy] Got $($response.Body.Length)"
                 }
                 
                 If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
                         Write-Debug "[Response.Body] $($response.Body)"
                 }
 
+                $decryptedinfo = Decrypt-String $Script:DSSessionKey $response.Body.Data
+                $response.Body.data = $decryptedinfo
+            
                 return $response
             }
             catch
             {
                 $exc = $_.Exception
-                Write-Verbose '[Set-DSVaultsContext] Exception occurred ...'
                 If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
                         Write-Debug "[Exception] $exc"
                 } 
@@ -64,6 +65,10 @@ function Set-DSVaultsContext{
         }
     
         END {
-            Write-Verbose '[Set-DSVaultsContext] End'
+           If ($?) {
+              Write-Verbose '[Get-DSEntrySensitiveDataLegacy] Completed Successfully.'
+            } else {
+                Write-Verbose '[Get-DSEntrySensitiveDataLegacy] ended with errors...'
+            }
         }
     }

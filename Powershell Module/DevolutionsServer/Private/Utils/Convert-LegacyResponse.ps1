@@ -34,7 +34,13 @@ Function Convert-LegacyResponse {
 
             $map = ""
             #BaseControllerV3.ToHttpStatusCode
-            $newStatusCode = 500
+            #No Result field means success
+            $newStatusCode = 200
+            if (!(Get-Member -inputobject $responseContent -name "result"))
+            {
+                return [ServerResponse]::new($true, $Response, $responseContent, $null, $null, $newStatusCode)                        
+            }
+
             switch ($responseContent.result) {
                 2 {
                     $map = "AccessDenied"
@@ -75,10 +81,6 @@ Function Convert-LegacyResponse {
                 11 {
                     $map = "DuplicateLoginEmail"
                     $newStatusCode = 400
-                }
-                Default {
-                    $map = "Error"
-                    $newStatusCode = 500
                 }
             }
             return [ServerResponse]::new($false, $Response, $responseContent, $null, $responseContent.errorMessage, $newStatusCode)                        

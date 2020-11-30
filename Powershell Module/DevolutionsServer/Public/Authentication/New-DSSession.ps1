@@ -53,6 +53,8 @@ Establishes a session with a Devolutions Server
 				SafeSessionKey = $Script:DSSafeSessionKey
 				Client = 'Scripting'
 				Version = $MyInvocation.MyCommand.Module.Version.ToString()
+				LocalMachineName = [Environment]::MachineName
+				LocalUserName = [Environment]::UserName
 			}
 		}
 		

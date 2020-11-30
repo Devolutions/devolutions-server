@@ -8,14 +8,10 @@ BeforeAll {
     Import-Module -Name $modulePath -Verbose -Force
     $dvlsURI = "http://localhost/dps"
     
-    if (-Not(Test-Path env:DS_USER)) {
-        throw "please use login to initialize the credentials in the environment variables"  
-      }
-      
-      if (-Not(Test-Path env:DS_PASSWORD)) {
-        throw "please use login to initialize the credentials in the environment variables"
-      }
-      
+    if (-Not(Test-Path env:DS_USER) -or -Not(Test-Path env:DS_PASSWORD)) {
+        throw "please initialize the credentials in the environment variables"  
+    }
+          
     [string]$credUser = $env:DS_USER
     [string]$credPassword = $env:DS_PASSWORD
     [securestring]$secPassword = ConvertTo-SecureString $credPassword -AsPlainText -Force
@@ -51,8 +47,35 @@ Describe NormalWorkflow{
         }
     } #context Vault endpoints
 
-    It "Should logoff" {
+    Context "Entries" {
+
+        It "Should access entry details" {
+            if ($null -ne $entries) {
+                for ($i = 0; $i -lt $entries.Count; $i++) {
+                    $entryId = $entries[$i].id
+                    $innerRes1 = Get-DSEntry $entryId -Verbose
+                    $innerRes1.Body.Data.Name | Should -Not -BeNullOrEmpty
+
+                    $getSD = $innerRes1.Body.Data.Data.passwordItem.hasSensitiveData
+                    if (($null -ne $getSD) -and ($true -eq $getSD)){
+                        $innerRes2 = Get-DSEntrySensitiveData $entryId -Verbose
+                        $innerRes2.Body.result | Should -BeGreaterThan 0
+                    }
+                }
+            }
+        }
+
+        BeforeAll {
+            $entries = $null
+            $res = Get-DSEntries -VaultId '00000000-0000-0000-0000-000000000000' -Verbose
+            $res.IsSuccess | Should -Be $true
+            $entries = $res.body
+        }
+    }
+    
+    AfterAll{
         $res = Close-DSSession -Verbose   
         $res.IsSuccess | Should -Be $true
     }
+
 }

@@ -10,7 +10,8 @@ A secret key to use
     [cmdletbinding()]
     param(
         [parameter(Mandatory)]
-        $key
+		$key,
+		$InitVector
 	)
 	
 	BEGIN{
@@ -20,6 +21,16 @@ A secret key to use
 	PROCESS {
 	
 		$aesManaged = [System.Security.Cryptography.AesManaged]::new()
+
+		if ($InitVector) {
+			if ($InitVector.getType().Name -eq "String") {
+				$aesManaged.IV = Convert-HexToBytes $InitVector
+			}
+			else {
+				$aesManaged.IV = $InitVector
+			}
+		}
+
 		if ($key.getType().Name -eq "String") {
 			$aesManaged.Key = Convert-HexToBytes $key
 		}

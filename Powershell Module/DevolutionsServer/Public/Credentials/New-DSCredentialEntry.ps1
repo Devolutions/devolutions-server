@@ -13,7 +13,7 @@ function New-DSCredentialEntry {
         [CmdletBinding(DefaultParameterSetName = "General")]
         param(
             [Parameter(Mandatory, ParameterSetName = "General")]
-            [string]$vaultID,
+            [string]$VaultId,
             [Parameter(ParameterSetName = "General")]
             [string]$Folder,
             [Parameter(Mandatory, ParameterSetName = "General")]
@@ -40,7 +40,8 @@ function New-DSCredentialEntry {
         }
     
         PROCESS {
-            $ctx = Set-DSVaultsContext $vaultID
+            $ctx = Set-DSVaultsContext $VaultId
+            $PSBoundParameters.Remove('VaultId') | out-null
 
             $localBody = ""
             if ($PsCmdlet.ParameterSetName -eq 'General') {
@@ -65,7 +66,7 @@ function New-DSCredentialEntry {
                     group = $folder
                     connectionType  = 26
                     data = $encryptedData
-                    repositoryId = $vaultID
+                    repositoryId = $VaultId
                     name = $SessionName
                 }
                
