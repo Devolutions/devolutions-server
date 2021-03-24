@@ -63,7 +63,7 @@
     NestedModules = @()
     
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Get-DSEntries', 'Get-DSEntry', 'Get-DSVaults', 'New-DSCredentialEntry', 'Get-DSEntrySensitiveData')
+    FunctionsToExport = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Get-DSEntries', 'Get-DSEntry', 'Get-DSVaults', 'New-DSCredentialEntry', 'Get-DSEntrySensitiveData', 'Get-DSSecureMessages', 'Protect-ResourceToHexString', 'Get-DSPamFolders', 'Get-DSPamAccounts')
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport = @()
