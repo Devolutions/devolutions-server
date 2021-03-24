@@ -1,4 +1,4 @@
-function Get-DSEntriesLegacy{
+function Get-DSPamAccounts{
     <#
     .SYNOPSIS
     
@@ -11,16 +11,13 @@ function Get-DSEntriesLegacy{
     .LINK
     #>
         [CmdletBinding()]
-        [OutputType([ServerResponse])]
         param(			
-            [Parameter(Mandatory)]
-            [string]$VaultId
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSEntriesLegacy] begin...'
+            Write-Verbose '[Get-DSPamAccounts] begin...'
     
-            $URI = "$Script:DSBaseURI/api/Connections/list/all"
+            $URI = "$Script:DSBaseURI/api/pam/credentials"
 
     		if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken))
 			{
@@ -30,32 +27,25 @@ function Get-DSEntriesLegacy{
     
         PROCESS {
             try
-            {   
-                $ctx = Set-DSVaultsContext $VaultId
-
+            {   	
                 $params = @{
                     Uri = $URI
                     Method = 'GET'
                     LegacyResponse = $true
                 }
 
-                Write-Verbose "[Get-DSEntriesLegacy] about to call $Uri"
+                Write-Verbose "[Get-DSPamAccounts] about to call with $params.Uri"
 
                 [ServerResponse] $response = Invoke-DS @params
 
                 if ($response.isSuccess)
                 { 
-                    #the entry representing the root should not be manipulated using a plain Connection pattern,
-                    #we'll remove it for now
-                    $newBody = $response.body.data | Where-Object {$_.connectionType -ne '92'}
-                    $response.Body.data = $newBody
-                    Write-Verbose "[Get-DSEntriesLegacy] Got $($response.Body.data.Length)"
+                    Write-Verbose "[Get-DSPamAccounts] was successfull"
                 }
-                
+
                 If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
                         Write-Debug "[Response.Body] $($response.Body)"
                 }
-
 
                 return $response
             }
@@ -70,9 +60,9 @@ function Get-DSEntriesLegacy{
     
         END {
            If ($?) {
-              Write-Verbose '[Get-DSEntriesLegacy] Completed Successfully.'
+              Write-Verbose '[Get-DSPamAccounts] Completed Successfully.'
             } else {
-                Write-Verbose '[Get-DSEntriesLegacy] ended with errors...'
+                Write-Verbose '[Get-DSPamAccounts] ended with errors...'
             }
         }
     }

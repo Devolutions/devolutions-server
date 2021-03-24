@@ -53,12 +53,12 @@ Describe NormalWorkflow{
             if ($null -ne $entries) {
                 for ($i = 0; $i -lt $entries.Count; $i++) {
                     $entryId = $entries[$i].id
-                    $innerRes1 = Get-DSEntry $entryId -Verbose
+                    $innerRes1 = Get-DSEntry $entryId -Verbose | Should -Not -Throw
                     $innerRes1.Body.Data.Name | Should -Not -BeNullOrEmpty
 
                     $getSD = $innerRes1.Body.Data.Data.passwordItem.hasSensitiveData
                     if (($null -ne $getSD) -and ($true -eq $getSD)){
-                        $innerRes2 = Get-DSEntrySensitiveData $entryId -Verbose
+                        $innerRes2 = Get-DSEntrySensitiveData $entryId -Verbose | Should -not -Throw
                         $innerRes2.Body.result | Should -BeGreaterThan 0
                     }
                 }
@@ -69,7 +69,7 @@ Describe NormalWorkflow{
             $entries = $null
             $res = Get-DSEntries -VaultId '00000000-0000-0000-0000-000000000000' -Verbose
             $res.IsSuccess | Should -Be $true
-            $entries = $res.body
+            $entries = $res.body.data
         }
     }
     
@@ -78,4 +78,17 @@ Describe NormalWorkflow{
         $res.IsSuccess | Should -Be $true
     }
 
+    Context "SecureMessages" {
+        It "Should list messages" {
+            $res = Get-DSSecureMessages -Verbose
+            $res.IsSuccess | Should -Be $true        }
+    }
+
+    Context "PAM" {
+        It "should list pam folders" {
+            $res = Get-DSPamFolders -Verbose
+            $res.IsSuccess | Should -Be $true
+            $res.Body.Data -is [system.array] | Should -Be $true
+        }
+    }
 }

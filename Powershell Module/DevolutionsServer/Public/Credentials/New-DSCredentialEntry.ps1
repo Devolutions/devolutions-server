@@ -10,22 +10,16 @@ function New-DSCredentialEntry {
     
     .LINK
     #>
-        [CmdletBinding(DefaultParameterSetName = "General")]
+        [CmdletBinding()]
         param(
-            [Parameter(Mandatory, ParameterSetName = "General")]
+            [Parameter(Mandatory)]
             [string]$VaultId,
-            [Parameter(ParameterSetName = "General")]
             [string]$Folder,
-            [Parameter(Mandatory, ParameterSetName = "General")]
-            [string]$SessionName,
-            [Parameter(ParameterSetName = "General")]
+            [Parameter(Mandatory)]
+            [string]$EntryName,
             [string]$Username,
-            [Parameter(ParameterSetName = "General")]
             [string]$Password,
-            [Parameter(ParameterSetName = "General")]
-            [string]$UserDomain,
-            [Parameter(Mandatory, ParameterSetName = "Passthru")]
-            [string]$fullObjectAsJSon
+            [string]$UserDomain
         )
         
         BEGIN {
@@ -40,47 +34,33 @@ function New-DSCredentialEntry {
         }
     
         PROCESS {
+            #the Set-DSVaultsContext is extremely tolerant in our current DVLS iteration
             $ctx = Set-DSVaultsContext $VaultId
             $PSBoundParameters.Remove('VaultId') | out-null
 
-            $localBody = ""
-            if ($PsCmdlet.ParameterSetName -eq 'General') {
-                $password = EscapeForJSon $password
-                $SensitiveData = @{
-                    credentials = @{
-                        domain = $UserDomain
-                        password = $password
-                        username = $username
-                    }
-                    userName =  $username
-                    domain = $UserDomain
-                    passwordItem = @{
-                        hasSensitiveData = $true
-                        sensitiveData = $password
-                    }
-                }
-
-                $encryptedData = Protect-ResourceToHexString ($SensitiveData | ConvertTo-Json)
-
-                $CredentialBody = @{
-                    group = $folder
-                    connectionType  = 26
-                    data = $encryptedData
-                    repositoryId = $VaultId
-                    name = $SessionName
-                }
-               
-                $localBody = $CredentialBody | ConvertTo-Json
-
-            } else {
-                $localBody = $fullObjectAsJSon
+            $credSegment = Get-DSCredentialSegment -Username $username -Password $password -UserDomain $UserDomain 
+            $EntryData = $credSegment + @{
+                group = $Folder
+                connectionType  = 26
+                repositoryID = $VaultId
+                name = $EntryName
             }
 
+            $encryptedData = Protect-ResourceToHexString ($EntryData | ConvertTo-Json)
+
+            $CredentialBody = @{
+                group = $folder
+                connectionType  = 26
+                data = $encryptedData
+                repositoryId = $VaultId
+                name = $EntryName
+            }
+            
             $params = @{
                 Uri = $URI
                 Method = 'POST'
                 LegacyResponse = $true
-                Body = $localBody
+                Body = $CredentialBody | ConvertTo-Json
             }
 
             return Invoke-DS @params

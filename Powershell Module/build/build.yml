@@ -7,34 +7,52 @@ variables:
   - name: minor
     value: 3
   - name: revision
-    value: 999
+    value: 0
   # Prefix and build are used to produce a auto-incrementing, yet resettable, build number
   - name: prefix 
-    value: 202003
+    value: 2020030
+  #homework, try to use variables above
   - name: build
-    value: $[counter(variables['prefix'], 1)]
+    value: $[counter(variables['prefix'], 0)]
   - name: buildVer
-    value: $(major).$(minor).$(build).$(revision))
+    value: $(major).$(minor).$(build).$(revision)
+  - group: bitbucket
+  - group: github-bot
 
 pool:
   vmImage: 'windows-latest'
 
 steps:
-- script: echo $(buildVer)
-  displayName: 'Run $(buildVer)'
+- checkout: self
+  clean: true
 
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  workingDirectory: DevolutionsServer
-  
+- task: PowerShell@2
+  displayName: 'to execute buildmodule.ps1'
+  env:
+    BUILDVER: '$(buildVer)'
+  inputs:
+    filePath: $(Build.SourcesDirectory)/DevolutionsServer/build/buildmodule.ps1
+    errorActionPreference: 'silentlyContinue'
 
-#- task: GitHubRelease@1
-#  inputs:
-#    repositoryName: '$(Build.Repository.Name)'
-#    action: 'create'
-#    target: '$(Build.SourceVersion)'
-#    tagSource: 'gitTag'
-#    changeLogCompareToRelease: 'lastFullRelease'
-#    changeLogType: 'commitBased'
-#  displayName: 'Run a multi-line script'
+- task: PowerShell@2
+  displayName: 'Adding Git tags to repository'
+  env:
+    BitBucketUsername: $(BitBucketUsername)
+    BitBucketPassword: $(BitBucketPassword)
+  inputs:
+    targetType: 'filePath'
+    filePath: $(Build.SourcesDirectory)/New-BitbucketTag.ps1
+    Arguments: "-CommitId $(Build.SourceVersion) -TagValue '$(buildVer)' -Repository ps_sdk"
+
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
+    script: |
+      Copy-Item -Path $(Build.Repository.LocalPath)\DevolutionsServer -Destination $(build.artifactstagingdirectory) -Recurse -force
+      echo $(buildVer) > $(build.artifactstagingdirectory)\version.json
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+    ArtifactName: ps_sdk
