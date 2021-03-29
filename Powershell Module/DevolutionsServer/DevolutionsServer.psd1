@@ -3,31 +3,31 @@
 #
 @{
     # Script module or binary module file associated with this manifest.
-    RootModule = 'DevolutionsServer.psm1'
+    RootModule             = 'DevolutionsServer.psm1'
     
     # Version number of this module.
-    ModuleVersion = '2020.3.2.0'
+    ModuleVersion          = '2021.1.0'
 
     # Supported PSEditions
-    CompatiblePSEditions = 'Desktop', 'Core'
+    CompatiblePSEditions   = 'Desktop', 'Core'
 
     # ID used to uniquely identify this module
-    GUID = '1E867BE1-DB19-4260-B768-6A368276B470'
+    GUID                   = '1E867BE1-DB19-4260-B768-6A368276B470'
 
     # Author of this module
-    Author = 'Devolutions'
+    Author                 = 'Devolutions'
 
     # Company or vendor of this module
-    CompanyName = 'Devolutions'
+    CompanyName            = 'Devolutions'
 
     # Copyright statement for this module
-    Copyright = '(c) 2020 Devolutions Inc. All rights reserved.'
+    Copyright              = '(c) 2021 Devolutions Inc. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description = 'Devolutions Server PowerShell Module'
+    Description            = 'Devolutions Server PowerShell Module'
 
     # Minimum version of the PowerShell engine required by this module
-    PowerShellVersion = '5.1'
+    PowerShellVersion      = '5.1'
     
     # Name of the PowerShell host required by this module
     # PowerShellHostName = ''
@@ -39,7 +39,7 @@
     DotNetFrameworkVersion = '4.7.2'
     
     # Minimum version of the common language runtime (CLR) required by this module. This prerequisite is valid for the PowerShell Desktop edition only.
-    CLRVersion = '4.0'
+    CLRVersion             = '4.0'
     
     # Processor architecture (None, X86, Amd64) required by this module
     # ProcessorArchitecture = ''
@@ -48,7 +48,7 @@
     # RequiredModules = @()
     
     # Assemblies that must be loaded prior to importing this module
-    RequiredAssemblies = @()
+    RequiredAssemblies     = @('.\DvlsAPI.dll')
     
     # Script files (.ps1) that are run in the caller's environment prior to importing this module.
     # ScriptsToProcess = @()
@@ -60,19 +60,22 @@
     # FormatsToProcess = @()
     
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-    NestedModules = @()
+    NestedModules          = @()
     
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Get-DSEntries', 'Get-DSEntry', 'Get-DSVaults', 'New-DSCredentialEntry', 'Get-DSEntrySensitiveData', 'Get-DSSecureMessages', 'Protect-ResourceToHexString', 'Get-DSPamFolders', 'Get-DSPamAccounts')
+    FunctionsToExport      = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Get-DSEntries', 'Get-DSEntry', 'Get-DSVaults', 'New-DSCredentialEntry', 'Get-DSEntrySensitiveData', 'Protect-ResourceToHexString', 
+        'Get-DSPamAccounts', 'New-DSPamAccount', 'Remove-DSPamAccount', 
+        'Get-DSPamFolders', 'New-DSPamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder', 
+        'Get-DSPamCheckoutPolicies', 'New-DSPamCheckoutPolicy', 'Remove-DSPamCheckoutPolicy', 'Update-DSPamCheckoutPolicy')
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-    CmdletsToExport = @()
+    CmdletsToExport        = @()
     
     # Variables to export from this module
-    VariablesToExport = @()
+    VariablesToExport      = @()
     
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport = @()
+    AliasesToExport        = @()
     
     # DSC resources to export from this module
     # DscResourcesToExport = @()
@@ -84,12 +87,12 @@
     # FileList = @()
     
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
-    PrivateData = @{
+    PrivateData            = @{
 
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags = 'Devolutions', 'Server', 'PAM', 'RemoteDesktop'
+            Tags       = 'Devolutions', 'Server', 'PAM', 'RemoteDesktop'
 
             # A URL to the license for this module.
             LicenseUri = 'https://github.com/Devolutions/devolutionsserver/blob/master/LICENSE'
@@ -98,7 +101,7 @@
             ProjectUri = 'https://github.com/Devolutions/devolutionsserver'
 
             # A URL to an icon representing this module.
-            IconUri = 'https://raw.githubusercontent.com/Devolutions/devolutions-server/main/logo.png'
+            IconUri    = 'https://raw.githubusercontent.com/Devolutions/devolutions-server/main/logo.png'
 
             # ReleaseNotes of this module
             # ReleaseNotes = ''
@@ -121,4 +124,4 @@
     # Default prefix for commands exported from this module. Override the default prefix using Import-Module -Prefix.
     # DefaultCommandPrefix = ''
     
-    }
+}

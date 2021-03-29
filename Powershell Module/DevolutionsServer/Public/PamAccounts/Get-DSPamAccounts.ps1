@@ -31,7 +31,7 @@ function Get-DSPamAccounts{
                 $params = @{
                     Uri = $URI
                     Method = 'GET'
-                    LegacyResponse = $true
+                    #LegacyResponse = $true
                 }
 
                 Write-Verbose "[Get-DSPamAccounts] about to call with $params.Uri"
