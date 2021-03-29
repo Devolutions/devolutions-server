@@ -51,9 +51,7 @@ function New-DSPamAccount {
         }
 
         $res = Invoke-DS @params
-        if ($res.StandardizedStatusCode -ne 401) {
-            $isSuccess = $false
-        }
+        $isSuccess = $res.isSuccess
         return $res
     }
     END {

@@ -1,5 +1,5 @@
-function Invoke-DS{
-<#
+function Invoke-DS {
+    <#
 .SYNOPSIS
 
 .DESCRIPTION
@@ -13,12 +13,12 @@ function Invoke-DS{
     [CmdletBinding()]
     [OutputType([ServerResponse])]
     param(			
-		[Parameter(Mandatory)]
-		[ValidateSet('Get', 'Post', 'Put', 'Delete')]
-		[string]$method,
+        [Parameter(Mandatory)]
+        [ValidateSet('Get', 'Post', 'Put', 'Delete')]
+        [string]$method,
 
-		[Parameter(Mandatory)]
-		[string]$URI,
+        [Parameter(Mandatory)]
+        [string]$URI,
 
         [string]$body,
 
@@ -28,8 +28,7 @@ function Invoke-DS{
     BEGIN {
         Write-Verbose '[Invoke-DS] begin...'
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken))
-        {
+        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
         
@@ -39,35 +38,38 @@ function Invoke-DS{
     }
 
     PROCESS {
-		try {
-			$response = Invoke-WebRequest @PSBoundParameters -ErrorAction Stop
-		}
-		catch [System.UriFormatException] {
-            throw "Not initialized, please use New-DSSEssion"
-		}
-		catch {
+        try {
+            $response = Invoke-WebRequest @PSBoundParameters -ErrorAction Stop
+        }
+        catch [System.UriFormatException] {
+            throw "Not initialized, please use New-DSSession"
+        }
+        catch {
             $exc = $_.Exception
             If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
-                    Write-Debug "[Exception] $exc"
+                Write-Debug "[Exception] $exc"
             } 
-            return [ServerResponse]::new($false, $null, $null, $exc, "", $exc.Response.StatusCode)                        
+
+            return [ServerResponse]::new($false, $null, $null, $exc, "Resource couldn't be found.", $exc.Response.StatusCode)                        
         }
         
-        if ($LegacyResponse)
-        {
-            return Convert-LegacyResponse $response
+        if ($LegacyResponse) {
+            $res = Convert-LegacyResponse $response
         }
         else {
-            return [ServerResponse]::new(($response.StatusCode -eq 200), $response, ($response.Content | ConvertFrom-JSon), $null, "", $response.StatusCode)
+            $res = New-ServerResponse $response $method 
         }
 
-	} #PROCESS
+        return $res
+
+    } #PROCESS
 
     END {
-        If ($?) {
+        If ($res.isSuccess) {
             Write-Verbose '[Invoke-DS] Completed Successfully.'
-        } else {
-            Write-Verbose '[Invoke-DS] ended with errors...'
+        }
+        else {
+            Write-Verbose '[Invoke-DS] Ended with errors...'
         }
     } #END
 }

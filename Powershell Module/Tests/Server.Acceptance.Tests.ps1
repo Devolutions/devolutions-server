@@ -2,10 +2,6 @@
 .DESCRIPTION
     These are tests that will simply exercise the backend without creating new info
     Obviously except logs and session information.
-
-    This assumes that data exists in the server...
-
-    When we are further along we will be able to create the seed data with the module.
 #>
 BeforeAll {
     $modulePath = Resolve-Path -Path "..\DevolutionsServer"
@@ -57,13 +53,13 @@ Describe NormalWorkflow{
             if ($null -ne $entries) {
                 for ($i = 0; $i -lt $entries.Count; $i++) {
                     $entryId = $entries[$i].id
-                    $innerRes1 = Get-DSEntry $entryId -Verbose # | Should -Not -Throw
+                    $innerRes1 = Get-DSEntry $entryId -Verbose | Should -Not -Throw
                     $innerRes1.Body.Data.Name | Should -Not -BeNullOrEmpty
 
                     $getSD = $innerRes1.Body.Data.Data.passwordItem.hasSensitiveData
                     if (($null -ne $getSD) -and ($true -eq $getSD)){
-                        $innerRes2 = Get-DSEntrySensitiveData $entryId -Verbose # | Should -not -Throw
-                        #$innerRes2.Body.result | Should -BeGreaterThan 0
+                        $innerRes2 = Get-DSEntrySensitiveData $entryId -Verbose | Should -not -Throw
+                        $innerRes2.Body.result | Should -BeGreaterThan 0
                     }
                 }
             }
@@ -94,5 +90,9 @@ Describe NormalWorkflow{
             $res.IsSuccess | Should -Be $true
             $res.Body.Data -is [system.array] | Should -Be $true
         }
+
+        It "Should get all checkout policies"
+        $res = Get-DSPamCheckoutPolicies -Verbose
+        $res.isSuccess | Should -be $true
     }
 }
