@@ -5,85 +5,97 @@ function Get-DSUserSecuritySegment {
     #>
     [CmdletBinding()]
     param(
-        #FIXME [CustomSecurity]$customSecurityEntity,
-        [bool]$deleteSQLLogin,
-        [bool]$isServerUserTypeAssumed,
-        [array]$repositoryEntities, 
+        [string]$name,
+        [int]$userType,
+        [bool]$isAdministrator,
+        [bool]$isEnabled,
+        [bool]$isLockedOut,
+        #[string]$departments,
+        #[string]$securityKey,
+        #[string]$accountSettings,
         [bool]$canAdd,
-        [bool]$canDelete, 
-        [bool]$canEdit, 
-        [string]$createdByLoggedUsername,
-        [string]$createdByUsername, 
-        [string]$creationDate,
+        [bool]$canDelete,
+        [bool]$canEdit,
         [string]$customSecurity,
-        [bool]$hasAccessPVM,
+        [bool]$canAddCredentials,
+        [bool]$canAddDataEntry,
+        [bool]$canEditCredentials,
+        [bool]$canEditDataEntry,
+        [bool]$canDeleteCredentials,
+        [bool]$canDeleteDataEntry,
+        #[int]$failedPasswordAttemptCount,
+        [string]$UPN, #?
+        [int]$authenticationType,
+        [string]$loginEmail,
         [bool]$hasAccessRDM,
+        #[bool]$hasAccessPVM,
         [bool]$hasAccessWeb,
         [bool]$hasAccessWebLogin,
-        [string]$id, 
-        [bool]$isAdministrator, 
-        [bool]$isEnabled, 
-        [bool]$isLockedOut,
-        [string]$lastLockoutDate, 
-        [string]$loginEmail, 
-        [string]$modifiedDate,
-        [string]$modifiedLoggedUsername,
-        [string]$modifiedUsername,
-        [string]$name, 
-        [string]$respositories, 
-        [string]$securityKey, 
-        [string]$UPN,
-        [int]$userLicenseType, 
-        [int]$userType
-        #[Devolutions.RemoteDesktopManager.UserLicenseTypeMode]$userLicenseType, 
-        #[Devolutions.RemoteDesktopManager.UserType]$userType
+        [int]$userLicenseTypeMode,
+        [bool]$hasAccessLauncher,
+        [bool]$hasAccessCli
+        #[string]$assigned
+        #[string]$identityProviderId
+
     )
+    BEGIN {
+        Add-Type -Path ".\DevolutionsServer\DvlsAPI.dll"
+    }
     PROCESS {
         try {
             $securityData = @{
-                #FIXME customSecurityEntity    = $null
-                deleteSQLLogin          = $deleteSQLLogin
-                isServerUserTypeAssumed = $isServerUserTypeAssumed
-                repositoryEntities      = @()
-                canAdd                  = $canAdd
-                canDelete               = $canDelete
-                canEdit                 = $canEdit
-                createdByLoggedUsername = if ($createdByLoggedUsername) { $createdByLoggedUsername } else { "" }
-                createdByUsername       = if ($createdByUsername) { $createcreatedByUsernamedBy } else { "" }
-                creationDate            = (Get-Date).ToUniversalTime().ToString("yyyy-MM-ddTHH:mm:ss.fffK")
-                customSecurity          = if ($customSecurity) { $customSecurity } else { "" }
-                hasAccessPVM            = $hasAccessPVM
-                hasAccessRDM            = $hasAccessRDM
-                hasAccessWeb            = $hasAccessWeb
-                hasAccessWebLogin       = $hasAccessWebLogin
-                id                      = [guid]::NewGuid()
-                isAdministrator         = $isAdministrator
-                isEnabled               = $isEnabled
-                isLockedOut             = $isLockedOut
-                lastLockoutDate         = if ($lastLockoutDate) { $lastLockoutDate } else { "" }
-                loginEmail              = if ($loginEmail) { $loginEmail } else { "" }
-                modifiedDate            = if ($modifiedDate) { $modifiedDate } else { "" }
-                modifiedLoggedUsername  = if ($modifiedLoggedUsername) { $modifiedLoggedUsername } else { "" }
-                modifiedUsername        = if ($modifiedUsername) { $modifiedUsername } else { "" }
-                name                    = if ($name) { $name } else { "" }
-                respositories           = if ($respositories) { $respositories } else { "" }
-                securityKey             = if ($securityKey) { $securityKey } else { "" }
-                UPN                     = if ($UPN) { $UPN } else { "" }
-                userLicenseType         = switch ($userLicenseType) {
-                    0 { "Default" }
-                    1 { "ConnectionManagement" }
-                    2 { "PasswordManagement" }
-                    Default { throw "Invalid license type. Please choose a type between 0 and 2 (Inclusivly)." }
+                name                 = if ($name) {} else { "" }
+                #departments                = if ($departments) { $departments } else { "" }
+                #securityKey                = if ($securityKey) { $securityKey } else { "" }
+                #accountSettings            = if ($accountSettings) { $accountSettings } else { "" }  
+                customSecurity       = if ($customSecurity) { $customSecurity } else { "" }
+                #failedPasswordAttemptCount = if ($failedPasswordAttemptCount++ -gt 3) {  } else { $failedPasswordAttemptCount++ } #Probably not needed, else probably needs a check of some sort
+                UPN                  = if ($UPN) { $UPN } else { "" }
+                loginEmail           = if ($loginEmail) { $loginEmail } else { "" }
+                #assigned                   = if ($assigned) { $assigned } else { "" }
+                #identityProviderId         = if ($identityProviderId) { $identityProviderId } else { "" }
+                isAdministrator      = $false #$isAdministrator
+                isEnabled            = $true #$isEnabled
+                isLockedOut          = $false #$isLockedOut
+                canAdd               = $true #$canAdd
+                canDelete            = $true #$canDelete
+                canEdit              = $true #$canEdit
+                canAddCredentials    = $true #$canAddCredentials
+                canAddDataEntry      = $true #$canAddDataEntry
+                canEditCredentials   = $true #$canEditCredentials
+                canEditDataEntry     = $true #$canEditDataEntry
+                canDeleteCredentials = $true #$canDeleteCredentials
+                canDeleteDataEntry   = $true #$canDeleteDataEntry
+                hasAccessRDM         = $hasAccessRDM
+                #hasAccessPVM               = $hasAccessPVM
+                hasAccessWeb         = $hasAccessWeb
+                hasAccessWebLogin    = $hasAccessWebLogin
+                hasAccessLauncher    = $hasAccessLauncher
+                hasAccessCli         = $true #$hasAccessCli
+
+                userType             = switch ($userType) {
+                    0 { [Devolutions.RemoteDesktopManager.UserType]::Admin }
+                    1 { [Devolutions.RemoteDesktopManager.UserType]::User }
+                    2 { [Devolutions.RemoteDesktopManager.UserType]::Restricted }
+                    3 { [Devolutions.RemoteDesktopManager.UserType]::ReadOnly }
+                    Default { throw "Invalid user type. Value must be between 0 and 3." }
                 }
-                userType                = switch ($userType) {
-                    0 { "Admin" }
-                    1 { "User" }
-                    2 { "Restricted" }
-                    3 { "ReadOnly" }
-                    Default { throw "Invalid user type. Please choose a type between 0 and 3 (Inclusivly)." }
+                userLicenseTypeMode  = switch ($userLicenseTypeMode) {
+                    0 { [Devolutions.RemoteDesktopManager.UserLicenceTypeMode]::Default }
+                    1 { [Devolutions.RemoteDesktopManager.UserLicenceTypeMode]::ConnectionManagement }
+                    2 { [Devolutions.RemoteDesktopManager.UserLicenceTypeMode]::PasswordManagement }
+                    Default { throw "Invalid user license type mode. Value must be between 0 and 2 inclusivly." }
+                }
+                authenticationType   = switch ($authenticationType) {
+                    0 { [Devolutions.RemoteDesktopManager.ServerUserType]::Builtin }
+                    3 { [Devolutions.RemoteDesktopManager.ServerUserType]::Domain }
+                    5 { [Devolutions.RemoteDesktopManager.ServerUserType]::None }
+                    8 { [Devolutions.RemoteDesktopManager.ServerUserType]::Office365 }
+                    9 { [Devolutions.RemoteDesktopManager.ServerUserType]::Application }
+                    Default { throw "Unsupported authentication type. Please select a" }
                 }
             }
-        
+
             return ($securityData)
         }
         catch {
