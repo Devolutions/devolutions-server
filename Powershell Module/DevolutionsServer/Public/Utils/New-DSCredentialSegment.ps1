@@ -1,4 +1,4 @@
-function Get-DSCredentialSegment{
+function New-DSCredentialSegment{
     <#
     .SYNOPSIS
         Returns the a SensitiveData object which is needed to handle safe transfer of credentials
