@@ -12,11 +12,6 @@ Endpoint with params return 400 if no resource were found matching supplied para
 by Invoke-DS. Maybe it could be useful to redirect here instead and return a custom error message for each resource that failed
 to be found.
 #>
-
-
-
-
-
     [CmdletBinding()]
     [OutputType([ServerResponse])]
     param(
@@ -58,11 +53,20 @@ to be found.
                     '/dvls/api/pam/credentials' {
                         if ($response.Content -eq '[]') {
                             #404 no account found.
-                            return [ServerResponse]::new($false, $response, ($response.Content | ConvertFrom-JSon), $null, "No PAM accounts found. Make sure you have the correct folderID and have created PAM accounts.", 404)
+                            return [ServerResponse]::new($false, $response, ($response.Content | ConvertFrom-JSon), $null, "No PAM accounts found. Make sure you have the correct folderID and have created PAM accounts.", 204)
                         }
                         else {
                             #200 resource(s) found.
                             return [ServerResponse]::new($true , $response, ($response.Content | ConvertFrom-JSon), $null, $null, 200)
+                        }
+                    }
+                    '/dvls/api/v3/usergroups' {
+                        $content = $response.Content | ConvertFrom-Json
+                        if ($content.data.Length -gt 0) {
+                            return [ServerResponse]::new($false, $response, ($response.Content | ConvertFrom-JSon), $null, "No user groups were found. Make sure you have created at least one user group.", 204)
+                        }
+                        else {
+                            return [ServerResponse]::new($true, $response, ($response.Content | ConvertFrom-JSon), $null, "", 200)
                         }
                     }
                     Default { return [ServerResponse]::new($false , $response, ($response.Content | ConvertFrom-JSon), $null, "[GET] Couldn't locate an appropriate response. If you see this, contact your system administrator for help.", 200) }
