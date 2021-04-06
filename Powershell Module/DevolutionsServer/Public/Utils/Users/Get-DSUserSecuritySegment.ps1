@@ -44,7 +44,7 @@ function Get-DSUserSecuritySegment {
     PROCESS {
         try {
             $securityData = @{
-                name                 = if ($name) {} else { "" }
+                Name                 = if ($name) { $name } else { "" }
                 #departments                = if ($departments) { $departments } else { "" }
                 #securityKey                = if ($securityKey) { $securityKey } else { "" }
                 #accountSettings            = if ($accountSettings) { $accountSettings } else { "" }  

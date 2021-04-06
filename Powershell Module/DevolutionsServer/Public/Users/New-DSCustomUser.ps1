@@ -65,7 +65,7 @@ function New-DSCustomUser {
 
     BEGIN {
         Write-Verbose '[New-DSCustomUser] Begining...'
-        $URI = "$Script:DSBaseURI/api/security/user/save?csToXml=1"
+        $URI = "$Script:DSBaseURI/api/security/user/save"
         $isSuccess = $true
 
         $userId = [guid]::NewGuid()
