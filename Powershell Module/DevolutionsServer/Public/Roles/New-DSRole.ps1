@@ -44,10 +44,10 @@ function New-DSRole {
 
     END {
         If ($isSuccess) {
-            Write-Verbose '[New-DSCustomUser] Completed Successfully.'
+            Write-Verbose '[New-DSRole] Completed Successfully.'
         }
         else {
-            Write-Verbose '[New-DSCustomUser] Ended with errors...'
+            Write-Verbose '[New-DSRole] Ended with errors...'
         }
     }    
 }

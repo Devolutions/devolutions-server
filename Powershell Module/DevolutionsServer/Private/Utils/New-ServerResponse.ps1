@@ -77,7 +77,7 @@ to be found.
                 }
             }
             "DELETE" {
-                if ($response.StatusCode -eq 204) {
+                if ($response.StatusCode -in @(200, 204)) {
                     return [ServerResponse]::new($true, $response, ($response.Content | ConvertFrom-JSon), $null, "", 204)
                 }
                 else {
