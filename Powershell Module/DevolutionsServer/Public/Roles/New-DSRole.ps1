@@ -7,27 +7,52 @@ function New-DSRole {
         [Parameter(Mandatory)]
         [string]$displayName,
         [string]$description,
-        [bool]$isAdministrator
+        [bool]$isAdministrator,
+        [bool]$allowDragAndDrop,
+        [bool]$canAdd,
+        [bool]$canEdit,
+        [bool]$canDelete,
+        [bool]$canImport,
+        [bool]$canExport,
+        [bool]$denyAddInRoot,
+        [int]$offlineMode
     )
 
     BEGIN {
         Write-Verbose '[New-DSRole] Begining...'
-        $URI = "$Script:DSBaseURI/api/security/role/save"
+        $URI = "$Script:DSBaseURI/api/security/role/save?csToXml=1"
         $isSuccess = $true
 
         if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
         }
+
+        if ($offlineMode) {
+            if ($offlineMode -notin @('0', '2', '3')) {
+                throw "Offline mode invalid. Should be 0 (Disabled), 2 (Read-only) or 3 (Read-write)."
+            }
+        }
     }
 
     PROCESS {
         $newRoleData = @{
-            userAccount = @{
+            userAccount  = @{
                 fullName = $description
             }
             userSecurity = @{
-                name            = $displayName
-                isAdministrator = $isAdministrator
+                name                 = $displayName
+                isAdministrator      = $isAdministrator
+                canAdd               = $canAdd
+                canEdit              = $canEdit
+                canDelete            = $canDelete
+                repositoryEntities   = @() #TODO maybe? Would require fetching all vaults and looking through them to see if it exists
+                customSecurityEntity = @{
+                    allowDragAndDrop = $allowDragAndDrop
+                    canImport        = $canImport
+                    canExport        = $canExport
+                    offlineMode      = $offlineMode
+                    denyAddInRoot    = $denyAddInRoot
+                }
             }
         }
 
