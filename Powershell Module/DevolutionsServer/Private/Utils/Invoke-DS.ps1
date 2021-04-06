@@ -39,7 +39,7 @@ function Invoke-DS {
 
     PROCESS {
         try {
-            $response = Invoke-WebRequest @PSBoundParameters -ErrorAction Stop
+            $response = Invoke-WebRequest @PSBoundParameters -Headers @{"tokenId" = $Script:DSSessionToken} -ErrorAction Stop
         }
         catch [System.UriFormatException] {
             throw "Not initialized, please use New-DSSession"
