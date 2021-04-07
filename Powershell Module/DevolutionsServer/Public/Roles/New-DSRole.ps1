@@ -1,6 +1,20 @@
 function New-DSRole {
     <#
     .SYNOPSIS
+    Creates a new role.
+    .DESCRIPTION
+    Creates a new role and pre-validate offlineMode value, if supplied.
+    .EXAMPLE
+    $newRoleData = @{
+        displayName = "Test"
+        description = "This is a test role"
+        canAdd = $true
+        canDelete = $false
+        offlineMode = 3
+        allowDragAndDrop = $false
+    }
+
+    $res = New-DSRole @newRoleData -Verbose
     #>
     [CmdletBinding()]
     param(

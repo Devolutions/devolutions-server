@@ -1,6 +1,10 @@
 function Get-DSRoles {
     <#
     .SYNOPSIS
+    Fetch all the currently existing roles.
+    .EXAMPLE
+    $res = Get-DSRoles
+    $rolesList = (Get-DSRoles).Body.data
     #>
     [CmdletBinding()]
     param(

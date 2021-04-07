@@ -1,6 +1,9 @@
 function Delete-DSRole {
     <#
     .SYNOPSIS
+    Deletes a role
+    .EXAMPLE
+    $res = Delete-DSRole -roleId "*roleIdToDelete*"
     #>
     [CmdletBinding()]
     param(
