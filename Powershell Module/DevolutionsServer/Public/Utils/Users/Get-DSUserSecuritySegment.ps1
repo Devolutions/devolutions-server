@@ -39,7 +39,6 @@ function Get-DSUserSecuritySegment {
 
     )
     BEGIN {
-        Add-Type -Path ".\DevolutionsServer\DvlsAPI.dll"
     }
     PROCESS {
         try {
