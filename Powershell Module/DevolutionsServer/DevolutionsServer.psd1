@@ -67,7 +67,7 @@
         'Get-DSPamAccounts', 'New-DSPamAccount', 'Remove-DSPamAccount', 
         'Get-DSPamFolders', 'New-DSPamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder', 
         'Get-DSPamCheckoutPolicies', 'New-DSPamCheckoutPolicy', 'Remove-DSPamCheckoutPolicy', 'Update-DSPamCheckoutPolicy',
-        'New-DSCustomUser')
+        'New-DSCustomUser', 'Delete-DSUser')
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport        = @()

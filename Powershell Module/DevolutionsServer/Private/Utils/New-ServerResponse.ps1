@@ -77,8 +77,8 @@ to be found.
                 }
             }
             "DELETE" {
-                if ($response.StatusCode -eq 204) {
-                    return [ServerResponse]::new($true, $response, ($response.Content | ConvertFrom-JSon), $null, "", 204)
+                if ($response.StatusCode -in (200, 204)) {
+                    return [ServerResponse]::new($true, $response, ($response.Content | ConvertFrom-JSon), $null, $null, 200)
                 }
                 else {
                     return [ServerResponse]::new($false, $response, ($response.Content | ConvertFrom-JSon), $null, "", $response.StatusCode)

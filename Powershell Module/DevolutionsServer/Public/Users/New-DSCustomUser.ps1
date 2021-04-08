@@ -65,7 +65,7 @@ function New-DSCustomUser {
 
     BEGIN {
         Write-Verbose '[New-DSCustomUser] Begining...'
-        $URI = "$Script:DSBaseURI/api/security/user/save"
+        $URI = "$Script:DSBaseURI/api/security/user/save?csToXml=1"
         $isSuccess = $true
 
         $userId = [guid]::NewGuid()
@@ -80,10 +80,13 @@ function New-DSCustomUser {
         }
     }
     PROCESS {
+        <#
         if (![string]::IsNullOrEmpty($password)) {
             $password = Protect-ResourceToHexString $password
         }
-
+        #>
+        
+        
         $params = @{
             Uri    = $URI
             Method = 'PUT'

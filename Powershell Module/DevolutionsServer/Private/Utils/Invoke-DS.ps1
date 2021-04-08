@@ -39,7 +39,7 @@ function Invoke-DS {
 
     PROCESS {
         try {
-            $response = Invoke-WebRequest @PSBoundParameters -Headers @{'tokenId' = $Script:DSSessionToken} -ErrorAction Stop
+            $response = Invoke-WebRequest @PSBoundParameters -Headers @{'tokenId' = $Script:DSSessionToken } -ErrorAction Stop
         }
         catch [System.UriFormatException] {
             throw "Not initialized, please use New-DSSession"
@@ -50,7 +50,7 @@ function Invoke-DS {
                 Write-Debug "[Exception] $exc"
             } 
 
-            return [ServerResponse]::new($false, $null, $null, $exc, "Resource couldn't be found.", $exc.Response.StatusCode)                        
+            return [ServerResponse]::new($false, $null, @{"errorMessage" = ($_.ErrorDetails.Message | ConvertFrom-JSon).message }, $exc, $null, $exc.Response.StatusCode)                        
         }
         
         if ($LegacyResponse) {
