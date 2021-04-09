@@ -16,6 +16,10 @@ function Delete-DSUser {
         if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
         }
+
+        if (![guid]::TryParse($candidUserId, $([ref][guid]::Empty))) {
+            throw "User ID is not valid. Please provide a valid ID."
+        }
     }
     PROCESS {   
         $params = @{
@@ -31,7 +35,7 @@ function Delete-DSUser {
             Write-Verbose '[Delete-DSUser] Completed successfully.'
         }
         else {
-            Write-Verbose "[Delete-DSUser] Error: $($res.Body.errorMessage)"
+            Write-Verbose "[Delete-DSUser] Error: $($res.ErrorMessage)"
         }
     }
 }

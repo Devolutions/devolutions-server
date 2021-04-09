@@ -12,11 +12,6 @@ Endpoint with params return 400 if no resource were found matching supplied para
 by Invoke-DS. Maybe it could be useful to redirect here instead and return a custom error message for each resource that failed
 to be found.
 #>
-
-
-
-
-
     [CmdletBinding()]
     [OutputType([ServerResponse])]
     param(
@@ -26,46 +21,37 @@ to be found.
         [string]$method
     )
     PROCESS {
+        $responseContentHash = $response.Content | ConvertFrom-Json -AsHashtable
+        $requestedResource = $response.BaseResponse.RequestMessage.RequestUri.AbsolutePath
+
         switch ($method) {
             "GET" {
-                $requestedResource = $response.BaseResponse.RequestMessage.RequestUri.AbsolutePath
-                switch -Wildcard ($requestedResource) {
-                    '/dvls/api/pam/checkout-policies' {
-                        if ($response.Content -eq '[]') {
-                            #404 no account found.
-                            return [ServerResponse]::new($false, $response, ($response.Content | ConvertFrom-JSon), $null, "No checkout policies were found. Make sure you have at least one checkout policy in place.", 404)
+                if (($null -ne $responseContentHash) -and ($responseContentHash.ContainsKey('result'))) {
+                    switch ($responseContentHash.result) {
+                        ( [Devolutions.RemoteDesktopManager.SaveResult]::Error.value__ ) { 
+                            return [ServerResponse]::new($false , $response, $null, $null, "TODO: Unhandled error.", 500) 
+                        }
+                        ( [Devolutions.RemoteDesktopManager.SaveResult]::Success.value__ ) { 
+                            return [ServerResponse]::new($true , $response, $responseContentHash.data, $null, $null, 200) 
+                        }
+                        ( [Devolutions.RemoteDesktopManager.SaveResult]::NotFound.value__ ) { 
+                            return [ServerResponse]::new($false , $response, $null, $null, "Resource couldn't be found.", 404) 
+                        }
+                        Default { return [ServerResponse]::new($false , $response, $null, $null, "[GET] Unhandled error. If you see this, please contact your system administrator for help.", 200) }
+                    }
+                }
+                else {
+                    if ($response.StatusCode -eq 200) {
+                        if ($responseContentHash -ne $null) {
+                            return [ServerResponse]::new($true , $response, $responseContentHash, $null, $null, 200)
                         }
                         else {
-                            #200 resource(s) found.
-                            return [ServerResponse]::new($true , $response, ($response.Content | ConvertFrom-JSon), $null, $null, 200)
-                        } 
-                    }
-                    '/dvls/api/pam/checkout-policies/count' { 
-                        if ($response.Content -eq '0') {
-                            #404 no account found.
-                            return [ServerResponse]::new($false, $response, ($response.Content | ConvertFrom-JSon), $null, "No checkout policies were found. Make sure you have at least one checkout policy in place.", 404)
-                        }
-                        else {
-                            #200 resource(s) found.
-                            return [ServerResponse]::new($true , $response, ($response.Content | ConvertFrom-JSon), $null, $null, 200)
-                        } 
-                    }
-                    '/dvls/api/pam/checkout-policies/*' {
-                        return [ServerResponse]::new($true , $response, ($response.Content | ConvertFrom-JSon), $null, $null, 200)
-                        
-                    }
-
-                    '/dvls/api/pam/credentials' {
-                        if ($response.Content -eq '[]') {
-                            #404 no account found.
-                            return [ServerResponse]::new($false, $response, ($response.Content | ConvertFrom-JSon), $null, "No PAM accounts found. Make sure you have the correct folderID and have created PAM accounts.", 404)
-                        }
-                        else {
-                            #200 resource(s) found.
-                            return [ServerResponse]::new($true , $response, ($response.Content | ConvertFrom-JSon), $null, $null, 200)
+                            return [ServerResponse]::new($true , $response, $response.Content, $null, $null, 200)
                         }
                     }
-                    Default { return [ServerResponse]::new($false , $response, ($response.Content | ConvertFrom-JSon), $null, "[GET] Couldn't locate an appropriate response. If you see this, contact your system administrator for help.", 200) }
+                    else {
+                        return [ServerResponse]::new($false , $response, $response.Content, $null, "[GET] Unhandled error. If you see this, please contact your system administrator for help.", 200)
+                    }
                 }                
             }
             "POST" {
@@ -77,11 +63,22 @@ to be found.
                 }
             }
             "DELETE" {
-                if ($response.StatusCode -in (200, 204)) {
-                    return [ServerResponse]::new($true, $response, ($response.Content | ConvertFrom-JSon), $null, $null, 200)
+                if (($null -ne $responseContentHash) -and ($responseContentHash.ContainsKey('result'))) {
+                    #delete users, for exemple, returns "response.content.result", so we'll make use of that to detect errors and send back appropriate error message.
+                    if ($responseContentHash.result -eq 1) {
+                        return [ServerResponse]::new($true, $response, ($response.Content | ConvertFrom-JSon), $null, $null, 200)
+                    }
+                    else {
+                        return [ServerResponse]::new($false, $response, $responseContentHash, $null, $responseContentHash.errorMessage, 404)
+                    }
+                }
+                elseif ($response.StatusCode -eq 204) {
+                    #delete checkoutPolicy, for exemple, does NOT return "response.content.result". If code is 204, deletion was successful.
+                    return [ServerResponse]::new($true, $null, $null, $null, $null, 204)
                 }
                 else {
-                    return [ServerResponse]::new($false, $response, ($response.Content | ConvertFrom-JSon), $null, "", $response.StatusCode)
+                    #Any unhandled response will end here.
+                    return [ServerResponse]::new($false, $null, $null, $null, "[DELETE] Unhandled error. If you see this, please contact your system administrator for help.", 500)
                 }
             }
             "PUT" {
