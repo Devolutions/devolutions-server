@@ -6,23 +6,27 @@
 BeforeAll {
     $modulePath = Resolve-Path -Path "..\DevolutionsServer"
     Import-Module -Name $modulePath -Verbose -Force
-    $dvlsURI = "http://localhost/dps"
     
     if (-Not(Test-Path env:DS_USER) -or -Not(Test-Path env:DS_PASSWORD)) {
         throw "please initialize the credentials in the environment variables"  
     }
+
+    if ([string]::IsNullOrEmpty($env:DS_URL)) {
+        throw "Please initialize DS_URL environement variable."
+    }
           
     [string]$credUser = $env:DS_USER
     [string]$credPassword = $env:DS_PASSWORD
+    [string]$dvlsURI = $env:DS_URL
     [securestring]$secPassword = ConvertTo-SecureString $credPassword -AsPlainText -Force
     [pscredential]$creds = New-Object System.Management.Automation.PSCredential ($credUser, $secPassword)
 }
 
-Describe NormalWorkflow{
-     It "Should get server information" {
-         $res = Get-DSServerInfo -BaseURI $dvlsURI -Verbose
-         $res.Body.data.version | Should -Not -BeNullOrEmpty
-        }
+Describe NormalWorkflow {
+    It "Should get server information" {
+        $res = Get-DSServerInfo -BaseURI $dvlsURI -Verbose
+        $res.Body.data.version | Should -Not -BeNullOrEmpty
+    }
     It "Should authenticate" {
         $res = New-DSSession -Credential $creds -BaseURI $dvlsURI -Verbose
         $res.IsSuccess | Should -Be $true
@@ -57,7 +61,7 @@ Describe NormalWorkflow{
                     $innerRes1.Body.Data.Name | Should -Not -BeNullOrEmpty
 
                     $getSD = $innerRes1.Body.Data.Data.passwordItem.hasSensitiveData
-                    if (($null -ne $getSD) -and ($true -eq $getSD)){
+                    if (($null -ne $getSD) -and ($true -eq $getSD)) {
                         $innerRes2 = Get-DSEntrySensitiveData $entryId -Verbose | Should -not -Throw
                         $innerRes2.Body.result | Should -BeGreaterThan 0
                     }
@@ -73,7 +77,7 @@ Describe NormalWorkflow{
         }
     }
     
-    AfterAll{
+    AfterAll {
         $res = Close-DSSession -Verbose   
         $res.IsSuccess | Should -Be $true
     }
@@ -81,7 +85,7 @@ Describe NormalWorkflow{
     Context "SecureMessages" {
         It "Should list messages" {
             $res = Get-DSSecureMessages -Verbose
-            $res.IsSuccess | Should -Be $true        }
+            $res.IsSuccess | Should -Be $true }
     }
 
     Context "PAM" {

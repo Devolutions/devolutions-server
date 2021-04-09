@@ -38,7 +38,7 @@ function New-DSCredentialEntry {
             $ctx = Set-DSVaultsContext $VaultId
             $PSBoundParameters.Remove('VaultId') | out-null
 
-            $credSegment = Get-DSCredentialSegment -Username $username -Password $password -UserDomain $UserDomain 
+            $credSegment = New-DSCredentialSegment -Username $username -Password $password -UserDomain $UserDomain 
             $EntryData = $credSegment + @{
                 group = $Folder
                 connectionType  = 26

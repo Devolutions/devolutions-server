@@ -82,7 +82,12 @@ to be found.
                 }
             }
             "PUT" {
-                return [ServerResponse]::new(($response.StatusCode -eq 200), $response, ($response.Content | ConvertFrom-JSon), $null, "", $response.StatusCode)
+                if ($response.Content.Contains("duplicate")) {
+                    return [ServerResponse]::new($false, $response, ($response.Content | ConvertFrom-JSon), $null, "A user group with this name already exists. Please choose another name for your user group.", 400)
+                }
+                else {
+                    return [ServerResponse]::new(($response.StatusCode -eq 200), $response, ($response.Content | ConvertFrom-JSon), $null, "", $response.StatusCode)
+                }
             }
             #Status 418: Should never get this response. If so, update switchcase so you don't.
             Default { return [ServerResponse]::new(($false), $response, ($response.Content | ConvertFrom-JSon), $null, "Please contact your system administrator for help.", 418) }
