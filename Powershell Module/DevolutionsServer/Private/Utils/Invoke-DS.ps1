@@ -39,7 +39,7 @@ function Invoke-DS {
 
     PROCESS {
         try {
-            $response = Invoke-WebRequest @PSBoundParameters -Headers @{"tokenId" = $Script:DSSessionToken} -ErrorAction Stop
+            $response = Invoke-WebRequest @PSBoundParameters -Headers @{'tokenId' = $Script:DSSessionToken } -ErrorAction Stop
         }
         catch [System.UriFormatException] {
             throw "Not initialized, please use New-DSSession"
@@ -48,9 +48,16 @@ function Invoke-DS {
             $exc = $_.Exception
             If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
                 Write-Debug "[Exception] $exc"
-            } 
+            }
 
-            return [ServerResponse]::new($false, $null, $null, $exc, "Resource couldn't be found.", $exc.Response.StatusCode)                        
+            if ($_.ErrorDetails) {
+                #delete users error contains ErrorDetails.Message
+                return [ServerResponse]::new($false, $null, $null, $exc, ($_.ErrorDetails.Message | ConvertFrom-JSon).message, $exc.Response.StatusCode)                        
+            }
+            else {
+                #delete checkout policy is missing an error message, probably not the only one so going generic
+                return [ServerResponse]::new($false, $null, $null, $exc, "Resource couldn't be found or error not yet handled.", 404) 
+            }
         }
         
         if ($LegacyResponse) {
