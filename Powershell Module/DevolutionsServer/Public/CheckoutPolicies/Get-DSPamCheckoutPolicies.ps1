@@ -14,8 +14,9 @@ function Get-DSPamCheckoutPolicies {
     #>
     [CmdletBinding()]
     param(
-        [string]$policyID,	
-        [System.Management.Automation.SwitchParameter]$Count
+        [string]$policyID
+        #TODO:the count is the sole content returned, it should be converted in the body	
+        #[System.Management.Automation.SwitchParameter]$Count
     )
         
     BEGIN {

@@ -1,4 +1,4 @@
-function Remove-DSPamFolder {
+function Remove-DSPamProvider {
     <#
     .SYNOPSIS
     
@@ -13,36 +13,36 @@ function Remove-DSPamFolder {
     [CmdletBinding()]
     param(
         [Parameter(Mandatory)]
-        [string]$folderID
+        [string]$ProviderID
     )
         
     BEGIN {
-        Write-Verbose '[Remove-DSPamFolder] Begin...'
+        Write-Verbose '[Remove-DSPamProvider] Begin...'
     
-        if (![string]::IsNullOrWhiteSpace($folderID)) {
-            $URI = "$Script:DSBaseURI/api/pam/folders/$folderID"
-        } else {
-            throw "Folder ID is null or not set. Please check if you have a valid folder ID."
-        }
-
         if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }
     
     PROCESS {
+        if (![string]::IsNullOrWhiteSpace($ProviderID)) {
+            $URI = "$Script:DSBaseURI/api/pam/providers/$ProviderID"
+        } else {
+            throw "Provider ID is null or not set. Please check if you have a valid Provider ID."
+        }
+
         try {
             $params = @{
                 Uri    = $URI
                 Method = 'DELETE'
             }
 
-            Write-Verbose "[Remove-DSPamFolder] About to call with ${params.Uri}"
+            Write-Verbose "[Remove-DSPamProvider] About to call with ${params.Uri}"
 
             $response = Invoke-DS @params
 
             if ($response.isSuccess) { 
-                Write-Verbose "[Remove-DSPamFolders] Folder deletion was successful"
+                Write-Verbose "[Remove-DSPamProviders] Provider deletion was successful"
             }
 
             return $response
@@ -58,10 +58,10 @@ function Remove-DSPamFolder {
     
     END {
         If ($?) {
-            Write-Verbose '[Remove-DSPamFolders] Completed Successfully.'
+            Write-Verbose '[Remove-DSPamProviders] Completed Successfully.'
         }
         else {
-            Write-Verbose '[Remove-DSPamFolders] Ended with errors...'
+            Write-Verbose '[Remove-DSPamProviders] Ended with errors...'
         }
     }
 }

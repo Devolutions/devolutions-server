@@ -1,4 +1,4 @@
-function New-DSPamFolder {
+function Remove-DSPamFolder {
     <#
     .SYNOPSIS
     
@@ -12,39 +12,38 @@ function New-DSPamFolder {
     #>
     [CmdletBinding()]
     param(
-        [string]$folderID,
-        [string]$name
+        [Parameter(Mandatory)]
+        [string]$folderID
     )
         
     BEGIN {
-        Write-Verbose '[New-DSPamFolder] Begin...'
+        Write-Verbose '[Remove-DSPamFolder] Begin...'
     
-        $URI = "$Script:DSBaseURI/api/pam/folders"
-
         if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }
     
     PROCESS {
+
+        if (![string]::IsNullOrWhiteSpace($folderID)) {
+            $URI = "$Script:DSBaseURI/api/pam/folders/$folderID"
+        } else {
+            throw "Folder ID is null or not set. Please check if you have a valid folder ID."
+        }
+
         try {
-            $newFolderData = @{
-                folderID = $folderID
-                name     = $name
-            }
-            
             $params = @{
                 Uri    = $URI
-                Method = 'POST'
-                Body   = $newFolderData | ConvertTo-Json
+                Method = 'DELETE'
             }
 
-            Write-Verbose "[New-DSPamFolder] About to call with ${params.Uri}"
+            Write-Verbose "[Remove-DSPamFolder] About to call with ${params.Uri}"
 
             $response = Invoke-DS @params
 
             if ($response.isSuccess) { 
-                Write-Verbose "[New-DSPamFolders] Folder creation was successful"
+                Write-Verbose "[Remove-DSPamFolders] Folder deletion was successful"
             }
 
             return $response
@@ -60,10 +59,10 @@ function New-DSPamFolder {
     
     END {
         If ($?) {
-            Write-Verbose '[New-DSPamFolders] Completed Successfully.'
+            Write-Verbose '[Remove-DSPamFolders] Completed Successfully.'
         }
         else {
-            Write-Verbose '[New-DSPamFolders] Ended with errors...'
+            Write-Verbose '[Remove-DSPamFolders] Ended with errors...'
         }
     }
 }
