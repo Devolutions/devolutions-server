@@ -1,4 +1,4 @@
-function Get-DSPamFolders{
+function Get-DSPamProviders{
     <#
     .SYNOPSIS
     
@@ -15,9 +15,9 @@ function Get-DSPamFolders{
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSPamFolders] begin...'
+            Write-Verbose '[Get-DSPamProviders] begin...'
     
-            $URI = "$Script:DSBaseURI/api/pam/folders"
+            $URI = "$Script:DSBaseURI/api/pam/providers"
 
     		if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken))
 			{
@@ -34,22 +34,13 @@ function Get-DSPamFolders{
                     LegacyResponse = $true
                 }
 
-                Write-Verbose "[Get-DSPamFolders] about to call with $params.Uri"
+                Write-Verbose "[Get-DSPamProviders] about to call with $params.Uri"
 
                 [ServerResponse] $response = Invoke-DS @params
 
-                #a "root" folder is returned that is more akin to a hidden placeholder for defaults.  We must remove it
-                if ($null -ne $response.Body.data) {
-                    if ($response.Body.data -is [system.array]) {
-                        $root = $response.Body.data | Where-Object {$null -eq $_.folderID}
-                        #the @() ensures that its an array even if 0 or 1 results
-                        $response.Body.data = @($response.Body.data | Where-Object { $_ -ne $root })
-                    }
-                }
-
                 if ($response.isSuccess)
                 { 
-                    Write-Verbose "[Get-DSPamFolders] was successfull"
+                    Write-Verbose "[Get-DSPamProviders] was successfull"
                 }
 
                 If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
@@ -69,9 +60,9 @@ function Get-DSPamFolders{
     
         END {
            If ($?) {
-              Write-Verbose '[Get-DSPamFolders] Completed Successfully.'
+              Write-Verbose '[Get-DSPamProviders] Completed Successfully.'
             } else {
-                Write-Verbose '[Get-DSPamFolders] ended with errors...'
+                Write-Verbose '[Get-DSPamProviders] ended with errors...'
             }
         }
     }
