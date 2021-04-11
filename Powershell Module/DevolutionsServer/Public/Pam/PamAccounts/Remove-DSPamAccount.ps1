@@ -18,6 +18,7 @@ function Remove-DSPamAccount {
 
     BEGIN {
         Write-Verbose '[Remove-DSPamAccount] Begining...'
+        #TODO:MOVE in process block
         if (![string]::IsNullOrEmpty($pamAccountID)) {
             $URI = "$Script:DSBaseURI/api/pam/credentials/$pamAccountID"
         } else {

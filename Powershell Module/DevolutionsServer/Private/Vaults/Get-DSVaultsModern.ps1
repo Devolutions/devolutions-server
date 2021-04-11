@@ -58,7 +58,7 @@ function Get-DSVaultsModern{
                     Method      = 'GET'
                 }
 
-                Write-Verbose "[Get-DSVaultsModern] about to call with $params.Uri"
+                Write-Verbose "[Get-DSVaultsModern] about to call with $($params.Uri)"
 
                 [ServerResponse] $response = Invoke-DS @params
 

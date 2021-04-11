@@ -22,12 +22,15 @@ to be found.
     )
     PROCESS {
         $responseContentHash = $response.Content | ConvertFrom-Json -AsHashtable
+        $responseContentJson = $response.Content | ConvertFrom-Json
         $requestedResource = $response.BaseResponse.RequestMessage.RequestUri.AbsolutePath
+        $HasResult = Get-Member -inputobject $responseContentJson -name "result"
 
         switch ($method) {
             "GET" {
-                if (($null -ne $responseContentHash) -and ($responseContentHash.ContainsKey('result'))) {
-                    switch ($responseContentHash.result) {
+                #patch
+                if (($null -ne $responseContentHash) -and ($HasResult)) {
+                    switch ($responseContentJson.result) {
                         ( [Devolutions.RemoteDesktopManager.SaveResult]::Error.value__ ) { 
                             return [ServerResponse]::new($false , $response, $null, $null, "TODO: Unhandled error.", 500) 
                         }
@@ -42,8 +45,8 @@ to be found.
                 }
                 else {
                     if ($response.StatusCode -eq 200) {
-                        if ($responseContentHash -ne $null) {
-                            return [ServerResponse]::new($true , $response, $responseContentHash, $null, $null, 200)
+                        if ($responseContentJson -ne $null) {
+                            return [ServerResponse]::new($true , $response, $responseContentJson, $null, $null, 200)
                         }
                         else {
                             return [ServerResponse]::new($true , $response, $response.Content, $null, $null, 200)

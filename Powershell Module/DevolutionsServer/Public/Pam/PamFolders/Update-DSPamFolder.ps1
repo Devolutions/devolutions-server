@@ -108,10 +108,10 @@ function Update-DSPamFolder {
     }
     END {
         If ($?) {
-            Write-Verbose '[New-DSPamFolders] Completed Successfully.'
+            Write-Verbose '[New-DSPamTeamFolders] Completed Successfully.'
         }
         else {
-            Write-Verbose '[New-DSPamFolders] Ended with errors...'
+            Write-Verbose '[New-DSPamTeamFolders] Ended with errors...'
         }
     }
 }
