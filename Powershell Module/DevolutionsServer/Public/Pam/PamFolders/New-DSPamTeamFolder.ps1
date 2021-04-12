@@ -34,7 +34,7 @@ function New-DSPamTeamFolder {
     PROCESS {
         try {
             #Creates folder in an existing folder
-            if ($null -ne $parentFolderID) {
+            if ("" -ne $parentFolderID) {
                 #Check if folder exists. For testing purpose, I'm sure it exists
                 $test = Get-DSPamFolder -candidFolderID $parentFolderID
 

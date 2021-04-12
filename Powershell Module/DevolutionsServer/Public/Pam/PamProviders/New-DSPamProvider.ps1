@@ -16,7 +16,7 @@ function New-DSPamProvider {
         [guid]$ID,
         [ValidateNotNullOrEmpty()]
         [string]$name,
-        [ValidateSet('LocalUser','DomainUser','SqlServer')]
+        [ValidateSet('LocalUser', 'DomainUser', 'SqlServer')]
         [string]$credentialType,
         [ValidateNotNullOrEmpty()]
         [string]$username
@@ -34,29 +34,24 @@ function New-DSPamProvider {
     
     PROCESS {
         try {
-
             [int] $credentialTypeValue
-            switch ( $credentialType )
-            {
-                'LocalUser'
-                {
+            switch ( $credentialType ) {
+                'LocalUser' {
                     $credentialTypeValue = 2
                 }
-                'DomainUser'
-                {
+                'DomainUser' {
                     $credentialTypeValue = 3
                 }
-                'SqlServer'
-                {
+                'SqlServer' {
                     $credentialTypeValue = 5
                 }
             }
 
             $newProviderData = @{
-                ProviderID = $ID
-                label     = $name
-                CredentialType = $credentialTypeValue
-                Username = $username
+                ProviderID        = $ID
+                label             = $name
+                CredentialType    = $credentialTypeValue
+                Username          = $username
                 #TODO handle the enum
                 ProtectedDataType = 1
             }

@@ -162,19 +162,28 @@ Describe "Integration tests - these will pollute the backend" {
         
                 $res = New-DSPamProvider @newProviderData -Debug
 
-                #needed to share data across test contexts...
                 $PamTemp.providerID = $res.Body.id
                 $res.isSuccess | Should -be $true
             }
-            It "Should create new folder" {
+            
+            It "Should create new folder at root" {
                 $newFolderData = @{
-                    ID = $null #[guid]::NewGuid() the backend assumes too much...
-                    name     = "Pam Folder $runSuffix"
+                    name = "Pam Folder $runSuffix"
                 }
         
                 $res = New-DSPamTeamFolder @newFolderData -Debug
 
-                #needed to share data across test contexts...
+                $PamTemp.folderAtRootID = $res.Body.id
+                $res.isSuccess | Should -be $true
+            }
+
+            It "Should create new folder in newly created folder" {
+                $newFolderData = @{
+                    parentFolderID = $PamTemp.folderAtRootID
+                    name = "Pam Folder 2 $runSuffix"
+                }
+        
+                $res = New-DSPamTeamFolder @newFolderData -Debug
                 $PamTemp.folderID = $res.Body.id
                 $res.isSuccess | Should -be $true
             }
@@ -192,36 +201,31 @@ Describe "Integration tests - these will pollute the backend" {
         
                 $res = New-DSPamAccount @pamAccountParams
 
-                #needed to share data across test contexts...
                 $PamTemp.accountID = $res.Body.id
                 $res.StandardizedStatusCode | Should -be 201
             }
 
             It "Should get PAM Accounts" {    
                 $res = Get-DSPamAccounts -folderID $PamTemp.folderID -Verbose
-                #TODO:Validate that the one we created is as expected
+                $res.StandardizedStatusCode | Should -be 204
                 $res.IsSuccess | Should -be $true
             }
 
             It "Should delete created PAM account" {
-
-                #needed to share data across test contexts...
                 $res = Remove-DSPamAccount -pamAccountID $PamTemp.accountID
-                #TODO:VALIDATE result http 204
+                $res.StandardizedStatusCode | Should -be 204
                 $res.isSuccess | Should -be $true
             }
 
             It "Should delete created folder" {
-
-                #needed to share data across test contexts...
-                $res = Remove-DSPamFolder $PamTemp.folderID -Verbose
-                #TODO:validate result http 204
+                $res = Remove-DSPamFolder $PamTemp.folderAtRootID -Verbose
+                $res.StandardizedStatusCode | Should -be 204
                 $res.isSuccess | Should -be $true
             }
 
             It "Should delete created provider" {
                 $res = Remove-DSPamProvider $PamTemp.providerID -Verbose
-                #TODO:validate result http 204
+                $res.StandardizedStatusCode | Should -be 204
                 $res.isSuccess | Should -be $true
             }
         }

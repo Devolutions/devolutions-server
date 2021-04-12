@@ -13,7 +13,7 @@ function Get-DSPamFolder {
     [CmdletBinding()]
     param(		
         [ValidateNotNullOrEmpty()]
-        [string]$candidFolderID
+        [guid]$candidFolderID
     )
         
     BEGIN {

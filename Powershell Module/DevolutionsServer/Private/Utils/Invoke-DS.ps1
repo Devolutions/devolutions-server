@@ -56,6 +56,7 @@ function Invoke-DS {
                 return [ServerResponse]::new($false, $exc.Response, $null, $exc, ($_.ErrorDetails.Message | ConvertFrom-JSon).message, $exc.Response.StatusCode)                        
             }
             else {
+                #If $_ErrorDetails doesn't exist, it just sends back the exception originating from Invoke-WebRequest
                 Write-Debug "Error might not have been handled properly. Trace Invoke-DS to make sure error couldn't be handlded in a more elegant way."
                 return [ServerResponse]::new($false, $exc.Response, $null, $exc, $exc.Message, $exc.Response.StatusCode) 
             }
