@@ -12,8 +12,8 @@ function Remove-DSPamProvider {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)]
-        [string]$ProviderID
+        [ValidateNotNullOrEmpty()]
+        [guid]$ProviderID
     )
         
     BEGIN {
@@ -25,11 +25,7 @@ function Remove-DSPamProvider {
     }
     
     PROCESS {
-        if (![string]::IsNullOrWhiteSpace($ProviderID)) {
-            $URI = "$Script:DSBaseURI/api/pam/providers/$ProviderID"
-        } else {
-            throw "Provider ID is null or not set. Please check if you have a valid Provider ID."
-        }
+        $URI = "$Script:DSBaseURI/api/pam/providers/$ProviderID"
 
         try {
             $params = @{
@@ -39,13 +35,8 @@ function Remove-DSPamProvider {
 
             Write-Verbose "[Remove-DSPamProvider] About to call with ${params.Uri}"
 
-            $response = Invoke-DS @params
-
-            if ($response.isSuccess) { 
-                Write-Verbose "[Remove-DSPamProviders] Provider deletion was successful"
-            }
-
-            return $response
+            $res = Invoke-DS @params -Verbose
+            return $res
         }
         catch {
             $exc = $_.Exception
@@ -53,11 +44,10 @@ function Remove-DSPamProvider {
                 Write-Debug "[Exception] $exc"
             } 
         }
-        
     }
     
     END {
-        If ($?) {
+        If ($res.isSuccess) {
             Write-Verbose '[Remove-DSPamProviders] Completed Successfully.'
         }
         else {

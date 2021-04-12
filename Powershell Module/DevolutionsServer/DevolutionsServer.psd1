@@ -67,7 +67,7 @@
         'Get-DSVaults', 
         'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData',  
         'New-DSCredentialEntry', 
-        'Get-DSPamProviders', 'New-DSPamProvider', 
+        'Get-DSPamProviders', 'New-DSPamProvider', 'Remove-DSPamProvider', 'Update-DSPamProvider', 
         'Get-DSPamFolders', 'Get-DSPamFolder', 'New-DSPamTeamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder', 
         'Get-DSPamAccounts', 'New-DSPamAccount', 'Remove-DSPamAccount', 
         #'Get-DSPamCheckoutPolicies', 'New-DSPamCheckoutPolicy', 'Remove-DSPamCheckoutPolicy', 'Update-DSPamCheckoutPolicy',

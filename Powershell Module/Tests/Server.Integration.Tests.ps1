@@ -150,7 +150,6 @@ Describe "Integration tests - these will pollute the backend" {
         }
 
         Context "End to end PAM" {
-
             It "Should create new provider" {
                 $newProviderData = @{
                     ID             = [guid]::NewGuid()
@@ -221,7 +220,9 @@ Describe "Integration tests - these will pollute the backend" {
             }
 
             It "Should delete created provider" {
-                #TODO:Implement Remove-DSPamProvider
+                $res = Remove-DSPamProvider $PamTemp.providerID -Verbose
+                #TODO:validate result http 204
+                $res.isSuccess | Should -be $true
             }
         }
 

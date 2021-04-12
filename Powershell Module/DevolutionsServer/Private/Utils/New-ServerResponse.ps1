@@ -16,7 +16,7 @@ to be found.
     [OutputType([ServerResponse])]
     param(
         [Parameter(Mandatory)]
-        [Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject]$response,
+        [Microsoft.PowerShell.Commands.WebResponseObject]$response,
         [Parameter(Mandatory)]
         [string]$method
     )

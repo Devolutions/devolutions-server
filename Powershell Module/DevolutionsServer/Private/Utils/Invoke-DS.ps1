@@ -65,7 +65,7 @@ function Invoke-DS {
             $res = Convert-LegacyResponse $response
         }
         else {
-            $res = New-ServerResponse $response $method 
+            $res = New-ServerResponse -response $response -method $method
         }
 
         return $res
