@@ -12,35 +12,35 @@ function Remove-DSPamAccount {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)]
+        #[Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
         [string]$pamAccountID
     )
 
     BEGIN {
-        Write-Verbose '[Remove-DSPamAccount] Begining...'
-        #TODO:MOVE in process block
-        if (![string]::IsNullOrEmpty($pamAccountID)) {
-            $URI = "$Script:DSBaseURI/api/pam/credentials/$pamAccountID"
-        } else {
-            throw "Invalid PAM account ID. Please double check entered value."
-        }
+        Write-Verbose '[Remove-DSPamAccount] Begining...'        
 
         if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
         }
+
+        if ([guid]::TryParse($pamAccountID, $([ref][guid]::Empty))) {
+            throw "Please provide a valid ID."
+        }
     }
     PROCESS {
+        $URI = "$Script:DSBaseURI/api/pam/credentials/$pamAccountID" 
+
         $params = @{
             Uri    = $URI
             Method = 'DELETE'
         }
 
         $res = Invoke-DS @params
-        $isSuccess = $res.isSuccess
         return $res
     }
     END {
-        If ($isSuccess) {
+        If ($res.isSuccess) {
             Write-Verbose '[New-DSPamAccount] Completed Successfully.'
         }
         else {

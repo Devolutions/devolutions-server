@@ -4,6 +4,7 @@ function New-DSPamAccount {
     Creates a new PAM account
     #>
     [CmdletBinding()]
+    #TODO Check credentialType & protectedDataType once PAM enums are added.
     param(
         [Parameter(Mandatory)]
         [int]$credentialType,
@@ -23,7 +24,6 @@ function New-DSPamAccount {
     BEGIN {
         Write-Verbose '[New-DSPamAccount] Begining...'
         $URI = "$Script:DSBaseURI/api/pam/credentials"
-        $isSuccess = $true
 
         if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
@@ -51,11 +51,10 @@ function New-DSPamAccount {
         }
 
         $res = Invoke-DS @params
-        $isSuccess = $res.isSuccess
         return $res
     }
     END {
-        If ($isSuccess) {
+        If ($res.isSuccess) {
             Write-Verbose '[New-DSPamAccount] Completed Successfully.'
         }
         else {

@@ -32,7 +32,6 @@ function Get-DSPamCheckoutPolicies {
             else {
                 "$Script:DSBaseURI/api/pam/checkout-policies"
             }
-            
         }
         
         if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {

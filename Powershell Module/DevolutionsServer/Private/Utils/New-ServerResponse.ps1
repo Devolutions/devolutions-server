@@ -23,7 +23,6 @@ to be found.
     PROCESS {
         $responseContentHash = $response.Content | ConvertFrom-Json -AsHashtable
         $responseContentJson = $response.Content | ConvertFrom-Json
-        $requestedResource = $response.BaseResponse.RequestMessage.RequestUri.AbsolutePath
         $HasResult = Get-Member -inputobject $responseContentJson -name "result"
 
         switch ($method) {

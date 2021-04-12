@@ -57,6 +57,83 @@ Describe "Integration tests - these will pollute the backend" {
             }
         }
 
+        <#Custom users
+        Context "Custom users" {
+            It "should create new custom user" {
+                $newUserData = @{
+                    name                    = "Alexandre Martigny"
+                    password                = 'Pa$$w0rd'
+                    isChangePasswordAllowed = $false
+                    address                 = "1234 Rue du Cafe"
+                    cellPhone               = "123-456-7890"
+                    companyName             = "Devolutions"
+                    countryName             = "Canada"
+                    department              = "test"
+                    fax                     = "123-456-9876"
+                    firstName               = "Alex"
+                    jobTitle                = "test"
+                    userType                = 0
+                    userLicenseTypeMode     = 0
+                    authenticationType      = 0
+                }
+        
+                $res = New-DSCustomUser @newUserData -Verbose
+                $res.isSuccess | Should -be $true
+                $hash.newUserId = $res.Body.data.id
+                return $res
+            }
+        }
+        #>
+
+        <#Roles
+        Context 'Roles' {
+        It "should create new role" {
+            $newRoleData = @{
+                displayName      = "Test"
+                description      = "This is a test role"
+                canAdd           = $true
+                canDelete        = $false
+                offlineMode      = 3
+                allowDragAndDrop = $false
+            }
+
+            $res = New-DSRole @newRoleData -Verbose
+            $hash.newRoleId = $res.Body.data.id
+            $res.isSuccess | Should -be $true
+        }
+
+        It "should delete newly created role" {
+            $res = Delete-DSRole -roleId $hash.newRoleId -Verbose
+            $res.isSuccess | Should -be $true
+        }
+        
+        It "should get all user groups" {
+            $res = Get-DSRoles -Verbose
+            $res.isSuccess | Should -be $true
+        }
+        
+        It "should update role" {
+            $updatedRoleData = @{
+                candidRoleId     = $hash.newRoleId
+                description      = "Ceci est un update test"
+                displayName      = "It worked"
+                isAdministrator  = $false
+                canAdd           = $true
+                canEdit          = $true
+                canDelete        = $true
+                allowDragAndDrop = $true
+                canImport        = $true
+                canExport        = $true
+                offlineMode      = $true
+                denyAddInRoot    = $true
+            }
+
+            $res = Update-DSRole @updatedRoleData -Verbose
+            $res.isSuccess | Should -be $true
+        }
+    } 
+        #>
+        
         Context "Creating entries" {
             It "Should create a credential entry in the default vault" {
                 $credParams = @{
