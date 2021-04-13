@@ -55,6 +55,12 @@ Describe NormalWorkflow {
             $res = Get-DSVaults -PageNumber 100 -PageSize 1 
             $res.StandardizedStatusCode | Should -Be '416'
         }
+
+        It "Should get at least the Default Vault" {
+            $res = Get-DSVault -VaultID ([guid]::Empty)
+            $res.IsSuccess | Should -Be $true
+        }
+        
     } #context Vault endpoints
 
     Context "Entries" {
