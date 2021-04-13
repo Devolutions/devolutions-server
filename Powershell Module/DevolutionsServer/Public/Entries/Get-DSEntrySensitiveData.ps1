@@ -20,6 +20,10 @@ function Get-DSEntrySensitiveData {
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
+
+        if ([string]::IsNullOrWhiteSpace($Script:DSInstanceVersion)) {
+            throw "Your Devoltions Server version is not supported by this module. Please update to the latest stable release."
+        }
     }
     
     PROCESS {
