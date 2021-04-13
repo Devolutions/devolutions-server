@@ -64,7 +64,7 @@
     
     FunctionsToExport      = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Protect-ResourceToHexString',
         'Get-DSSecureMessages',
-        'Get-DSVaults', 
+        'Get-DSVaults', 'Get-DSVault', 'Get-DSVaultPermissions', 
         'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData',  
         'New-DSCredentialEntry', 
         'Get-DSPamProviders', 'New-DSPamProvider', 

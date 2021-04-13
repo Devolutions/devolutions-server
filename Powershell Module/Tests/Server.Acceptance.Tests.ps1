@@ -55,6 +55,25 @@ Describe NormalWorkflow {
             $res = Get-DSVaults -PageNumber 100 -PageSize 1 
             $res.StandardizedStatusCode | Should -Be '416'
         }
+
+        It "Should get at least the Default Vault" {
+            $res = Get-DSVault -VaultID ([guid]::Empty)
+            $res.IsSuccess | Should -Be $true
+        }
+
+        It "Should get the default Vault permissions - Applications" {
+            $principals = [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'Applications')
+        }
+        It "Should get the default Vault permissions - Users" {
+            $principals =  [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'Users')
+        }
+        It "Should get the default Vault permissions - Roles" {
+            $principals =  [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'Roles') 
+        }
+        It "Should get the default Vault permissions - All" {
+            $principals =  [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'All') 
+        }
+        
     } #context Vault endpoints
 
     Context "Entries" {

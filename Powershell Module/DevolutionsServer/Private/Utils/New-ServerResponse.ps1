@@ -35,7 +35,7 @@ to be found.
                             return [ServerResponse]::new($false , $response, $null, $null, "TODO: Unhandled error.", 500) 
                         }
                         ( [Devolutions.RemoteDesktopManager.SaveResult]::Success.value__ ) { 
-                            return [ServerResponse]::new($true , $response, $responseContentHash.data, $null, $null, 200) 
+                            return [ServerResponse]::new($true , $response, $responseContentJson, $null, $null, 200) 
                         }
                         ( [Devolutions.RemoteDesktopManager.SaveResult]::NotFound.value__ ) { 
                             return [ServerResponse]::new($false , $response, $null, $null, "Resource couldn't be found.", 404) 
