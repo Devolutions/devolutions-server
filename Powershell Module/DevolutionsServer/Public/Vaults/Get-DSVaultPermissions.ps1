@@ -14,7 +14,7 @@ function Get-DSVaultPermissions{
         param(			
             [ValidateNotNullOrEmpty()]
             [string]$VaultID,
-            [ValidateSet('Applications','Users','Roles')]
+            [ValidateSet('All', 'Applications','Users','Roles')]
             [string[]]$PrincipalTypes
         )
         
@@ -33,7 +33,7 @@ function Get-DSVaultPermissions{
             try
             {   	
                 $permissions = @()
-                if ($PrincipalTypes.Contains('Applications')) {
+                if ('All' , 'Applications' | Where-Object { $PrincipalTypes -contains $_ }) {
 
                     $URI = "$Script:DSBaseURI/api/security/repositories/$($VaultID)/applications"
                     $params = @{
@@ -48,7 +48,7 @@ function Get-DSVaultPermissions{
                     }
         
                 }
-                if ($PrincipalTypes.Contains('Users')) {
+               if ('All' , 'Users' | Where-Object { $PrincipalTypes -contains $_ }) {
 
                     $URI = "$Script:DSBaseURI/api/security/repositories/$($VaultID)/users"
                     $params = @{
@@ -63,7 +63,7 @@ function Get-DSVaultPermissions{
                     }
 
                 }
-                if ($PrincipalTypes.Contains('Roles')) {
+                if ('All' , 'Roles' | Where-Object { $PrincipalTypes -contains $_ }) {
 
                     $URI = "$Script:DSBaseURI/api/security/repositories/$($VaultID)/roles"
                     $params = @{

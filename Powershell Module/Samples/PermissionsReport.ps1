@@ -4,7 +4,22 @@
 # it must be run using an account that has full rights to every vault,
 # folder, even down to entries.
 #
+# It expects the URL and the credentials to be defined in environment variables
+# please refer to the SetEnvironmentVariables.ps1 script for an example of 
+# setting them.
+#
+# You could also customize certain variable below for managing the resulting
+# data.
+#
 ################################################################################
+#until we publish the module in the PSGallery we load it by path...
+$DSModulePath =  "..\DevolutionsServer"
+$OutputPath = $PSScriptRoot
+
+$VaultsSummaryFilename = "VaultsSummary.csv"
+################################################################################
+
+#----------------------------->>    Setup
 if (-Not(Test-Path env:DS_USER) -or -Not(Test-Path env:DS_PASSWORD)) {
     throw "please initialize the credentials in the environment variables"  
 }
@@ -13,7 +28,7 @@ if ([string]::IsNullOrEmpty($env:DS_URL)) {
 }
 
 #until we publish the module in the PSGallery we load it by path...
-$modulePath = Resolve-Path -Path "..\DevolutionsServer"
+$modulePath = Resolve-Path -Path $DSModulePath 
 Import-Module -Name $modulePath -Force
       
 [string]$credUser = $env:DS_USER
@@ -29,7 +44,11 @@ if ($null -eq $sess.Body.data.tokenId) {
     throw "unable to authenticate"
 }
 
+Write-Output ""
+Write-Output "Generating permissions report..."
+
 #----------------------------->>    Vaults
+Write-Output "    Processing vaults"
 $vaults = @()
 [int]$currentPage = 1
 [int]$totalPages = 1
@@ -44,14 +63,19 @@ Do {
 #now that we have all vaults, we must get the assigned permissions by distinct Vaults
 $vaultsSummary = @()
 foreach ($vault in $vaults) {
-    Write-Output $vault.Name
-    $principals = Get-DSVaultPermissions -VaultID $vault.ID -PrincipalTypes 'Applications', 'Users', 'Roles' 
+    Write-Output "        Processing vault : $($vault.Name)"
+    $principals = Get-DSVaultPermissions -VaultID $vault.ID -PrincipalTypes 'All' 
     $vaultsSummary += ($principals | Select-Object -Property @{Name = 'Vault'; Expression = {"$($vault.Name)"}}, Kind, Description, Name)
-    $vaultsSummary | Export-Csv -NoTypeInformation -UseCulture -Path (Join-Path -Path $PSScriptRoot -ChildPath "VaultsSummary.csv")
 }
-   
+$vaultsSummary | Export-Csv -NoTypeInformation -UseCulture -Path (Join-Path -Path $OutputPath -ChildPath $VaultsSummaryFilename)
 
+#----------------------------->>    Root level folders
 
+#----------------------------->>    Intermediate folders
 
+#----------------------------->>    Entries
 
-
+#----------------------------->>    Teardown
+Write-Output "...Done!"
+Write-Output ""
+Close-DSSession | out-null
