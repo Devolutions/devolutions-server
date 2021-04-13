@@ -1,11 +1,13 @@
 <#
 .DESCRIPTION
     These are tests that will simply exercise the backend without creating new info
-    Obviously except logs and session information.
+    Obviously except logs and session information.  It does expect a seeded system
+    so its mostly for internal Devolutions use at this time.  In the future
+    we will create seed data using this module.
 #>
 BeforeAll {
     $modulePath = Resolve-Path -Path "..\DevolutionsServer"
-    Import-Module -Name $modulePath -Verbose -Force
+    Import-Module -Name $modulePath  -Force
     
     if (-Not(Test-Path env:DS_USER) -or -Not(Test-Path env:DS_PASSWORD)) {
         throw "please initialize the credentials in the environment variables"  
@@ -20,35 +22,58 @@ BeforeAll {
     [string]$dvlsURI = $env:DS_URL
     [securestring]$secPassword = ConvertTo-SecureString $credPassword -AsPlainText -Force
     [pscredential]$creds = New-Object System.Management.Automation.PSCredential ($credUser, $secPassword)
+
+    $sess = New-DSSession -Credential $creds -BaseURI $dvlsURI 
+    if ($null -eq $sess.Body.data.tokenId) {
+        throw "unable to authenticate"
+    }
 }
 
 Describe NormalWorkflow {
-    It "Should get server information" {
-        $res = Get-DSServerInfo -BaseURI $dvlsURI -Verbose
-        $res.Body.data.version | Should -Not -BeNullOrEmpty
-    }
-    It "Should authenticate" {
-        $res = New-DSSession -Credential $creds -BaseURI $dvlsURI -Verbose
-        $res.IsSuccess | Should -Be $true
-    }
+    #TODO:MC:reinstate this
+#    Context "Server Information" {
+#        It "Should get server information" {
+#            $res = Get-DSServerInfo -BaseURI $dvlsURI 
+#            $res.Body.data.version | Should -Not -BeNullOrEmpty
+#        }
+#    }
 
     Context "Vault Endpoints" {
         It "Should get at least the Default Vault" {
-            $res = Get-DSVaults -PageNumber 1 -PageSize 100 -Verbose
+            $res = Get-DSVaults -PageNumber 1 -PageSize 100 
             $res.IsSuccess | Should -Be $true
         }
         It "Should sort" {
-            $res = Get-DSVaults -Sortfield 'Name' -Verbose
+            $res = Get-DSVaults -Sortfield 'Name' 
             $res.IsSuccess | Should -Be $true
         }
         It "Should sort" {
-            $res = Get-DSVaults -Sortfield 'Name' -Descending -Verbose
+            $res = Get-DSVaults -Sortfield 'Name' -Descending 
             $res.IsSuccess | Should -Be $true
         }
         It "Should respond with error" {
-            $res = Get-DSVaults -PageNumber 100 -PageSize 1 -Verbose
+            $res = Get-DSVaults -PageNumber 100 -PageSize 1 
             $res.StandardizedStatusCode | Should -Be '416'
         }
+
+        It "Should get at least the Default Vault" {
+            $res = Get-DSVault -VaultID ([guid]::Empty)
+            $res.IsSuccess | Should -Be $true
+        }
+
+        It "Should get the default Vault permissions - Applications" {
+            $principals = [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'Applications')
+        }
+        It "Should get the default Vault permissions - Users" {
+            $principals =  [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'Users')
+        }
+        It "Should get the default Vault permissions - Roles" {
+            $principals =  [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'Roles') 
+        }
+        It "Should get the default Vault permissions - All" {
+            $principals =  [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'All') 
+        }
+        
     } #context Vault endpoints
 
     Context "Entries" {
@@ -57,13 +82,13 @@ Describe NormalWorkflow {
             if ($null -ne $entries) {
                 for ($i = 0; $i -lt $entries.Count; $i++) {
                     $entryId = $entries[$i].id
-                    $innerRes1 = Get-DSEntry $entryId -Verbose | Should -Not -Throw
+                    $innerRes1 = Get-DSEntry $entryId  
                     $innerRes1.Body.Data.Name | Should -Not -BeNullOrEmpty
 
                     $getSD = $innerRes1.Body.Data.Data.passwordItem.hasSensitiveData
                     if (($null -ne $getSD) -and ($true -eq $getSD)) {
-                        $innerRes2 = Get-DSEntrySensitiveData $entryId -Verbose | Should -not -Throw
-                        $innerRes2.Body.result | Should -BeGreaterThan 0
+                        $innerRes2 = Get-DSEntrySensitiveData $entryId  
+                        $innerRes2.Body.Data | Should -Not -BeNullOrEmpty
                     }
                 }
             }
@@ -71,32 +96,39 @@ Describe NormalWorkflow {
 
         BeforeAll {
             $entries = $null
-            $res = Get-DSEntries -VaultId '00000000-0000-0000-0000-000000000000' -Verbose
+            $res = Get-DSEntries -VaultId ([guid]::Empty) 
             $res.IsSuccess | Should -Be $true
             $entries = $res.body.data
         }
     }
     
     AfterAll {
-        $res = Close-DSSession -Verbose   
+        $res = Close-DSSession    
         $res.IsSuccess | Should -Be $true
     }
 
     Context "SecureMessages" {
         It "Should list messages" {
-            $res = Get-DSSecureMessages -Verbose
+            $res = Get-DSSecureMessages 
             $res.IsSuccess | Should -Be $true }
     }
 
     Context "PAM" {
-        It "should list pam folders" {
-            $res = Get-DSPamFolders -Verbose
+        It "should list pam providers" {
+            $res = Get-DSPamProviders 
             $res.IsSuccess | Should -Be $true
             $res.Body.Data -is [system.array] | Should -Be $true
         }
 
-        It "Should get all checkout policies"
-        $res = Get-DSPamCheckoutPolicies -Verbose
-        $res.isSuccess | Should -be $true
+        It "should list pam folders" {
+            $res = Get-DSPamFolders 
+            $res.IsSuccess | Should -Be $true
+            $res.Body.Data -is [system.array] | Should -Be $true
+        }
+
+        # It "Should get all checkout policies" {
+        #     $res = Get-DSPamCheckoutPolicies 
+        #     $res.isSuccess | Should -be $true
+        # }
     }
 }

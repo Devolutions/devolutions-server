@@ -17,6 +17,7 @@ function Get-DSPamAccounts {
             throw "Session invalid. Please call New-DSSession."
         }
 
+        #TODO: use cmdlet parameter validation instead
         if ([string]::IsNullOrWhiteSpace($folderID)) {
             $isSuccess = $false
             throw "There was a problem loading credentials from folder: folderID null or invalid."

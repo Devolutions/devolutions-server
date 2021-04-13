@@ -1,4 +1,4 @@
-function Get-DSPamAccounts{
+function Get-DSVault{
     <#
     .SYNOPSIS
     
@@ -12,12 +12,13 @@ function Get-DSPamAccounts{
     #>
         [CmdletBinding()]
         param(			
+            [ValidateNotNullOrEmpty()]
+            [string]$VaultID
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSPamAccounts] begin...'
+            Write-Verbose '[Get-DSVault] begin...'
     
-            $URI = "$Script:DSBaseURI/api/pam/credentials"
 
     		if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken))
 			{
@@ -26,23 +27,24 @@ function Get-DSPamAccounts{
         }
     
         PROCESS {
+            $URI = "$Script:DSBaseURI/api/security/vaults/$($VaultID)"
+
             try
             {   	
                 $params = @{
                     Uri = $URI
                     Method = 'GET'
-                    #LegacyResponse = $true
                 }
 
-                Write-Verbose "[Get-DSPamAccounts] about to call with $params.Uri"
+                Write-Verbose "[Get-DSVault] about to call with $($params.Uri)"
 
                 [ServerResponse] $response = Invoke-DS @params
 
                 if ($response.isSuccess)
                 { 
-                    Write-Verbose "[Get-DSPamAccounts] was successfull"
+                    Write-Verbose "[Get-DSVault] Got $($response.Body.data)"
                 }
-
+                
                 If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
                         Write-Debug "[Response.Body] $($response.Body)"
                 }
@@ -60,9 +62,9 @@ function Get-DSPamAccounts{
     
         END {
            If ($?) {
-              Write-Verbose '[Get-DSPamAccounts] Completed Successfully.'
+              Write-Verbose '[Get-DSVault] Completed Successfully.'
             } else {
-                Write-Verbose '[Get-DSPamAccounts] ended with errors...'
+                Write-Verbose '[Get-DSVault] ended with errors...'
             }
         }
     }
