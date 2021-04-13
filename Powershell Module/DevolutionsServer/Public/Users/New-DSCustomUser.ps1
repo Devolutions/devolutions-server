@@ -8,9 +8,9 @@ function New-DSCustomUser {
         [switch]$IKnowWhatImDoing,
 
         #Base
-        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
         [string]$name,
-        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
         [string]$password,
 
         [string]$firstName,
@@ -66,7 +66,6 @@ function New-DSCustomUser {
     BEGIN {
         Write-Verbose '[New-DSCustomUser] Begining...'
         $URI = "$Script:DSBaseURI/api/security/user/save?csToXml=1"
-        $isSuccess = $true
 
         $userId = [guid]::NewGuid()
 
@@ -79,14 +78,7 @@ function New-DSCustomUser {
             throw "Session invalid. Please call New-DSSession."
         }
     }
-    PROCESS {
-        <#
-        if (![string]::IsNullOrEmpty($password)) {
-            $password = Protect-ResourceToHexString $password
-        }
-        #>
-        
-        
+    PROCESS {       
         $params = @{
             Uri    = $URI
             Method = 'PUT'
@@ -127,10 +119,10 @@ function New-DSCustomUser {
             }
 
             $userSecurityData = @{
-                userType = $userType
+                userType            = $userType
                 userLicenseTypeMode = $userLicenseTypeMode
-                authenticationType = $authenticationType
-                name = $name
+                authenticationType  = $authenticationType
+                name                = $name
             }
 
             $userAccount = Get-DSUserAccountSegment @userAccountData
@@ -155,11 +147,10 @@ function New-DSCustomUser {
         $params.Body = $newUserData | ConvertTo-Json
 
         $res = Invoke-DS @params
-        $isSuccess = $res.isSuccess
         return $res
     }
     END {
-        If ($isSuccess) {
+        If ($res.isSuccess) {
             Write-Verbose '[New-DSCustomUser] Completed Successfully.'
         }
         else {

@@ -12,9 +12,8 @@ function Remove-DSPamAccount {
     #>
     [CmdletBinding()]
     param(
-        #[Parameter(Mandatory)]
         [ValidateNotNullOrEmpty()]
-        [string]$pamAccountID
+        [guid]$pamAccountID
     )
 
     BEGIN {

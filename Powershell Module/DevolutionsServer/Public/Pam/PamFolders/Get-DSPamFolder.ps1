@@ -29,8 +29,8 @@ function Get-DSPamFolder {
     PROCESS {
         try {   	
             $params = @{
-                Uri            = $URI
-                Method         = 'GET'
+                Uri    = $URI
+                Method = 'GET'
             }
 
             $res = Invoke-DS @params -Verbose

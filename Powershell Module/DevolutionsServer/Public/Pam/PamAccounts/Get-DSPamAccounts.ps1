@@ -5,7 +5,7 @@ function Get-DSPamAccounts {
     [CmdletBinding()]
     param(
         [ValidateNotNullOrEmpty()]
-        [string]$folderID
+        [guid]$folderID
     )
 
     BEGIN {

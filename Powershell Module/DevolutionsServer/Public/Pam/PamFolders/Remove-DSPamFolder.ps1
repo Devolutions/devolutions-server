@@ -12,8 +12,8 @@ function Remove-DSPamFolder {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)]
-        [string]$folderID
+        [ValidateNotNullOrEmpty()]
+        [guid]$folderID
     )
         
     BEGIN {
@@ -54,11 +54,10 @@ function Remove-DSPamFolder {
                 Write-Debug "[Exception] $exc"
             } 
         }
-        
     }
     
     END {
-        If ($?) {
+        If ($response.isSuccess) {
             Write-Verbose '[Remove-DSPamFolders] Completed Successfully.'
         }
         else {

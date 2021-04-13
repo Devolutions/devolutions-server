@@ -26,8 +26,8 @@ function Update-DSPamCheckoutPolicy {
     #>
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
-        [string]$candidPolicyID,
+        [ValidateNotNullOrEmpty()]
+        [guid]$candidPolicyID,
         [string]$name,
         [int]$checkoutApprovalMode,
         [int]$checkoutReasonMode,
@@ -39,7 +39,6 @@ function Update-DSPamCheckoutPolicy {
     )
     BEGIN {
         Write-Verbose '[Update-DSPamFolder] Begin...'
-        $URI = "$Script:DSBaseURI/api/pam/checkout-policies/$candidPolicyID"
 
         if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
@@ -47,6 +46,8 @@ function Update-DSPamCheckoutPolicy {
     }
     PROCESS {
         try {
+            $URI = "$Script:DSBaseURI/api/pam/checkout-policies/$candidPolicyID"
+
             #Getting policy infos
             $params = @{
                 Uri    = $URI
@@ -118,7 +119,8 @@ function Update-DSPamCheckoutPolicy {
                     Body   = $policyInfos | ConvertTo-Json
                 }
     
-                return Invoke-DS @params
+                $res = Invoke-DS @params
+                return $res
             }
             else {
                 Write-Host "[Update-DSPamCheckoutPolicy] Checkout policy couldn't be found. Make sure that you are using the correct checkout policy ID and try again." -ForegroundColor Red
@@ -132,7 +134,7 @@ function Update-DSPamCheckoutPolicy {
         }
     }
     END {
-        If ($?) {
+        If ($res.isSuccess) {
             Write-Verbose '[New-DSPamTeamFolders] Completed Successfully.'
         }
         else {

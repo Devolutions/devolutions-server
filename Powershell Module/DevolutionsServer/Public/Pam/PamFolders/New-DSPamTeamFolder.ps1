@@ -14,7 +14,7 @@ function New-DSPamTeamFolder {
     param(
         [ValidateNotNullOrEmpty()]
         [string]$name,
-        [string]$parentFolderID
+        [guid]$parentFolderID
     )
         
     BEGIN {
@@ -24,10 +24,6 @@ function New-DSPamTeamFolder {
 
         if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
-        }
-
-        if (![string]::IsNullOrEmpty($parentFolderID) -and ![guid]::TryParse($parentFolderID, $([ref][guid]::Empty))) {
-            throw "Please provide a valid folder ID."
         }
     }
     

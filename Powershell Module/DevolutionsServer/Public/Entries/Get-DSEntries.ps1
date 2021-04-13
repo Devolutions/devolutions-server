@@ -1,4 +1,4 @@
-function Get-DSEntries{
+function Get-DSEntries {
     <#
     .SYNOPSIS
     
@@ -10,30 +10,30 @@ function Get-DSEntries{
     
     .LINK
     #>
-        [CmdletBinding()]
-        param(			
-            [Parameter(Mandatory)]
-            [string]$VaultId
-        )
+    [CmdletBinding()]
+    param(			
+        [ValidateNotNullOrEmpty()]
+        [guid]$VaultId
+    )
         
-        BEGIN {
-            Write-Verbose '[Get-DSEntries] begin...'
-            if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken))
-			{
-				throw "Session does not seem authenticated, call New-DSSession."
-			}
-          }
-    
-        PROCESS {
-            [ServerResponse]$response = Get-DSEntriesLegacy @PSBoundParameters
-            return $response
-        }
-    
-        END {
-           If ($?) {
-              Write-Verbose '[Get-DSEntries] Completed Successfully.'
-            } else {
-                Write-Verbose '[Get-DSEntries] ended with errors...'
-            }
+    BEGIN {
+        Write-Verbose '[Get-DSEntries] begin...'
+        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+            throw "Session does not seem authenticated, call New-DSSession."
         }
     }
+    
+    PROCESS {
+        [ServerResponse]$response = Get-DSEntriesLegacy @PSBoundParameters
+        return $response
+    }
+    
+    END {
+        If ($response.isSuccess) {
+            Write-Verbose '[Get-DSEntries] Completed Successfully.'
+        }
+        else {
+            Write-Verbose '[Get-DSEntries] ended with errors...'
+        }
+    }
+}

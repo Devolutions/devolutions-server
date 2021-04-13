@@ -6,19 +6,19 @@ function New-DSPamAccount {
     [CmdletBinding()]
     #TODO Check credentialType & protectedDataType once PAM enums are added.
     param(
-        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
         [int]$credentialType,
-        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
         [int]$protectedDataType,
-        [Parameter(Mandatory)]
-        [string]$folderID,
-        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [duid]$folderID,
+        [ValidateNotNullOrEmpty()]
         [string]$label,
-        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
         [string]$username,
         [string]$password,
-        [Parameter(Mandatory)]
-        [string]$adminCredentialID
+        [ValidateNotNullOrEmpty()]
+        [guid]$adminCredentialID
     )
 
     BEGIN {

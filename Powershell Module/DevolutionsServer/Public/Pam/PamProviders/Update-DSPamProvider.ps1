@@ -9,10 +9,10 @@ function Update-DSPamProvider {
     #>
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
-        [string]$candidProviderID,
+        [ValidateNotNullOrEmpty()]
+        [guid]$candidProviderID,
         [string]$name,
-        [string]$ProviderID,
+        [guid]$ProviderID,
         [int]$checkoutApprovalMode,
         [int]$checkoutReasonMode,
         [int]$allowCheckoutOwnerAsApprover,
@@ -22,7 +22,6 @@ function Update-DSPamProvider {
     )
     BEGIN {
         Write-Verbose '[Update-DSPamProvider] Begin...'
-        $URI = "$Script:DSBaseURI/api/pam/Providers/$candidProviderID"
 
         if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
@@ -30,12 +29,14 @@ function Update-DSPamProvider {
     }
     PROCESS {
         try {
+            $URI = "$Script:DSBaseURI/api/pam/Providers/$candidProviderID"
+
             #Getting Provider infos
             $params = @{
                 Uri    = $URI
                 Method = 'GET'
             }
-            $res = Invoke-DS -Uri $URI -method 'GET'
+            $res = Invoke-DS @params
 
             if ($res.Body) {
                 $ProviderInfos = @{}
@@ -84,8 +85,8 @@ function Update-DSPamProvider {
                 Method = 'PUT'
                 Body   = $ProviderInfos | ConvertTo-Json
             }
-
-            return Invoke-DS @params
+            $res = Invoke-DS @params
+            return $res
         }
         catch { 
             $exc = $_.Exception
@@ -95,7 +96,7 @@ function Update-DSPamProvider {
         }
     }
     END {
-        If ($?) {
+        If ($res.isSuccess) {
             Write-Verbose '[New-DSPamProviders] Completed Successfully.'
         }
         else {

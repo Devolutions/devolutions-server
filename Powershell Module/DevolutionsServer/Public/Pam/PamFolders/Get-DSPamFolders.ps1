@@ -68,7 +68,7 @@ function Get-DSPamFolders {
     }
     
     END {
-        If ($?) {
+        If ($response.isSuccess) {
             Write-Verbose '[Get-DSPamFolders] Completed Successfully.'
         }
         else {

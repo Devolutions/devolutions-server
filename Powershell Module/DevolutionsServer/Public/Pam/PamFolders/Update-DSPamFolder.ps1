@@ -21,10 +21,10 @@ function Update-DSPamFolder {
     #>
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
-        [string]$candidFolderID,
+        [ValidateNotNullOrEmpty()]
+        [guid]$candidFolderID,
         [string]$name,
-        [string]$folderID,
+        [guid]$folderID,
         [int]$checkoutApprovalMode,
         [int]$checkoutReasonMode,
         [int]$allowCheckoutOwnerAsApprover,
@@ -47,7 +47,7 @@ function Update-DSPamFolder {
                 Uri    = $URI
                 Method = 'GET'
             }
-            $res = Invoke-DS -Uri $URI -method 'GET'
+            $res = Invoke-DS @params
 
             if ($res.Body) {
                 $folderInfos = @{}
@@ -97,7 +97,8 @@ function Update-DSPamFolder {
                 Body   = $folderInfos | ConvertTo-Json
             }
 
-            return Invoke-DS @params
+            $res = Invoke-DS @params
+            return $res
         }
         catch { 
             $exc = $_.Exception
@@ -107,7 +108,7 @@ function Update-DSPamFolder {
         }
     }
     END {
-        If ($?) {
+        If ($res.isSuccess) {
             Write-Verbose '[New-DSPamTeamFolders] Completed Successfully.'
         }
         else {

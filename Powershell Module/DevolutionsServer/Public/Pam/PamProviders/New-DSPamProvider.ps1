@@ -65,11 +65,6 @@ function New-DSPamProvider {
             Write-Verbose "[New-DSPamProvider] About to call with ${params.Uri}"
 
             $response = Invoke-DS @params
-
-            if ($response.isSuccess) { 
-                Write-Verbose "[New-DSPamProviders] Provider creation was successful"
-            }
-
             return $response
         }
         catch {
@@ -82,7 +77,7 @@ function New-DSPamProvider {
     }
     
     END {
-        If ($?) {
+        If ($response.isSuccess) {
             Write-Verbose '[New-DSPamProviders] Completed Successfully.'
         }
         else {
