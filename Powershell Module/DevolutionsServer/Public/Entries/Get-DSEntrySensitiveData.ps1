@@ -7,8 +7,7 @@ function Get-DSEntrySensitiveData {
     .EXAMPLE
     
     .NOTES
-    
-    .LINK
+    Only works for DVLS 2020.3.17 and later.
     #>
     [CmdletBinding()]
     param(			
@@ -20,6 +19,10 @@ function Get-DSEntrySensitiveData {
         Write-Verbose '[Get-DSEntrySensitiveData] begin...'
         if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
+        }
+
+        if ([string]::IsNullOrWhiteSpace($Script:DSInstanceVersion)) {
+            throw "Your Devoltions Server version is not supported by this module. Please update to the latest stable release."
         }
     }
     
