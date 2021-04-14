@@ -1,4 +1,4 @@
-function Get-DSEntry{
+function Get-DSFolder{
     <#
     .SYNOPSIS
     
@@ -13,12 +13,12 @@ function Get-DSEntry{
         [CmdletBinding()]
         param(			
             [ValidateNotNullOrEmpty()]
-            [GUID]$EntryId,
+            [Guid]$EntryId,
             [switch]$IncludeAdvancedProperties
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSEntry] begin...'
+            Write-Verbose '[Get-DSFolder] begin...'
             if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken))
 			{
 				throw "Session does not seem authenticated, call New-DSSession."
@@ -32,9 +32,9 @@ function Get-DSEntry{
     
         END {
            If ($?) {
-              Write-Verbose '[Get-DSEntry] Completed Successfully.'
+              Write-Verbose '[Get-DSFolder] Completed Successfully.'
             } else {
-                Write-Verbose '[Get-DSEntry] ended with errors...'
+                Write-Verbose '[Get-DSFolder] ended with errors...'
             }
         }
     }

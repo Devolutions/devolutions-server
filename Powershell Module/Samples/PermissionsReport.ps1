@@ -17,6 +17,7 @@ $DSModulePath =  "..\DevolutionsServer"
 $OutputPath = $PSScriptRoot
 
 $VaultsSummaryFilename = "VaultsSummary.csv"
+$RootFoldersSummaryFilename = "RootFoldersSummary.csv"
 ################################################################################
 
 #----------------------------->>    Setup
@@ -53,6 +54,7 @@ $vaults = @()
 [int]$currentPage = 1
 [int]$totalPages = 1
 [int]$pageSize = 100
+#this loop will be moved inside the cmdlet code to reduce complexity for consumers of the module
 Do {
     $res = Get-DSVaults -PageNumber $currentPage -PageSize $pageSize 
     $totalPages = $res.Body.totalPage
@@ -70,6 +72,29 @@ foreach ($vault in $vaults) {
 $vaultsSummary | Export-Csv -NoTypeInformation -UseCulture -Path (Join-Path -Path $OutputPath -ChildPath $VaultsSummaryFilename)
 
 #----------------------------->>    Root level folders
+$rootFoldersSummary = @()
+foreach ($vault in $vaults) {
+    Write-Output "        Processing root folders of vault : $($vault.Name)"
+    $rootFolders = Get-DSFolders -VaultId $vault.ID 
+    $rootFolders.IsSuccess | Should -Be $true
+
+    foreach ($folder in $rootFolders.Body.Data) {
+        Write-Output "            Processing folder : $($folder.Name)"
+        $innerRes = Get-DSFolder -EntryId $folder.id -IncludeAdvancedProperties
+        foreach ($sec in $innerRes.Body.data.security) {
+            foreach ($view in $sec.ViewRoles) {
+                Write-Output "            View permissions assigned to : $($view)"
+            }
+            foreach ($perm in $sec.Permissions) {
+                Write-Output "            Security override : $($perm)"
+            }
+        } 
+    }
+    #$rootFoldersSummary += ($principals | Select-Object -Property @{Name = 'Vault'; Expression = {"$($vault.Name)"}}, Kind, Description, Name)
+}
+$rootFoldersSummary | Export-Csv -NoTypeInformation -UseCulture -Path (Join-Path -Path $OutputPath -ChildPath $RootFoldersSummaryFilename)
+
+
 
 #----------------------------->>    Intermediate folders
 

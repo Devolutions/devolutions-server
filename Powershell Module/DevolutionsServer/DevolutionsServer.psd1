@@ -65,14 +65,14 @@
     FunctionsToExport      = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Protect-ResourceToHexString',
         'Get-DSSecureMessages',
         'Get-DSVaults', 'Get-DSVault', 'Get-DSVaultPermissions', 
-        'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData',  
+        'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData', 'Get-DSFolders', 'Get-DSFolder'
         'New-DSCredentialEntry', 
         'Get-DSPamProviders', 'New-DSPamProvider', 
         'Get-DSPamFolders', 'New-DSPamTeamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder', 
         'Get-DSPamAccounts', 'New-DSPamAccount', 'Remove-DSPamAccount', 
  #       'Get-DSPamCheckoutPolicies', 'New-DSPamCheckoutPolicy', 'Remove-DSPamCheckoutPolicy', 'Update-DSPamCheckoutPolicy',
         'New-DSRole', 'Get-DSRoles', 'Update-DSRole', 'Delete-DSRole',
-        'New-DSCustomUser', 'Update-DSCustomUser', 'Delete-DSUser', 'Get-DSUsers')
+        'New-DSCustomUser', 'Update-DSCustomUser', 'Delete-DSUser', 'Get-DSUsers') 
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport        = @()
