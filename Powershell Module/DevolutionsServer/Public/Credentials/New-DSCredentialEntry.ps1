@@ -12,14 +12,26 @@ function New-DSCredentialEntry {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)]
-        [string]$VaultId,
-        [string]$Folder,
-        [Parameter(Mandatory)]
+        #Base credential data
+        [ValidateNotNullOrEmpty()]
         [string]$EntryName,
+        [ValidateNotNull]
         [string]$Username,
         [string]$Password,
-        [string]$UserDomain
+        [string]$UserDomain,
+        [guid]$VaultId = [guid]::Empty,
+        [string]$Folder,
+        [string]$Description,
+        [System]$Tags,
+
+        #Events
+        [bool]$credentialViewedCommentIsRequired,
+        [bool]$credentialViewedPrompt,
+        [bool]$ticketNumberIsRequiredOnCredentialViewed,
+
+        #Security
+        [ValidateSet('Default', 'Not available', 'Automatic', 'Manual', 'Inherited', 'Optional')]
+        [string]$checkOutMode
     )
         
     BEGIN {
@@ -33,39 +45,73 @@ function New-DSCredentialEntry {
     }
     
     PROCESS {
-        #the Set-DSVaultsContext is extremely tolerant in our current DVLS iteration
-        $ctx = Set-DSVaultsContext $VaultId
-        $PSBoundParameters.Remove('VaultId') | out-null
+        try {
+            #Get vault context. Result=1 -> Vault exists. Result=2 -> Vault not found
+            $VaultCtx = Set-DSVaultsContext $VaultId
 
-        $credSegment = New-DSCredentialSegment -Username $username -Password $password -UserDomain $UserDomain 
-        $EntryData = $credSegment + @{
-            group          = $Folder
-            connectionType = 26
-            repositoryID   = $VaultId
-            name           = $EntryName
+            if ($VaultCtx.Body.result -ne 1) { 
+                throw [System.Management.Automation.ItemNotFoundException]::new("Vault could not be found. Please make sure you provide a valid vault ID.") 
+            }  
+
+            #Get credential segment
+            $CredSegmentData = @{
+                Username   = $Username
+                Password   = $Password
+                UserDomain = $UserDomain
+            }
+            $CredSegment = New-DSCredentialSegment @CredSegmentData
+
+            #Get events (log) segment
+            $EventsSegmentData = @{
+                credentialViewedCommentIsRequired        = $credentialViewedCommentIsRequired
+                credentialViewedPrompt                   = $credentialViewedPrompt
+                ticketNumberIsRequiredOnCredentialViewed = $ticketNumberIsRequiredOnCredentialViewed
+            }
+            $EventsSegment = Get-DSCredentialEventsSegment @EventsSegmentData
+
+            #Prepare entry data for encryption
+            $EntryData = $CredSegment + @{
+                group          = $Folder
+                connectionType = 26
+                repositoryID   = $VaultId
+                name           = $EntryName
+            }
+    
+            #Encrypt entry data
+            $EncryptedData = Protect-ResourceToHexString ($EntryData | ConvertTo-Json)
+    
+            #Prepare credential body for POST request
+            $CredentialBody = @{
+                checkOutMode   = [Devolutions.RemoteDesktopManager.CheckOutMode]::$checkOutMode.value__
+                group          = $Folder
+                connectionType = 26
+                data           = $EncryptedData
+                repositoryId   = $VaultId
+                name           = $EntryName
+                events         = $EventsSegment
+                description    = $Description
+            }
+                
+            $params = @{
+                Uri    = $URI
+                Method = 'POST'
+                Body   = $CredentialBody | ConvertTo-Json
+            }
+    
+            $res = Invoke-DS @params
+            return $res
         }
-
-        $encryptedData = Protect-ResourceToHexString ($EntryData | ConvertTo-Json)
-
-        $CredentialBody = @{
-            group          = $folder
-            connectionType = 26
-            data           = $encryptedData
-            repositoryId   = $VaultId
-            name           = $EntryName
+        catch {
+            Write-Error $_.Exception.Message
         }
-            
-        $params = @{
-            Uri            = $URI
-            Method         = 'POST'
-            LegacyResponse = $true
-            Body           = $CredentialBody | ConvertTo-Json
-        }
-
-        return Invoke-DS @params
     }
 
     END {
-        Write-Verbose '[New-DSCredentialEntry] Exit.'
+        if ($? -and $res.isSuccess) {
+            Write-Verbose '[New-DSCredentialEntry] Completed successfully.'
+        }
+        else {
+            Write-Verbose '[New-DSCredentialEntry] Ended with errors...'
+        }
     }
 }
