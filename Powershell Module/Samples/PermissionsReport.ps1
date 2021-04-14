@@ -74,8 +74,8 @@ $vaultsSummary | Export-Csv -NoTypeInformation -UseCulture -Path (Join-Path -Pat
 #----------------------------->>    Root level folders
 $rootFoldersSummary = @()
 foreach ($vault in $vaults) {
-    Write-Output "        Processing root folders of vault : $($vault.Name)"
-    $rootFolders = Get-DSFolders -VaultId $vault.ID 
+    Write-Output "        Processing entries of vault : $($vault.Name)"
+    $rootFolders = Get-DSEntriesTree -VaultId $vault.ID 
     $rootFolders.IsSuccess | Should -Be $true
 
     foreach ($folder in $rootFolders.Body.Data) {

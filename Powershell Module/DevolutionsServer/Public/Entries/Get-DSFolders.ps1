@@ -25,26 +25,22 @@ function Get-DSFolders{
 			{
 				throw "Session does not seem authenticated, call New-DSSession."
 			}
-          }
+        }
     
         PROCESS {
-            [ServerResponse]$response = Get-DSEntriesTree @PSBoundParameters
+            $response = Get-DSEntriesTree @PSBoundParameters
             if ($response.IsSuccess) {
                 if ($IncludeSubFolders.IsPresent) {
                     throw "Assertion : NotImplementedException"
                 } else {
                     $toplevelFolders = $response.Body.Data | where-object {$_.connectionType -eq 25}
-                    $response.Body.Data = $toplevelFolders
+                    $response.Body.Data =[PSCustomObject]@($toplevelFolders)
                 }
             }
             return $response
         }
     
         END {
-           If ($?) {
-              Write-Verbose '[Get-DSFolders] Completed Successfully.'
-            } else {
-                Write-Verbose '[Get-DSFolders] ended with errors...'
-            }
+              Write-Verbose '[Get-DSFolders] ...end'
         }
     }

@@ -13,15 +13,13 @@ function Get-DSEntriesTree{
         [CmdletBinding()]
         [OutputType([ServerResponse])]
         param(			
-            [ValidateNotNullOrEmpty()]
-            [guid]$VaultId
+            [Parameter(Mandatory)]
+            [string]$VaultId
         )
         
         BEGIN {
             Write-Verbose '[Get-DSEntriesTree] begin...'
     
-            $URI = "$Script:DSBaseURI/api/connections/partial/tree/$($VaultId)"
-
     		if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken))
 			{
 				throw "Session does not seem authenticated, call New-DSSession."
@@ -29,9 +27,12 @@ function Get-DSEntriesTree{
         }
     
         PROCESS {
+
+            $URI = "$Script:DSBaseURI/api/connections/partial/tree/$($VaultId)"
+
             try
             {   
-                Set-DSVaultsContext $VaultId
+                Set-DSVaultsContext $VaultId | out-null
 
                 $params = @{
                     Uri = $URI
@@ -43,20 +44,14 @@ function Get-DSEntriesTree{
 
                 [ServerResponse] $response = Invoke-DS @params
 
-                if ($response.isSuccess)
+                if (!$response.isSuccess)
                 { 
-                    ####the entry representing the root should not be manipulated using a plain Connection pattern,
-                    ####we'll remove it for now
-                    #update, its hierarchical... we must therefore just return the children...
-                    $newBody = $response.body.data.partialConnections
-                    $response.Body.data = $newBody
-                    Write-Verbose "[Get-DSEntriesTree] Got $($response.Body.data.Length)"
+                    Write-Verbose "[Get-DSEntriesTree] Got $($response)"
                 }
                 
                 If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
-                        Write-Debug "[Response.Body] $($response.Body)"
+                    Write-Debug "[Response.Body] $($response.Body)"
                 }
-
 
                 return $response
             }
@@ -70,10 +65,6 @@ function Get-DSEntriesTree{
         }
     
         END {
-           If ($?) {
-              Write-Verbose '[Get-DSEntriesTree] Completed Successfully.'
-            } else {
-                Write-Verbose '[Get-DSEntriesTree] ended with errors...'
-            }
+            Write-Verbose '[Get-DSEntriesTree] ...end'
         }
     }
