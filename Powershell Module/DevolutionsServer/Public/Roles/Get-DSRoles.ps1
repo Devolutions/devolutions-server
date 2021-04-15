@@ -13,9 +13,8 @@ function Get-DSRoles {
     BEGIN {
         Write-Verbose '[Get-DSRoles] Begining...'
         $URI = "$Script:DSBaseURI/api/v3/usergroups"
-        $isSuccess = $true
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
         }
     }
@@ -27,12 +26,11 @@ function Get-DSRoles {
         }
 
         $res = Invoke-DS @params
-        $isSuccess = $res.isSuccess
         return $res
     }
 
     END {
-        If ($isSuccess) {
+        If ($res.isSuccess) {
             Write-Verbose '[Get-DSRoles] Completed Successfully.'
         }
         else {

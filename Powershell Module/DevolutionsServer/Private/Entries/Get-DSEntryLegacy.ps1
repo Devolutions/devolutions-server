@@ -22,7 +22,7 @@ function Get-DSEntryLegacy{
     
             $URI = "$Script:DSBaseURI/api/Connections/partial/$($EntryId)"
 
-    		if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken))
+    		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{
 				throw "Session does not seem authenticated, call New-DSSession."
 			}

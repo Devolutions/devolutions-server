@@ -1,4 +1,4 @@
-function Get-DSEntry {
+function Get-DSEntriesModern {
     <#
     .SYNOPSIS
     
@@ -11,25 +11,29 @@ function Get-DSEntry {
     .LINK
     #>
     [CmdletBinding()]
-    param(			
-        [ValidateNotNullOrEmpty()]
-        [guid]$EntryId       
+    param(			     
     )
         
     BEGIN {
         Write-Verbose '[Get-DSEntry] begin...'
+
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }
     
     PROCESS {
-        [ServerResponse]$response = Get-DSEntryLegacy @PSBoundParameters
-        return $response
+        $params = @{
+            URI    = "http://localhost/dps/api/v3/entries?vaultId=$([guid]::Empty)&folderId=c54dde7a-f8d4-4ba5-8281-7bec11a28b24"
+            Method = "GET"
+        }
+        
+        $res = Invoke-DS @params
+        return $res
     }
     
     END {
-        If ($response.isSuccess) {
+        If ($res.isSuccess) {
             Write-Verbose '[Get-DSEntry] Completed Successfully.'
         }
         else {

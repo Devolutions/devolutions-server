@@ -12,8 +12,9 @@ function New-DSPamTeamFolder {
     #>
     [CmdletBinding()]
     param(
-        [string]$ID,
-        [string]$name
+        [ValidateNotNullOrEmpty()]
+        [string]$name,
+        [guid]$parentFolderID
     )
         
     BEGIN {
@@ -21,42 +22,51 @@ function New-DSPamTeamFolder {
     
         $URI = "$Script:DSBaseURI/api/pam/folders"
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }
     
     PROCESS {
         try {
-            $rootNodeResponse = Get-DSPamRootFolder
-            $rootNode = $rootNodeResponse.Body.Data[0]
+            #Creates folder in an existing folder
+            if ("" -ne $parentFolderID) {
+                #Check if folder exists. For testing purpose, I'm sure it exists
+                $test = Get-DSPamFolder -candidFolderID $parentFolderID
 
-            if ($null -eq $rootNode) {
-                throw "abnormal condition while getting root Team folder"
+                if ($test.Body -eq "[]") {
+                    throw "Provided ID doesn't belong to an existing folder."
+                }
+                else {
+                    $newFolderData = @{
+                        folderID = $parentFolderID
+                        name     = $name
+                    }
+                }
+            }
+            #Creates folder in root folder
+            else {
+                $rootNodeResponse = Get-DSPamRootFolder
+                $rootNode = $rootNodeResponse.Body.Data[0]
+
+                if ($null -eq $rootNode) {
+                    throw "Abnormal condition while getting root Team folder."
+                }
+
+                $newFolderData = @{
+                    folderID = $rootNode.ID
+                    name     = $name
+                }    
             }
 
-            $newFolderData = @{
-                ID = $ID
-                folderID = $rootNode.ID
-                #TeamFolderID = $ID
-                name     = $name
-            }
-            
             $params = @{
                 Uri    = $URI
                 Method = 'POST'
                 Body   = $newFolderData | ConvertTo-Json
             }
 
-            Write-Verbose "[New-DSPamTeamFolder] About to call with ${params.Uri}"
-
-            $response = Invoke-DS @params
-
-            if ($response.isSuccess) { 
-                Write-Verbose "[New-DSPamTeamFolders] Folder creation was successful"
-            }
-
-            return $response
+            $res = Invoke-DS @params
+            return $res
         }
         catch {
             $exc = $_.Exception
@@ -68,11 +78,11 @@ function New-DSPamTeamFolder {
     }
     
     END {
-        If ($?) {
+        If ($res.isSuccess) {
             Write-Verbose '[New-DSPamTeamFolders] Completed Successfully.'
         }
         else {
-            Write-Verbose '[New-DSPamTeamFolders] Ended with errors...'
+            Write-Verbose "[New-DSPamTeamFolders] Error: $($res.ErrorMessage)"
         }
     }
 }

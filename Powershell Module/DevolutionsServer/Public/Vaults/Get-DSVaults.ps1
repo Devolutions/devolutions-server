@@ -22,7 +22,7 @@ function Get-DSVaults{
         
         BEGIN {
             Write-Verbose '[Get-DSVaults] begin...'
-            if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken))
+            if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{
 				throw "Session does not seem authenticated, call New-DSSession."
 			}

@@ -9,34 +9,30 @@ function Remove-DSPamCheckoutPolicy {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)]
-        [string]$candidPolicyID
+        [ValidateNotNullOrEmpty()]
+        [guid]$candidPolicyID
     )
 
     BEGIN {
         Write-Verbose '[Remove-DSPamCheckoutPolicy] Begining...'
-        if (![string]::IsNullOrEmpty($candidPolicyID)) {
-            $URI = "$Script:DSBaseURI/api/pam/checkout-policies/$candidPolicyID"
-        } else {
-            throw "Invalid checkout policy ID. Please make sure the value you entered is correct."
-        }
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
         }
     }
     PROCESS {
+        $URI = "$Script:DSBaseURI/api/pam/checkout-policies/$candidPolicyID"
+
         $params = @{
             Uri    = $URI
             Method = 'DELETE'
         }
 
         $res = Invoke-DS @params
-        $isSuccess = $res.isSuccess
         return $res
     }
     END {
-        If ($isSuccess) {
+        If ($res.isSuccess) {
             Write-Verbose '[Remove-DSPamCheckoutPolicy] Completed Successfully.'
         }
         else {

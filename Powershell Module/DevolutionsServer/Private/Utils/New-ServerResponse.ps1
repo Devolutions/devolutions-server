@@ -4,8 +4,7 @@ function New-ServerResponse {
 Returns a new ServerResponse object.
 
 .DESCRIPTION
-In order to forge an appropriate server response, this CMDlet looks at the request method, then 
-at the request URI absolute path. It then sends an appropriate response using (usually) the HTTP response's body.
+In order to forge an appropriate server response, this CMDlet looks at the request method. It then sends an appropriate response using (usually) the HTTP response's body.
 
 .NOTES
 Endpoint with params return 400 if no resource were found matching supplied params. 400 generates an exception and is handled
@@ -16,15 +15,14 @@ to be found.
     [OutputType([ServerResponse])]
     param(
         [Parameter(Mandatory)]
-        [Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject]$response,
+        [Microsoft.PowerShell.Commands.WebResponseObject]$response,
         [Parameter(Mandatory)]
         [string]$method
     )
     PROCESS {
         $responseContentHash = $response.Content | ConvertFrom-Json -AsHashtable
         $responseContentJson = $response.Content | ConvertFrom-Json
-        $requestedResource = $response.BaseResponse.RequestMessage.RequestUri.AbsolutePath
-        $HasResult = Get-Member -inputobject $responseContentJson -name "result"
+        $HasResult = Get-Member -InputObject $responseContentJson -Name "result"
 
         switch ($method) {
             "GET" {
@@ -46,10 +44,10 @@ to be found.
                 else {
                     if ($response.StatusCode -eq 200) {
                         if ($responseContentJson -ne $null) {
-                            return [ServerResponse]::new($true , $response, $responseContentJson, $null, $null, 200)
+                            return [ServerResponse]::new($true , $response, $responseContentJson, $null, $null, $response.StatusCode)
                         }
                         else {
-                            return [ServerResponse]::new($true , $response, $response.Content, $null, $null, 200)
+                            return [ServerResponse]::new($true , $response, $response.Content, $null, $null, $response.StatusCode)
                         }
                     }
                     else {
@@ -58,15 +56,27 @@ to be found.
                 }                
             }
             "POST" {
-                if ($response.StatusCode -eq 201) {
-                    return [ServerResponse]::new($true, $response, ($response.Content | ConvertFrom-JSon), $null, "", 201)
+                if (($null -ne $responseContentJson) -and ($HasResult)) {
+                    #Get-DSEntrySensitiveData uses POST although the correct verb would be GET.
+                    #TODO Fix this after merge. Missing modifications in New-ServerResponse
+                    switch ($responseContentJson.result) {
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::NotFound) {
+                            return [ServerResponse]::new($false, $response, $responseContentJson, $null, "Resource could not be found. Please make sure you are using an existing ID.", 404)
+                        }
+                        Default {}
+                    }
                 }
                 else {
-                    return [ServerResponse]::new(($response.StatusCode -eq 200), $response, ($response.Content | ConvertFrom-JSon), $null, "", $response.StatusCode)
+                    if ($response.StatusCode -eq 201) {
+                        return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode)
+                    }
+                    else {
+                        return [ServerResponse]::new($false, $response, ($response.Content | ConvertFrom-JSon), $null, "[POST] Unhandled error. If you see this, please contact your system administrator for help.", $response.StatusCode)
+                    }
                 }
             }
             "DELETE" {
-                if (($null -ne $responseContentHash) -and ($responseContentHash.ContainsKey('result'))) {
+                if (($null -ne $responseContentHash) -and ($HasResult)) {
                     #delete users, for exemple, returns "response.content.result", so we'll make use of that to detect errors and send back appropriate error message.
                     if ($responseContentHash.result -eq 1) {
                         return [ServerResponse]::new($true, $response, ($response.Content | ConvertFrom-JSon), $null, $null, 200)
@@ -77,7 +87,7 @@ to be found.
                 }
                 elseif ($response.StatusCode -eq 204) {
                     #delete checkoutPolicy, for exemple, does NOT return "response.content.result". If code is 204, deletion was successful.
-                    return [ServerResponse]::new($true, $null, $null, $null, $null, 204)
+                    return [ServerResponse]::new($true, $response, $null, $null, $null, 204)
                 }
                 else {
                     #Any unhandled response will end here.

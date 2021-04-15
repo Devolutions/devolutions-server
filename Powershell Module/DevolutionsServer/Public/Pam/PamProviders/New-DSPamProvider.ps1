@@ -16,7 +16,7 @@ function New-DSPamProvider {
         [guid]$ID,
         [ValidateNotNullOrEmpty()]
         [string]$name,
-        [ValidateSet('LocalUser','DomainUser','SqlServer')]
+        [ValidateSet('LocalUser', 'DomainUser', 'SqlServer')]
         [string]$credentialType,
         [ValidateNotNullOrEmpty()]
         [string]$username
@@ -27,36 +27,31 @@ function New-DSPamProvider {
     
         $URI = "$Script:DSBaseURI/api/pam/providers"
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }
     
     PROCESS {
         try {
-
             [int] $credentialTypeValue
-            switch ( $credentialType )
-            {
-                'LocalUser'
-                {
+            switch ( $credentialType ) {
+                'LocalUser' {
                     $credentialTypeValue = 2
                 }
-                'DomainUser'
-                {
+                'DomainUser' {
                     $credentialTypeValue = 3
                 }
-                'SqlServer'
-                {
+                'SqlServer' {
                     $credentialTypeValue = 5
                 }
             }
 
             $newProviderData = @{
-                ProviderID = $ID
-                label     = $name
-                CredentialType = $credentialTypeValue
-                Username = $username
+                ProviderID        = $ID
+                label             = $name
+                CredentialType    = $credentialTypeValue
+                Username          = $username
                 #TODO handle the enum
                 ProtectedDataType = 1
             }
@@ -70,11 +65,6 @@ function New-DSPamProvider {
             Write-Verbose "[New-DSPamProvider] About to call with ${params.Uri}"
 
             $response = Invoke-DS @params
-
-            if ($response.isSuccess) { 
-                Write-Verbose "[New-DSPamProviders] Provider creation was successful"
-            }
-
             return $response
         }
         catch {
@@ -87,7 +77,7 @@ function New-DSPamProvider {
     }
     
     END {
-        If ($?) {
+        If ($response.isSuccess) {
             Write-Verbose '[New-DSPamProviders] Completed Successfully.'
         }
         else {

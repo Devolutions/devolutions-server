@@ -1,4 +1,4 @@
-function Remove-DSPamProvider {
+function Get-DSPamFolder {
     <#
     .SYNOPSIS
     
@@ -11,36 +11,34 @@ function Remove-DSPamProvider {
     .LINK
     #>
     [CmdletBinding()]
-    param(
+    param(		
         [ValidateNotNullOrEmpty()]
-        [guid]$ProviderID
+        [guid]$candidFolderID
     )
         
     BEGIN {
-        Write-Verbose '[Remove-DSPamProvider] Begin...'
+        Write-Verbose '[Get-DSPamFolder] begin...'
     
+        $URI = "$Script:DSBaseURI/api/pam/folders?folderID=$candidFolderID"
+
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }
     
     PROCESS {
-        $URI = "$Script:DSBaseURI/api/pam/providers/$ProviderID"
-
-        try {
+        try {   	
             $params = @{
                 Uri    = $URI
-                Method = 'DELETE'
+                Method = 'GET'
             }
-
-            Write-Verbose "[Remove-DSPamProvider] About to call with ${params.Uri}"
 
             $res = Invoke-DS @params -Verbose
             return $res
         }
         catch {
             $exc = $_.Exception
-            If ([System.Management.Automation.ActionPreference]::Break -ne $DebugPreference) {
+            If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
                 Write-Debug "[Exception] $exc"
             } 
         }
@@ -48,10 +46,10 @@ function Remove-DSPamProvider {
     
     END {
         If ($res.isSuccess) {
-            Write-Verbose '[Remove-DSPamProviders] Completed Successfully.'
+            Write-Verbose '[Get-DSPamFolders] Completed Successfully.'
         }
         else {
-            Write-Verbose '[Remove-DSPamProviders] Ended with errors...'
+            Write-Verbose '[Get-DSPamFolders] ended with errors...'
         }
     }
 }

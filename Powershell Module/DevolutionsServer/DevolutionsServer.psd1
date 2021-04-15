@@ -67,12 +67,13 @@
         'Get-DSVaults', 'Get-DSVault', 'Get-DSVaultPermissions', 
         'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData',  
         'New-DSCredentialEntry', 
-        'Get-DSPamProviders', 'New-DSPamProvider', 
-        'Get-DSPamFolders', 'New-DSPamTeamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder', 
+        'Get-DSPamProviders', 'New-DSPamProvider', 'Remove-DSPamProvider', 'Update-DSPamProvider', 
+        'Get-DSPamFolders', 'Get-DSPamFolder', 'New-DSPamTeamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder', 
         'Get-DSPamAccounts', 'New-DSPamAccount', 'Remove-DSPamAccount', 
- #       'Get-DSPamCheckoutPolicies', 'New-DSPamCheckoutPolicy', 'Remove-DSPamCheckoutPolicy', 'Update-DSPamCheckoutPolicy',
-        'New-DSRole', 'Get-DSRoles', 'Update-DSRole', 'Delete-DSRole',
-        'New-DSCustomUser', 'Update-DSCustomUser', 'Delete-DSUser', 'Get-DSUsers')
+        #'Get-DSPamCheckoutPolicies', 'New-DSPamCheckoutPolicy', 'Remove-DSPamCheckoutPolicy', 'Update-DSPamCheckoutPolicy',
+        'New-DSRole', 'Get-DSRoles', 'Update-DSRole', 'Remove-DSRole',
+        'New-DSCustomUser', 'Update-DSCustomUser', 'Remove-DSUser', 'Get-DSUsers',
+        'Get-DSEntriesModern')
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport        = @()

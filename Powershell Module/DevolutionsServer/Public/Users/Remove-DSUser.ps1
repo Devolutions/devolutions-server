@@ -1,27 +1,23 @@
-function Delete-DSUser {
+function Remove-DSUser {
     <#
     .SYNOPSIS
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)]
-        [string]$candidUserId
+        [ValidateNotNullOrEmpty()]
+        [guid]$candidUserId
     )
 
     BEGIN {
         Write-Verbose '[Delete-DSUser] Begining...'
-        $URI = "$Script:DSBaseURI/api/security/userinfo/delete/$candidUserId"
-        $isSuccess = $true
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
-        }
-
-        if (![guid]::TryParse($candidUserId, $([ref][guid]::Empty))) {
-            throw "User ID is not valid. Please provide a valid ID."
         }
     }
     PROCESS {   
+        $URI = "$Script:DSBaseURI/api/security/userinfo/delete/$candidUserId"
+
         $params = @{
             Uri    = $URI
             Method = 'DELETE'

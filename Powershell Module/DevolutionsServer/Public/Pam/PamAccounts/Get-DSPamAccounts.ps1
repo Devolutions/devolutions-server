@@ -4,23 +4,21 @@ function Get-DSPamAccounts {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)]
-        [string]$folderID
+        [ValidateNotNullOrEmpty()]
+        [guid]$folderID
     )
 
     BEGIN {
         Write-Verbose '[Get-DSPamAccount] Begining...'
-        $URI = "$Script:DSBaseURI/api/pam/credentials"
-        $isSuccess = $true
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        $URI = "$Script:DSBaseURI/api/pam/credentials"
+
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
         }
 
-        #TODO: use cmdlet parameter validation instead
-        if ([string]::IsNullOrWhiteSpace($folderID)) {
-            $isSuccess = $false
-            throw "There was a problem loading credentials from folder: folderID null or invalid."
+        if ([guid]::TryParse($folderID, $([ref][guid]::Empty))) {
+            throw "Please provide a valid ID."
         }
     }
     PROCESS {
@@ -31,11 +29,10 @@ function Get-DSPamAccounts {
         }
 
         $res = Invoke-DS @params
-        $isSuccess = $res.isSuccess
         return $res
     }
     END {
-        If ($isSuccess) {
+        If ($res.isSuccess) {
             Write-Verbose '[Get-DSPamAccount] Completed Successfully.'
         }
         else {
