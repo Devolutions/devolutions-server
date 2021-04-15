@@ -25,18 +25,18 @@ to be found.
 
         if ($HasResult) {
             switch ($responseContentJson.result) {
-                0 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::Error }
-                1 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::Success }
-                2 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::AccessDenied }
-                3 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::InvalidData }
-                4 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::AlreadyExists }
-                5 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::MaximumReached }
-                6 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::NotFound }
-                7 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::LicenseExpired }
-                8 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::Unknown }
-                9 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::TwoFactorTypeNotConfigured }
-                10 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::WebApiRedirectToLogin }
-                11 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::DuplicateLoginEmail }
+                0 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::Error; break; }
+                1 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::Success; break; }
+                2 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::AccessDenied; break; }
+                3 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::InvalidData; break; }
+                4 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::AlreadyExists; break; }
+                5 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::MaximumReached; break; }
+                6 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::NotFound; break; }
+                7 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::LicenseExpired; break; }
+                8 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::Unknown; break; }
+                9 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::TwoFactorTypeNotConfigured; break; }
+                10 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::WebApiRedirectToLogin; break; }
+                11 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::DuplicateLoginEmail; break; }
                 Default { throw "Assertion: Unhandled server result error." }
             }
         }
@@ -117,12 +117,24 @@ to be found.
                 }
             }
             "PUT" {
-                if ($response.Content.Contains("duplicate")) {
-                    return [ServerResponse]::new($false, $response, $responseContentJson, $null, "A user group with this name already exists. Please choose another name for your user group.", 400)
+                if (($null -ne $responseContentJson) -and ($HasResult)) {
+                    switch ($responseContentJson.result) {
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::Success) { 
+                            return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode)
+                        }
+                        Default { return [ServerResponse]::new($false, $response, $responseContentJson, $null, "[PUT] Unhandled error. If you see this, please contact your system administrator for help.", 500) }
+                    }
                 }
                 else {
-                    return [ServerResponse]::new(($response.StatusCode -eq 200), $response, $responseContentJson, $null, "", $response.StatusCode)
+                    if ($response.Content.Contains("duplicate")) {
+                        return [ServerResponse]::new($false, $response, $responseContentJson, $null, "A user group with this name already exists. Please choose another name for your user group.", 400)
+                    }
+                    else {
+                        return [ServerResponse]::new(($response.StatusCode -eq 200), $response, $responseContentJson, $null, "", $response.StatusCode)
+                    } 
                 }
+
+                
             }
             #Status 418: Should never get this response. If so, update switchcase so you don't.
             Default { return [ServerResponse]::new($false, $response, $responseContentJson, $null, "Please contact your system administrator for help.", 418) }

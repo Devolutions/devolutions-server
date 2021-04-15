@@ -15,14 +15,14 @@ function New-DSCredentialEntry {
         #Base credential data
         [ValidateNotNullOrEmpty()]
         [string]$EntryName,
-        [ValidateNotNull]
+        [ValidateNotNullOrEmpty()]
         [string]$Username,
         [string]$Password,
         [string]$UserDomain,
         [guid]$VaultId = [guid]::Empty,
         [string]$Folder,
         [string]$Description,
-        [System]$Tags,
+        [string]$Tags,
 
         #Events
         [bool]$credentialViewedCommentIsRequired,
@@ -49,7 +49,7 @@ function New-DSCredentialEntry {
             #Get vault context. Result=1 -> Vault exists. Result=2 -> Vault not found
             $VaultCtx = Set-DSVaultsContext $VaultId
 
-            if ($VaultCtx.Body.result -ne 1) { 
+            if ($VaultCtx.Body.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) { 
                 throw [System.Management.Automation.ItemNotFoundException]::new("Vault could not be found. Please make sure you provide a valid vault ID.") 
             }  
 
@@ -90,6 +90,7 @@ function New-DSCredentialEntry {
                 name           = $EntryName
                 events         = $EventsSegment
                 description    = $Description
+                keywords       = $Tags
             }
                 
             $params = @{
