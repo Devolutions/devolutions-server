@@ -13,8 +13,7 @@ function New-DSPamTeamFolder {
     [CmdletBinding()]
     param(
         [ValidateNotNullOrEmpty()]
-        [string]$name,
-        [guid]$parentFolderID
+        [string]$name
     )
         
     BEGIN {
@@ -29,35 +28,17 @@ function New-DSPamTeamFolder {
     
     PROCESS {
         try {
-            #Creates folder in an existing folder
-            if ("" -ne $parentFolderID) {
-                #Check if folder exists. For testing purpose, I'm sure it exists
-                $test = Get-DSPamFolder -candidFolderID $parentFolderID
+            $rootNodeResponse = Get-DSPamRootFolder
+            $rootNode = $rootNodeResponse.Body.Data[0]
 
-                if ($test.Body -eq "[]") {
-                    throw "Provided ID doesn't belong to an existing folder."
-                }
-                else {
-                    $newFolderData = @{
-                        folderID = $parentFolderID
-                        name     = $name
-                    }
-                }
+            if ($null -eq $rootNode) {
+                throw "Abnormal condition while getting root Team folder."
             }
-            #Creates folder in root folder
-            else {
-                $rootNodeResponse = Get-DSPamRootFolder
-                $rootNode = $rootNodeResponse.Body.Data[0]
 
-                if ($null -eq $rootNode) {
-                    throw "Abnormal condition while getting root Team folder."
-                }
-
-                $newFolderData = @{
-                    folderID = $rootNode.ID
-                    name     = $name
-                }    
-            }
+            $newFolderData = @{
+                folderID = $rootNode.ID
+                name     = $name
+            }    
 
             $params = @{
                 Uri    = $URI

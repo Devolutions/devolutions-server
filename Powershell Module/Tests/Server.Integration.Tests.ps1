@@ -29,12 +29,12 @@ Describe "Integration tests - these will pollute the backend" {
         }
 
         #local testing context
-        [string]$runSuffix = Get-Date -f MM_dd_HH_mm_ss
+        [string]$runSuffix = Get-Date -f MMdd_HHmmss
         [string]$testPassword = 'Pa$$w0rd!'
         #needed to share data across Pester contexts...
         $PamTemp = @{
             providerID  = ''
-            folderID    = ''
+            TFId        = ''
             accountID   = ''
             newPolicyID = ''
         }
@@ -173,18 +173,17 @@ Describe "Integration tests - these will pollute the backend" {
         
                 $res = New-DSPamTeamFolder @newFolderData -Debug
 
-                $PamTemp.folderAtRootID = $res.Body.id
+                $PamTemp.TFId = $res.Body.id
                 $res.isSuccess | Should -be $true
             }
 
             It "Should create new folder in newly created folder" {
                 $newFolderData = @{
-                    parentFolderID = $PamTemp.folderAtRootID
                     name = "Pam Folder 2 $runSuffix"
                 }
         
                 $res = New-DSPamTeamFolder @newFolderData -Debug
-                $PamTemp.folderID = $res.Body.id
+                $PamTemp.TFId = $res.Body.id
                 $res.isSuccess | Should -be $true
             }
 
@@ -192,7 +191,7 @@ Describe "Integration tests - these will pollute the backend" {
                 $pamAccountParams = @{
                     credentialType    = 2
                     protectedDataType = 1
-                    folderID          = $PamTemp.folderID
+                    folderID          = $PamTemp.TFId
                     label             = "Pam account $runSuffix"
                     username          = -join ((97..122) | Get-Random -Count 8 | ForEach-Object { [char]$_ })
                     adminCredentialID = $PamTemp.providerID
@@ -206,8 +205,8 @@ Describe "Integration tests - these will pollute the backend" {
             }
 
             It "Should get PAM Accounts" {    
-                $res = Get-DSPamAccounts -folderID $PamTemp.folderID -Verbose
-                $res.StandardizedStatusCode | Should -be 204
+                $res = Get-DSPamAccounts -folderID $PamTemp.TFId -Verbose
+                $res.StandardizedStatusCode | Should -be 200
                 $res.IsSuccess | Should -be $true
             }
 
@@ -218,7 +217,7 @@ Describe "Integration tests - these will pollute the backend" {
             }
 
             It "Should delete created folder" {
-                $res = Remove-DSPamFolder $PamTemp.folderAtRootID -Verbose
+                $res = Remove-DSPamFolder $PamTemp.TFId -Verbose
                 $res.StandardizedStatusCode | Should -be 204
                 $res.isSuccess | Should -be $true
             }

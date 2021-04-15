@@ -35,7 +35,7 @@ function Get-DSVaults{
             $PSBoundParameters.Remove('Legacy') | out-null
 
             [System.Version]$ModernVersion = '2020.3.8.0'
-            [System.Version]$v = $script:DSInstanceVersion
+            [System.Version]$v = $Global:DSInstanceVersion
             
             if (($LegacyRequested) -or ($v.CompareTo($ModernVersion) -lt 0)){
                 $response = Get-DSVaultsLegacy @PSBoundParameters

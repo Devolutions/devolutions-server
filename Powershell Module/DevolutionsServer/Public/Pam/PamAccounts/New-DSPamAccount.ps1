@@ -11,7 +11,7 @@ function New-DSPamAccount {
         [ValidateNotNullOrEmpty()]
         [int]$protectedDataType,
         [ValidateNotNullOrEmpty()]
-        [duid]$folderID,
+        [guid]$folderID,
         [ValidateNotNullOrEmpty()]
         [string]$label,
         [ValidateNotNullOrEmpty()]

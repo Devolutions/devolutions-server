@@ -15,19 +15,22 @@ to be found.
     [OutputType([ServerResponse])]
     param(
         [Parameter(Mandatory)]
-        [Microsoft.PowerShell.Commands.WebResponseObject]$response,
+        $response,
         [Parameter(Mandatory)]
         [string]$method
     )
     PROCESS {
-        $responseContentHash = $response.Content | ConvertFrom-Json -AsHashtable
         $responseContentJson = $response.Content | ConvertFrom-Json
-        $HasResult = Get-Member -InputObject $responseContentJson -Name "result"
+        if ($null -eq $responseContentJson) {
+            $HasResult = $false
+        } else {
+            $HasResult = Get-Member -InputObject $responseContentJson -Name "result"
+        }
 
         switch ($method) {
             "GET" {
                 #patch
-                if (($null -ne $responseContentHash) -and ($HasResult)) {
+                if (($null -ne $responseContentJson) -and ($HasResult)) {
                     switch ($responseContentJson.result) {
                         ( [Devolutions.RemoteDesktopManager.SaveResult]::Error.value__ ) { 
                             return [ServerResponse]::new($false , $response, $null, $null, "TODO: Unhandled error.", 500) 
@@ -43,7 +46,7 @@ to be found.
                 }
                 else {
                     if ($response.StatusCode -eq 200) {
-                        if ($responseContentJson -ne $null) {
+                        if ($null -ne $responseContentJson) {
                             return [ServerResponse]::new($true , $response, $responseContentJson, $null, $null, $response.StatusCode)
                         }
                         else {
@@ -63,7 +66,11 @@ to be found.
                         ([Devolutions.RemoteDesktopManager.SaveResult]::NotFound) {
                             return [ServerResponse]::new($false, $response, $responseContentJson, $null, "Resource could not be found. Please make sure you are using an existing ID.", 404)
                         }
-                        Default {}
+                        ( [Devolutions.RemoteDesktopManager.SaveResult]::Success.value__ ) { 
+                            return [ServerResponse]::new($true , $response, $responseContentJson, $null, $null, 200) 
+                        }
+                        Default {
+                        }
                     }
                 }
                 else {
@@ -71,23 +78,25 @@ to be found.
                         return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode)
                     }
                     else {
-                        return [ServerResponse]::new($false, $response, ($response.Content | ConvertFrom-JSon), $null, "[POST] Unhandled error. If you see this, please contact your system administrator for help.", $response.StatusCode)
+                        return [ServerResponse]::new($false, $response, $responseContentJson, $null, "[POST] Unhandled error. If you see this, please contact your system administrator for help.", $response.StatusCode)
                     }
                 }
             }
             "DELETE" {
-                if (($null -ne $responseContentHash) -and ($HasResult)) {
+                if (($null -ne $responseContentJson) -and ($HasResult)) {
                     #delete users, for exemple, returns "response.content.result", so we'll make use of that to detect errors and send back appropriate error message.
-                    if ($responseContentHash.result -eq 1) {
-                        return [ServerResponse]::new($true, $response, ($response.Content | ConvertFrom-JSon), $null, $null, 200)
+                    if ($responseContentJson.result -eq 1) {
+                        return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, 200)
                     }
                     else {
-                        return [ServerResponse]::new($false, $response, $responseContentHash, $null, $responseContentHash.errorMessage, 404)
+                        return [ServerResponse]::new($false, $response, $responseContentJson, $null, $responseContentJson.errorMessage, 404)
                     }
                 }
                 elseif ($response.StatusCode -eq 204) {
                     #delete checkoutPolicy, for exemple, does NOT return "response.content.result". If code is 204, deletion was successful.
-                    return [ServerResponse]::new($true, $response, $null, $null, $null, 204)
+                    #TODO:Remove-DSPamProvider return a WebResponseObject, not a basic one....
+#                    return [ServerResponse]::new($true, $null, $null, $null, $null, 204)
+                    return [ServerResponse]::new($true, $null, $null, $null, $null, 204)
                 }
                 else {
                     #Any unhandled response will end here.
@@ -96,14 +105,14 @@ to be found.
             }
             "PUT" {
                 if ($response.Content.Contains("duplicate")) {
-                    return [ServerResponse]::new($false, $response, ($response.Content | ConvertFrom-JSon), $null, "A user group with this name already exists. Please choose another name for your user group.", 400)
+                    return [ServerResponse]::new($false, $response, $responseContentJson, $null, "A user group with this name already exists. Please choose another name for your user group.", 400)
                 }
                 else {
-                    return [ServerResponse]::new(($response.StatusCode -eq 200), $response, ($response.Content | ConvertFrom-JSon), $null, "", $response.StatusCode)
+                    return [ServerResponse]::new(($response.StatusCode -eq 200), $response, $responseContentJson, $null, "", $response.StatusCode)
                 }
             }
             #Status 418: Should never get this response. If so, update switchcase so you don't.
-            Default { return [ServerResponse]::new(($false), $response, ($response.Content | ConvertFrom-JSon), $null, "Please contact your system administrator for help.", 418) }
+            Default { return [ServerResponse]::new(($false), $response, $responseContentJson, $null, "Please contact your system administrator for help.", 418) }
         }
     }
 }

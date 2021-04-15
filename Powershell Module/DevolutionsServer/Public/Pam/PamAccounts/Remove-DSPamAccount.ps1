@@ -22,10 +22,6 @@ function Remove-DSPamAccount {
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
         }
-
-        if ([guid]::TryParse($pamAccountID, $([ref][guid]::Empty))) {
-            throw "Please provide a valid ID."
-        }
     }
     PROCESS {
         $URI = "$Script:DSBaseURI/api/pam/credentials/$pamAccountID" 

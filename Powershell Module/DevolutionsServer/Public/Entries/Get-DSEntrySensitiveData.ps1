@@ -24,7 +24,8 @@ function Get-DSEntrySensitiveData {
     
     PROCESS {
         try {        
-            if (($LegacyRequested) -or (Confirm-DSServerVersionAtLeast -CandidVersion "2020.3.17")) {
+#            if (($LegacyRequested) -or (Confirm-DSServerVersionAtLeast -CandidVersion "2020.3.17")) {
+            if (Confirm-DSServerVersionAtLeast -CandidVersion "2020.3.17") {
                 [ServerResponse]$response = Get-DSEntrySensitiveDataLegacy @PSBoundParameters
             }
             else {
@@ -36,16 +37,10 @@ function Get-DSEntrySensitiveData {
         }
         catch {
             $ErrorRecord = $_
-            Write-Host
         }
     }
     
     END {
-        If (!$? -and $response.isSuccess) {
-            Write-Verbose '[Get-DSEntrySensitiveData] Completed Successfully.'
-        }
-        else {
-            Write-Verbose '[Get-DSEntrySensitiveData] Ended with errors...'
-        }
+        Write-Verbose '[Get-DSEntrySensitiveData] ...end'
     }
 }
