@@ -11,7 +11,7 @@ function Remove-DSUser {
     BEGIN {
         Write-Verbose '[Delete-DSUser] Begining...'
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
         }
     }

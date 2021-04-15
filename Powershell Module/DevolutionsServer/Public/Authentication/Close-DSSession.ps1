@@ -30,10 +30,10 @@ function Close-DSSession{
 		Clear-Variable -Name DSKeyExp -Scope Script
 		Clear-Variable -Name DSKeyMod -Scope Script
 		Clear-Variable -Name DSSafeSessionKey -Scope Script
-		Clear-Variable -Name DSInstanceVersion -Scope Script
+		Clear-Variable -Name DSInstanceVersion -Scope Global
 		Clear-Variable -Name DSInstanceName -Scope Script
-		Clear-Variable -Name DSSessionToken -Scope Script
-		Clear-Variable -Name WebSession -Scope Script
+		Clear-Variable -Name DSSessionToken -Scope Global
+		Clear-Variable -Name WebSession -Scope Global
 
 		$response
 	}

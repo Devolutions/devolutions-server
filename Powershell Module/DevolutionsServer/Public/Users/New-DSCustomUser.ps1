@@ -74,7 +74,7 @@ function New-DSCustomUser {
         elseif ( $firstName -and $lastName ) { "$firstName $lastName" }
         else { "" }
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
         }
     }

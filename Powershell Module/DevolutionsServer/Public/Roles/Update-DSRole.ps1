@@ -58,7 +58,7 @@ function Update-DSRole {
         Write-Verbose '[Update-DSRole] Begin...'
         $URI = "$Script:DSBaseURI/api/security/role/save?csToXml=1"
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }

@@ -22,7 +22,7 @@ function Set-DSVaultsContext{
     
             $URI = "$Script:DSBaseURI/api/security/vaults/change"
 
-    		if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken))
+    		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{
 				throw "Session does not seem authenticated, call New-DSSession."
 			}

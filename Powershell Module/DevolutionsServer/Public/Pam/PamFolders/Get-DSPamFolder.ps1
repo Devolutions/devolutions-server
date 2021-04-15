@@ -21,7 +21,7 @@ function Get-DSPamFolder {
     
         $URI = "$Script:DSBaseURI/api/pam/folders?folderID=$candidFolderID"
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }

@@ -40,7 +40,7 @@ function Update-DSPamCheckoutPolicy {
     BEGIN {
         Write-Verbose '[Update-DSPamFolder] Begin...'
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }

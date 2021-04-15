@@ -36,7 +36,7 @@ function Update-DSPamFolder {
         Write-Verbose '[Update-DSPamFolder] Begin...'
         $URI = "$Script:DSBaseURI/api/pam/folders/$candidFolderID"
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }

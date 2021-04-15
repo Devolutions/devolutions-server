@@ -19,7 +19,7 @@ function Get-DSPamProviders {
     
         $URI = "$Script:DSBaseURI/api/pam/providers"
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
                         throw "Session does not seem authenticated, call New-DSSession."
         }
     }

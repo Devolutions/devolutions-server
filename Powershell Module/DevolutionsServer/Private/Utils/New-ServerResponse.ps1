@@ -56,11 +56,23 @@ to be found.
                 }                
             }
             "POST" {
-                if ($response.StatusCode -eq 201) {
-                    return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode)
+                if (($null -ne $responseContentJson) -and ($HasResult)) {
+                    #Get-DSEntrySensitiveData uses POST although the correct verb would be GET.
+                    #TODO Fix this after merge. Missing modifications in New-ServerResponse
+                    switch ($responseContentJson.result) {
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::NotFound) {
+                            return [ServerResponse]::new($false, $response, $responseContentJson, $null, "Resource could not be found. Please make sure you are using an existing ID.", 404)
+                        }
+                        Default {}
+                    }
                 }
                 else {
-                    return [ServerResponse]::new($false, $response, ($response.Content | ConvertFrom-JSon), $null, "[POST] Unhandled error. If you see this, please contact your system administrator for help.", $response.StatusCode)
+                    if ($response.StatusCode -eq 201) {
+                        return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode)
+                    }
+                    else {
+                        return [ServerResponse]::new($false, $response, ($response.Content | ConvertFrom-JSon), $null, "[POST] Unhandled error. If you see this, please contact your system administrator for help.", $response.StatusCode)
+                    }
                 }
             }
             "DELETE" {

@@ -39,7 +39,7 @@ function New-DSPamCheckoutPolicy {
         
         $URI = "$Script:DSBaseURI/api/pam/checkout-policies"
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }

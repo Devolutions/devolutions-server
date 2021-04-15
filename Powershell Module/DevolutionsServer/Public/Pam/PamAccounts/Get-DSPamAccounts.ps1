@@ -13,7 +13,7 @@ function Get-DSPamAccounts {
 
         $URI = "$Script:DSBaseURI/api/pam/credentials"
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
         }
 

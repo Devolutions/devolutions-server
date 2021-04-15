@@ -22,7 +22,7 @@ function Get-DSPamCheckoutPolicies {
     BEGIN {
         Write-Verbose '[Get-DSPamCheckoutPolicies] Begin...'
     
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }

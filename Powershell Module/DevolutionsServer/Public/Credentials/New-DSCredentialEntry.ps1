@@ -27,7 +27,7 @@ function New-DSCredentialEntry {
 
         $URI = "$Script:DSBaseURI/api/connections/partial/save"
     
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }

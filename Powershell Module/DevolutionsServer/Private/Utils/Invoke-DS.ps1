@@ -28,11 +28,11 @@ function Invoke-DS {
     BEGIN {
         Write-Verbose '[Invoke-DS] begin...'
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
         
-        $PSBoundParameters.Add("WebSession", $Script:WebSession)
+        $PSBoundParameters.Add("WebSession", $Global:WebSession)
         $PSBoundParameters.Add("ContentType", 'application/json')
         $PSBoundParameters.Remove('LegacyResponse') | out-null
     }
