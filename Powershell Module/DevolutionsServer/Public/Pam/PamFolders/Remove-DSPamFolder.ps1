@@ -12,14 +12,14 @@ function Remove-DSPamFolder {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)]
-        [string]$folderID
+        [ValidateNotNullOrEmpty()]
+        [guid]$folderID
     )
         
     BEGIN {
         Write-Verbose '[Remove-DSPamFolder] Begin...'
     
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }
@@ -54,11 +54,10 @@ function Remove-DSPamFolder {
                 Write-Debug "[Exception] $exc"
             } 
         }
-        
     }
     
     END {
-        If ($?) {
+        If ($response.isSuccess) {
             Write-Verbose '[Remove-DSPamFolders] Completed Successfully.'
         }
         else {

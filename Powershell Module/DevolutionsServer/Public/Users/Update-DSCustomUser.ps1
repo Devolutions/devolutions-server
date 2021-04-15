@@ -5,8 +5,8 @@ function Update-DSCustomUser {
     [CmdletBinding()]
     param(
         #Base
-        [Parameter(Mandatory)]
-        [string]$candidUserId,
+        [ValidateNotNullOrEmpty()]
+        [guid]$candidUserId,
         [string]$firstName,
         [string]$lastName,
 
@@ -59,12 +59,8 @@ function Update-DSCustomUser {
         Write-Verbose '[Update-DSCustomUser] Begining...'
         $URI = "$Script:DSBaseURI/api/security/user/save?csToXml=1"
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
-        }
-
-        if (![guid]::TryParse($candidUserId, $([ref][guid]::Empty))) {
-            throw "Provided user ID is not valid."
         }
 
         $currentUserData = (Get-DSUsers -candidUserId $candidUserId -Verbose).Body
@@ -106,11 +102,10 @@ function Update-DSCustomUser {
         $params.Body = $currentUserData | ConvertTo-Json
 
         $res = Invoke-DS @params
-        $isSuccess = $res.isSuccess
         return $res
     }
     END {
-        If ($isSuccess) {
+        If ($res.isSuccess) {
             Write-Verbose '[New-DSCustomUser] Completed Successfully.'
         }
         else {

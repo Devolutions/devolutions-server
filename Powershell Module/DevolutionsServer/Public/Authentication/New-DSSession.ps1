@@ -22,7 +22,7 @@ Establishes a session with a Devolutions Server
 
 		if ($Script:DSBaseURI -ne $BaseURI)
 		{
-			if ($Script:DSSessionToken)
+			if ($Global:DSSessionToken)
 			{
 				throw "Session already established, Close it before switching servers."
 			}
@@ -59,7 +59,7 @@ Establishes a session with a Devolutions Server
 		}
 		
 		#body is typed as a HashTable, I'd like to offer an override that pushes the conversion downstream
-		$response = Invoke-WebRequest -URI $URI -Method Post -ContentType 'application/json'  -Body ($Body | ConvertTo-Json) -SessionVariable Script:WebSession
+		$response = Invoke-WebRequest -URI $URI -Method Post -ContentType 'application/json'  -Body ($Body | ConvertTo-Json) -SessionVariable Global:WebSession
 		If ($null -ne $response) {
 			$jsonContent = $response.Content | ConvertFrom-JSon
 			Write-Verbose "[New-DSSession] Got authentication token $($jsonContent.data.tokenId)"
@@ -69,8 +69,8 @@ Establishes a session with a Devolutions Server
 					Write-Debug "[Response.Data] $($jsonContent.data)"
 			}
 
-			Set-Variable -Name DSSessionToken -Value $jsonContent.data.tokenId -Scope Script
-			$Script:WebSession.Headers["tokenId"] = $jsonContent.data.tokenId
+			Set-Variable -Name DSSessionToken -Value $jsonContent.data.tokenId -Scope Global
+			$Global:WebSession.Headers["tokenId"] = $jsonContent.data.tokenId
 
 			return [ServerResponse]::new(($response.StatusCode -eq 200), $response, $jsonContent, $null, "", $response.StatusCode)
 		}

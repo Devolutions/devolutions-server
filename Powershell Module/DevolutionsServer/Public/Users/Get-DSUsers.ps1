@@ -4,28 +4,30 @@ function Get-DSUsers {
     #>
     [CmdletBinding()]
     param(
-        [Parameter()]
         [switch]$All,
-        [string]$candidUserId,
+        [guid]$candidUserId,
         [int]$pageSize = 10,
         [int]$pageNumber = 1
     )
 
     BEGIN {
         Write-Verbose '[Delete-DSUser] Begining...'
+        
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
+            throw "Session invalid. Please call New-DSSession."
+        }
+    }
+    PROCESS { 
         $URI = if ($All) { 
             "$Script:DSBaseURI/api/security/users/list" 
         }
         elseif ($candidUserId) {
             "$Script:DSBaseURI/api/security/user/${candidUserId}?csFromXml=1&loadGroup=1" 
         }
-        else { "$Script:DSBaseURI/api/v3/users?pageSize=$pageSize&pageNumber=$pageNumber&sortOrder=1&includeImages=false" }
-
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
-            throw "Session invalid. Please call New-DSSession."
+        else { 
+            "$Script:DSBaseURI/api/v3/users?pageSize=$pageSize&pageNumber=$pageNumber&sortOrder=1&includeImages=false" 
         }
-    }
-    PROCESS {   
+
         $params = @{
             Uri    = $URI
             Method = 'GET'

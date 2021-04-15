@@ -40,8 +40,8 @@ function Update-DSRole {
     #>
     [CmdletBinding()]
     param (
-        [Parameter(Mandatory)]
-        [string]$candidRoleId,
+        [ValidateNotNullOrEmpty()]
+        [guid]$candidRoleId,
         [string]$displayName,
         [string]$description,
         [bool]$isAdministrator,
@@ -58,7 +58,7 @@ function Update-DSRole {
         Write-Verbose '[Update-DSRole] Begin...'
         $URI = "$Script:DSBaseURI/api/security/role/save?csToXml=1"
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }
@@ -100,7 +100,8 @@ function Update-DSRole {
                     Body   = $updatedRoleData | ConvertTo-Json
                 }
         
-                return Invoke-DS @params 
+                $res = Invoke-DS @params
+                return $res 
             }
             else {
                 throw "The supplied role ID couldn't be found. Make sure the ID of the role you are trying to update is valid."
@@ -114,7 +115,7 @@ function Update-DSRole {
         }
     }
     END {
-        If ($?) {
+        If ($res.isSuccess) {
             Write-Verbose '[Update-DSRole] Completed Successfully.'
         }
         else {

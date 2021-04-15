@@ -20,7 +20,7 @@ function Get-DSEntriesTree{
         BEGIN {
             Write-Verbose '[Get-DSEntriesTree] begin...'
     
-    		if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken))
+    		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{
 				throw "Session does not seem authenticated, call New-DSSession."
 			}

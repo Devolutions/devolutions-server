@@ -25,7 +25,7 @@ This endpoint does not require authentication.
 		 #>
 		if ($Script:DSBaseURI -ne $BaseURI)
 		{
-			if ($Script:DSSessionToken)
+			if ($Global:DSSessionToken)
 			{
 				throw "Session already established, Close it before switching servers."
 			}
@@ -39,7 +39,7 @@ This endpoint does not require authentication.
 
 		try
 		{
-			$response = Invoke-WebRequest -URI $URI -Method 'GET' -SessionVariable script:WebSession
+			$response = Invoke-WebRequest -URI $URI -Method 'GET' #-SessionVariable Global:WebSession
 
 			If ($null -ne $response) {
 				$jsonContent = $response.Content | ConvertFrom-JSon
@@ -62,7 +62,7 @@ This endpoint does not require authentication.
 				Set-Variable -Name DSKeyMod -Value $publickey_mod -Scope Script
 				Set-Variable -Name DSSessionKey -Value $session_Key -Scope Script
 				Set-Variable -Name DSSafeSessionKey -Value $safeSessionKey -Scope Script
-				Set-Variable -Name DSInstanceVersion -Value $instanceVersion -Scope Script
+				Set-Variable -Name DSInstanceVersion -Value $instanceVersion -Scope Global
 				Set-Variable -Name DSInstanceName -Value $jsonContent.data.serverName -Scope Script
 
 				return [ServerResponse]::new(($response.StatusCode -eq 200), $response, $jsonContent, $null, "", $response.StatusCode)

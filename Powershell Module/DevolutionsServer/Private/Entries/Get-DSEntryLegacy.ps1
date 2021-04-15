@@ -21,7 +21,7 @@ function Get-DSEntryLegacy{
         BEGIN {
             Write-Verbose '[Get-DSEntryLegacy] begin...'
 
-    		if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken))
+    		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{
 				throw "Session does not seem authenticated, call New-DSSession."
 			}

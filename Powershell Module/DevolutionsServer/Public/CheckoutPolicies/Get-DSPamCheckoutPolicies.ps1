@@ -14,7 +14,7 @@ function Get-DSPamCheckoutPolicies {
     #>
     [CmdletBinding()]
     param(
-        [string]$policyID
+        [guid]$policyID
         #TODO:the count is the sole content returned, it should be converted in the body	
         #[System.Management.Automation.SwitchParameter]$Count
     )
@@ -22,26 +22,25 @@ function Get-DSPamCheckoutPolicies {
     BEGIN {
         Write-Verbose '[Get-DSPamCheckoutPolicies] Begin...'
     
-        $URI = if ($Count) { 
-            "$Script:DSBaseURI/api/pam/checkout-policies/count"
-        } 
-        else { 
-            if (![string]::IsNullOrWhiteSpace($policyID)) {
-                "$Script:DSBaseURI/api/pam/checkout-policies/$policyID"
-            }
-            else {
-                "$Script:DSBaseURI/api/pam/checkout-policies"
-            }
-            
-        }
-        
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }
     
     PROCESS {
-        try {   	
+        try {  
+            $URI = if ($Count) { 
+                "$Script:DSBaseURI/api/pam/checkout-policies/count"
+            } 
+            else { 
+                if (![string]::IsNullOrWhiteSpace($policyID)) {
+                    "$Script:DSBaseURI/api/pam/checkout-policies/$policyID"
+                }
+                else {
+                    "$Script:DSBaseURI/api/pam/checkout-policies"
+                }
+            }
+
             $params = @{
                 Uri    = $URI
                 Method = 'GET'
@@ -50,11 +49,6 @@ function Get-DSPamCheckoutPolicies {
             Write-Verbose "[Get-DSPamCheckoutPolicies] About to call with $params.Uri..."
 
             $response = Invoke-DS @params
-
-            if ($response.isSuccess) { 
-                Write-Verbose "[Get-DSPamCheckoutPolicies] Operation was successful."
-            }
-
             If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
                 Write-Debug "[Response.Body] $($response.Body)"
             }
