@@ -81,10 +81,15 @@ to be found.
                     #Get-DSEntrySensitiveData uses POST although the correct verb would be GET.
                     #TODO Fix this after merge. Missing modifications in New-ServerResponse
                     switch ($responseContentJson.result) {
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::Success) {
+                            return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode)
+                        }
                         ([Devolutions.RemoteDesktopManager.SaveResult]::NotFound) {
                             return [ServerResponse]::new($false, $response, $responseContentJson, $null, "Resource could not be found. Please make sure you are using an existing ID.", 404)
                         }
-                        Default {}
+                        Default {
+                            return [ServerResponse]::new($false, $response, $responseContentJson, $null, "[POST] Unhandled error. If you see this, please contact your system administrator for help.", $response.StatusCode)
+                        }
                     }
                 
                 }
@@ -108,8 +113,9 @@ to be found.
                     }
                 }
                 elseif ($response.StatusCode -eq 204) {
-                    #delete checkoutPolicy, for exemple, does NOT return "response.content.result". If code is 204, deletion was successful.
+                    #Delete checkoutPolicy, for exemple, does NOT return "response.content.result". If code is 204, deletion was successful.
                     return [ServerResponse]::new($true, $response, $null, $null, $null, 204)
+                    
                 }
                 else {
                     #Any unhandled response will end here.

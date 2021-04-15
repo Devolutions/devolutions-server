@@ -160,7 +160,7 @@ Describe "Integration tests - these will pollute the backend" {
                     username       = -join ((97..122) | Get-Random -Count 8 | ForEach-Object { [char]$_ })
                 }
         
-                $res = New-DSPamProvider @newProviderData -Debug
+                $res = New-DSPamProvider @newProviderData #-Debug
 
                 $PamTemp.providerID = $res.Body.id
                 $res.isSuccess | Should -be $true
@@ -173,17 +173,6 @@ Describe "Integration tests - these will pollute the backend" {
         
                 $res = New-DSPamTeamFolder @newFolderData -Debug
 
-                $PamTemp.folderAtRootID = $res.Body.id
-                $res.isSuccess | Should -be $true
-            }
-
-            It "Should create new folder in newly created folder" {
-                $newFolderData = @{
-                    parentFolderID = $PamTemp.folderAtRootID
-                    name = "Pam Folder 2 $runSuffix"
-                }
-        
-                $res = New-DSPamTeamFolder @newFolderData -Debug
                 $PamTemp.folderID = $res.Body.id
                 $res.isSuccess | Should -be $true
             }
@@ -203,12 +192,13 @@ Describe "Integration tests - these will pollute the backend" {
 
                 $PamTemp.accountID = $res.Body.id
                 $res.StandardizedStatusCode | Should -be 201
+                $res.isSuccess | Should -be $true
             }
 
             It "Should get PAM Accounts" {    
                 $res = Get-DSPamAccounts -folderID $PamTemp.folderID -Verbose
-                $res.StandardizedStatusCode | Should -be 204
-                $res.IsSuccess | Should -be $true
+                $res.StandardizedStatusCode | Should -be 200
+                $res.isSuccess | Should -be $true
             }
 
             It "Should delete created PAM account" {
@@ -218,7 +208,7 @@ Describe "Integration tests - these will pollute the backend" {
             }
 
             It "Should delete created folder" {
-                $res = Remove-DSPamFolder $PamTemp.folderAtRootID -Verbose
+                $res = Remove-DSPamFolder $PamTemp.folderID -Verbose
                 $res.StandardizedStatusCode | Should -be 204
                 $res.isSuccess | Should -be $true
             }

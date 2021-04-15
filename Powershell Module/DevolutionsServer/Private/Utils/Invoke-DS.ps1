@@ -40,6 +40,15 @@ function Invoke-DS {
     PROCESS {
         try {
             $response = Invoke-WebRequest @PSBoundParameters -ErrorAction Stop
+
+            if ($LegacyResponse) {
+                $res = Convert-LegacyResponse $response
+            }
+            else {
+                $res = New-ServerResponse -response $response -method $method
+            }
+    
+            return $res
         }
         catch [System.UriFormatException] {
             throw "Not initialized, please use New-DSSession"
@@ -61,17 +70,7 @@ function Invoke-DS {
                 return [ServerResponse]::new($false, $exc.Response, $null, $exc, $exc.Message, $exc.Response.StatusCode) 
             }
         }
-        
-        if ($LegacyResponse) {
-            $res = Convert-LegacyResponse $response
-        }
-        else {
-            $res = New-ServerResponse -response $response -method $method
-        }
-
-        return $res
-
-    } #PROCESS
+    }
 
     END {
         If ($res.isSuccess) {
@@ -80,5 +79,5 @@ function Invoke-DS {
         else {
             Write-Verbose '[Invoke-DS] Ended with errors...'
         }
-    } #END
+    }
 }

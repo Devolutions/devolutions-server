@@ -16,10 +16,6 @@ function Get-DSPamAccounts {
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
         }
-
-        if ([guid]::TryParse($folderID, $([ref][guid]::Empty))) {
-            throw "Please provide a valid ID."
-        }
     }
     PROCESS {
         $params = @{
