@@ -12,12 +12,12 @@ function GetPermissionSummary {
         if ($sec.ViewRoles -is [system.array]) {
 
             $results += [PSCustomObject]@{
-                Vault      = $vaultName
-                Depth     = $Depth
-                Entry      = $entry.Name
-                IsOverride = [Devolutions.RemoteDesktopManager.SecurityRoleOverride]::Default
-                Permission = [Devolutions.RemoteDesktopManager.SecurityRoleRight]::View
-                Principal  = [string]::Join(', ', $sec.ViewRoles)
+                Vault        = $vaultName
+                Depth        = $Depth
+                Entry        = $entry.Name
+                OverrideType = [Devolutions.RemoteDesktopManager.SecurityRoleOverride]::Default
+                Right        = [Devolutions.RemoteDesktopManager.SecurityRoleRight]::View
+                Principals   = [string]::Join(', ', $sec.ViewRoles)
             }
 
         }
@@ -28,12 +28,12 @@ function GetPermissionSummary {
             if ($perm.roles -is [system.array]) {
 
                 $results += [PSCustomObject]@{
-                    Vault      = $vaultName
-                    Depth      = $Depth
-                    Entry      = $entry.Name
-                    IsOverride = [enum]::ToObject([Devolutions.RemoteDesktopManager.SecurityRoleOverride], $perm.override)
-                    Permission = [enum]::ToObject([Devolutions.RemoteDesktopManager.SecurityRoleRight], $perm.right)
-                    Principal  = [string]::Join(', ', $perm.roles)
+                    Vault        = $vaultName
+                    Depth        = $Depth
+                    Entry        = $entry.Name
+                    OverrideType = [enum]::ToObject([Devolutions.RemoteDesktopManager.SecurityRoleOverride], $perm.override)
+                    Right        = [enum]::ToObject([Devolutions.RemoteDesktopManager.SecurityRoleRight], $perm.right)
+                    Principals   = [string]::Join(', ', $perm.roles)
                 }
             }
         }
