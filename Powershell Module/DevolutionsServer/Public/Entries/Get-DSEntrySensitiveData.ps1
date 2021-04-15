@@ -20,32 +20,27 @@ function Get-DSEntrySensitiveData {
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
-
-        if ([string]::IsNullOrWhiteSpace($Script:DSInstanceVersion)) {
-            throw "Your Devoltions Server version is not supported by this module. Please update to the latest stable release."
-        }
     }
     
     PROCESS {
         try {        
             if (($LegacyRequested) -or (Confirm-DSServerVersionAtLeast -CandidVersion "2020.3.17")) {
                 [ServerResponse]$response = Get-DSEntrySensitiveDataLegacy @PSBoundParameters
+                return $response
             }
             else {
                 #TODO Get-DSEntrySensitiveDataModern ?
                 throw [System.Exception]::new("Retreiving entries's sensitive data is supported only for DVLS v2020.3.17 and later. Please consider updating your DVLS instance.")
             }
-
-            return $response
         }
         catch {
-            $ErrorRecord = $_
-            Write-Host
+            $Exception = $_.Exception
+            Write-Error $Exception.Message
         }
     }
     
     END {
-        If (!$? -and $response.isSuccess) {
+        If ($? -and $response.isSuccess) {
             Write-Verbose '[Get-DSEntrySensitiveData] Completed Successfully.'
         }
         else {
