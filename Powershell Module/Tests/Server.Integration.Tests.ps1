@@ -29,7 +29,7 @@ Describe "Integration tests - these will pollute the backend" {
         }
 
         #local testing context
-        [string]$runSuffix = Get-Date -f MM_dd_HH_mm_ss
+        [string]$runSuffix = Get-Date -f MMdd_HHmmss
         [string]$testPassword = 'Pa$$w0rd!'
         #needed to share data across Pester contexts...
         $PamTemp = @{

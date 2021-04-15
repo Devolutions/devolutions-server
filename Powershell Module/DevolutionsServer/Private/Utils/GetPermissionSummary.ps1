@@ -3,31 +3,41 @@ function GetPermissionSummary {
         [Parameter(Mandatory)]
         [PSCustomObject]$entry,
         [string]$VaultName,
-        [string]$indent
+        [int]$Depth
     )
     $results = @()
     foreach ($sec in $entry.security) {
-        foreach ($view in $sec.ViewRoles) {
-            $results +=  [PSCustomObject]@{
-                Vault       = $vaultName
-                Indent      = $indent
-                Entry       = $entry.Name
-                IsOverride  = 0
-                Permission  = "View"
-                Principal   = $view
-            }
-        }
-        
-        foreach ($perm in $sec.Permissions) {
+
+        #some special objects are returned, only handle RBAC permissions
+        if ($sec.ViewRoles -is [system.array]) {
+
             $results += [PSCustomObject]@{
-                Vault       = $vaultName
-                Indent      = $indent
-                Entry       = $entry.Name
-                IsOverride  = $perm.override
-                Permission  = $perm.right
-                Principal   = $view
+                Vault      = $vaultName
+                Depth     = $Depth
+                Entry      = $entry.Name
+                IsOverride = [Devolutions.RemoteDesktopManager.SecurityRoleOverride]::Default
+                Permission = [Devolutions.RemoteDesktopManager.SecurityRoleRight]::View
+                Principal  = [string]::Join(', ', $sec.ViewRoles)
+            }
+
+        }
+
+        foreach ($perm in $sec.Permissions) {
+
+            #some special objects are returned, only handle RBAC permissions
+            if ($perm.roles -is [system.array]) {
+
+                $results += [PSCustomObject]@{
+                    Vault      = $vaultName
+                    Depth      = $Depth
+                    Entry      = $entry.Name
+                    IsOverride = [enum]::ToObject([Devolutions.RemoteDesktopManager.SecurityRoleOverride], $perm.override)
+                    Permission = [enum]::ToObject([Devolutions.RemoteDesktopManager.SecurityRoleRight], $perm.right)
+                    Principal  = [string]::Join(', ', $perm.roles)
+                }
             }
         }
     }
+
     return $results
 } 

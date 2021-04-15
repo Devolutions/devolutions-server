@@ -10,28 +10,26 @@
 ###########################################################################
 function ListPermissionsRecursive {
     Param (
-        [string]$Indent,
+        [int]$Depth = 0,
         [PSCustomObject]$Folder,
         [string]$VaultName
     )
     if (!@(26, 92) -Contains $folder.ConnectionType) {
         throw "assertion - not a folder"
     }
-    if ($null -eq $Indent) {
-        $Indent = ''
-    } 
 
     $results = @()
     # start by getting the folder's own permissions
     $innerRes = Get-DSEntry -EntryId $folder.id -IncludeAdvancedProperties
-    $results += GetPermissionSummary -entry $innerRes.body.data -Indent $Indent -VaultName $VaultName
-    $Indent += '  '
+    $results += GetPermissionSummary -entry $innerRes.body.data -Depth $Depth -VaultName $VaultName
+    $Depth++
     foreach ($entry in $folder.PartialConnections) {
         if ($entry.ConnectionType = 26) {
-            $results += ListPermissionsRecursive -indent $indent -Folder $entry -VaultName $VaultName
+            $results += ListPermissionsRecursive -Depth $Depth -Folder $entry -VaultName $VaultName
+        } else {
+            $innerRes = Get-DSEntry -EntryId $entry.id -IncludeAdvancedProperties
+            $results += GetPermissionSummary -entry $innerRes.body.data -Depth $Depth -VaultName $VaultName
         }
-        $innerRes = Get-DSEntry -EntryId $entry.id -IncludeAdvancedProperties
-        $results += GetPermissionSummary -entry $innerRes.body.data -Indent $Indent -VaultName $VaultName
     }
 
     return $results
