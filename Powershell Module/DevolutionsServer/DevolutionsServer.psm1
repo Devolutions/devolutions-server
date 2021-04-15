@@ -1,4 +1,3 @@
-
 $ModuleName = $(Get-Item $PSCommandPath).BaseName
 $Manifest = Import-PowerShellDataFile -Path $(Join-Path $PSScriptRoot "${ModuleName}.psd1")
 

@@ -29,12 +29,12 @@ Describe "Integration tests - these will pollute the backend" {
         }
 
         #local testing context
-        [string]$runSuffix = Get-Date -f MM_dd_HH_mm_ss
+        [string]$runSuffix = Get-Date -f MMdd_HHmmss
         [string]$testPassword = 'Pa$$w0rd!'
         #needed to share data across Pester contexts...
         $PamTemp = @{
             providerID  = ''
-            folderID    = ''
+            TFId        = ''
             accountID   = ''
             newPolicyID = ''
         }
@@ -57,6 +57,83 @@ Describe "Integration tests - these will pollute the backend" {
             }
         }
 
+        <#Custom users
+        Context "Custom users" {
+            It "should create new custom user" {
+                $newUserData = @{
+                    name                    = "Alexandre Martigny"
+                    password                = 'Pa$$w0rd'
+                    isChangePasswordAllowed = $false
+                    address                 = "1234 Rue du Cafe"
+                    cellPhone               = "123-456-7890"
+                    companyName             = "Devolutions"
+                    countryName             = "Canada"
+                    department              = "test"
+                    fax                     = "123-456-9876"
+                    firstName               = "Alex"
+                    jobTitle                = "test"
+                    userType                = 0
+                    userLicenseTypeMode     = 0
+                    authenticationType      = 0
+                }
+        
+                $res = New-DSCustomUser @newUserData -Verbose
+                $res.isSuccess | Should -be $true
+                $hash.newUserId = $res.Body.data.id
+                return $res
+            }
+        }
+        #>
+
+        <#Roles
+        Context 'Roles' {
+        It "should create new role" {
+            $newRoleData = @{
+                displayName      = "Test"
+                description      = "This is a test role"
+                canAdd           = $true
+                canDelete        = $false
+                offlineMode      = 3
+                allowDragAndDrop = $false
+            }
+
+            $res = New-DSRole @newRoleData -Verbose
+            $hash.newRoleId = $res.Body.data.id
+            $res.isSuccess | Should -be $true
+        }
+
+        It "should delete newly created role" {
+            $res = Delete-DSRole -roleId $hash.newRoleId -Verbose
+            $res.isSuccess | Should -be $true
+        }
+        
+        It "should get all user groups" {
+            $res = Get-DSRoles -Verbose
+            $res.isSuccess | Should -be $true
+        }
+        
+        It "should update role" {
+            $updatedRoleData = @{
+                candidRoleId     = $hash.newRoleId
+                description      = "Ceci est un update test"
+                displayName      = "It worked"
+                isAdministrator  = $false
+                canAdd           = $true
+                canEdit          = $true
+                canDelete        = $true
+                allowDragAndDrop = $true
+                canImport        = $true
+                canExport        = $true
+                offlineMode      = $true
+                denyAddInRoot    = $true
+            }
+
+            $res = Update-DSRole @updatedRoleData -Verbose
+            $res.isSuccess | Should -be $true
+        }
+    } 
+        #>
+        
         Context "Creating entries" {
             It "Should create a credential entry in the default vault" {
                 $credParams = @{
@@ -73,7 +150,6 @@ Describe "Integration tests - these will pollute the backend" {
         }
 
         Context "End to end PAM" {
-
             It "Should create new provider" {
                 $newProviderData = @{
                     ID             = [guid]::NewGuid()
@@ -86,20 +162,28 @@ Describe "Integration tests - these will pollute the backend" {
         
                 $res = New-DSPamProvider @newProviderData -Debug
 
-                #needed to share data across test contexts...
                 $PamTemp.providerID = $res.Body.id
                 $res.isSuccess | Should -be $true
             }
-            It "Should create new folder" {
+            
+            It "Should create new folder at root" {
                 $newFolderData = @{
-                    ID = $null #[guid]::NewGuid() the backend assumes too much...
-                    name     = "Pam Folder $runSuffix"
+                    name = "Pam Folder $runSuffix"
                 }
         
                 $res = New-DSPamTeamFolder @newFolderData -Debug
 
-                #needed to share data across test contexts...
-                $PamTemp.folderID = $res.Body.id
+                $PamTemp.TFId = $res.Body.id
+                $res.isSuccess | Should -be $true
+            }
+
+            It "Should create new folder in newly created folder" {
+                $newFolderData = @{
+                    name = "Pam Folder 2 $runSuffix"
+                }
+        
+                $res = New-DSPamTeamFolder @newFolderData -Debug
+                $PamTemp.TFId = $res.Body.id
                 $res.isSuccess | Should -be $true
             }
 
@@ -107,7 +191,7 @@ Describe "Integration tests - these will pollute the backend" {
                 $pamAccountParams = @{
                     credentialType    = 2
                     protectedDataType = 1
-                    folderID          = $PamTemp.folderID
+                    folderID          = $PamTemp.TFId
                     label             = "Pam account $runSuffix"
                     username          = -join ((97..122) | Get-Random -Count 8 | ForEach-Object { [char]$_ })
                     adminCredentialID = $PamTemp.providerID
@@ -116,35 +200,32 @@ Describe "Integration tests - these will pollute the backend" {
         
                 $res = New-DSPamAccount @pamAccountParams
 
-                #needed to share data across test contexts...
                 $PamTemp.accountID = $res.Body.id
                 $res.StandardizedStatusCode | Should -be 201
             }
 
             It "Should get PAM Accounts" {    
-                $res = Get-DSPamAccounts -folderID $PamTemp.folderID -Verbose
-                #TODO:Validate that the one we created is as expected
+                $res = Get-DSPamAccounts -folderID $PamTemp.TFId -Verbose
+                $res.StandardizedStatusCode | Should -be 200
                 $res.IsSuccess | Should -be $true
             }
 
             It "Should delete created PAM account" {
-
-                #needed to share data across test contexts...
                 $res = Remove-DSPamAccount -pamAccountID $PamTemp.accountID
-                #TODO:VALIDATE result http 204
+                $res.StandardizedStatusCode | Should -be 204
                 $res.isSuccess | Should -be $true
             }
 
             It "Should delete created folder" {
-
-                #needed to share data across test contexts...
-                $res = Remove-DSPamFolder $PamTemp.folderID -Verbose
-                #TODO:validate result http 204
+                $res = Remove-DSPamFolder $PamTemp.TFId -Verbose
+                $res.StandardizedStatusCode | Should -be 204
                 $res.isSuccess | Should -be $true
             }
 
             It "Should delete created provider" {
-                #TODO:Implement Remove-DSPamProvider
+                $res = Remove-DSPamProvider $PamTemp.providerID -Verbose
+                $res.StandardizedStatusCode | Should -be 204
+                $res.isSuccess | Should -be $true
             }
         }
 

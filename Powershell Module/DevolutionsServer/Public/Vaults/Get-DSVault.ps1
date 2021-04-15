@@ -1,7 +1,7 @@
-function Set-DSVaultsContext{
+function Get-DSVault{
     <#
     .SYNOPSIS
-    The Legacy API still has a "current" Vault in context.
+    
     .DESCRIPTION
     
     .EXAMPLE
@@ -11,16 +11,14 @@ function Set-DSVaultsContext{
     .LINK
     #>
         [CmdletBinding()]
-        [OutputType([ServerResponse])]
         param(			
-            [Parameter(Mandatory)]
-            [string]$vaultId
+            [ValidateNotNullOrEmpty()]
+            [string]$VaultID
         )
         
         BEGIN {
-            Write-Verbose '[Set-DSVaultsContext] begin...'
+            Write-Verbose '[Get-DSVault] begin...'
     
-            $URI = "$Script:DSBaseURI/api/security/vaults/change"
 
     		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{
@@ -29,22 +27,22 @@ function Set-DSVaultsContext{
         }
     
         PROCESS {
+            $URI = "$Script:DSBaseURI/api/security/vaults/$($VaultID)"
+
             try
             {   	
                 $params = @{
-                    Uri         = $URI
-                    Method      = 'PUT'
-                    Body = """$vaultId"""
+                    Uri = $URI
+                    Method = 'GET'
                 }
 
-                Write-Verbose "[Set-DSVaultsContext] about to call with $params.Uri"
+                Write-Verbose "[Get-DSVault] about to call with $($params.Uri)"
 
                 [ServerResponse] $response = Invoke-DS @params
 
                 if ($response.isSuccess)
                 { 
-                    $content = $response.originalResponse.Content | ConvertFrom-Json
-                    Write-Verbose "[Set-DSVaultsContext] $($content)"
+                    Write-Verbose "[Get-DSVault] Got $($response.Body.data)"
                 }
                 
                 If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
@@ -56,7 +54,6 @@ function Set-DSVaultsContext{
             catch
             {
                 $exc = $_.Exception
-                Write-Verbose '[Set-DSVaultsContext] Exception occurred ...'
                 If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
                         Write-Debug "[Exception] $exc"
                 } 
@@ -64,6 +61,10 @@ function Set-DSVaultsContext{
         }
     
         END {
-            Write-Verbose '[Set-DSVaultsContext] End'
+           If ($?) {
+              Write-Verbose '[Get-DSVault] Completed Successfully.'
+            } else {
+                Write-Verbose '[Get-DSVault] ended with errors...'
+            }
         }
     }

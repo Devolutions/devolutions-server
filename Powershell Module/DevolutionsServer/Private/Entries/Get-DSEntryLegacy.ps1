@@ -13,22 +13,28 @@ function Get-DSEntryLegacy{
         [CmdletBinding()]
         [OutputType([ServerResponse])]
         param(			
-            [Parameter(Mandatory)]
-            [string]$EntryId
+            [ValidateNotNullOrEmpty()]
+            [GUID]$EntryId,
+            [switch]$IncludeAdvancedProperties            
         )
         
         BEGIN {
             Write-Verbose '[Get-DSEntryLegacy] begin...'
-    
-            $URI = "$Script:DSBaseURI/api/Connections/partial/$($EntryId)"
 
-    		if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken))
+    		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{
 				throw "Session does not seem authenticated, call New-DSSession."
 			}
         }
     
         PROCESS {
+            if ($IncludeAdvancedProperties.IsPresent)
+            {
+                $URI = "$Script:DSBaseURI/api/Connections/partial/$($EntryId)/resolved-variables"
+            } else {
+                $URI = "$Script:DSBaseURI/api/Connections/partial/$($EntryId)"
+            }
+            $PSBoundParameters.Remove('IncludeAdvancedProperties') | out-null
             try
             {   
                 $params = @{

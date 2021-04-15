@@ -18,7 +18,7 @@ function New-DSRole {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
         [string]$displayName,
         [string]$description,
         [bool]$isAdministrator,
@@ -35,9 +35,8 @@ function New-DSRole {
     BEGIN {
         Write-Verbose '[New-DSRole] Begining...'
         $URI = "$Script:DSBaseURI/api/security/role/save?csToXml=1"
-        $isSuccess = $true
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
         }
 
@@ -77,12 +76,11 @@ function New-DSRole {
         }
 
         $res = Invoke-DS @params
-        $isSuccess = $res.isSuccess
         return $res
     }
 
     END {
-        If ($isSuccess) {
+        If ($res.isSuccess) {
             Write-Verbose '[New-DSRole] Completed Successfully.'
         }
         else {

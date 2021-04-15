@@ -1,4 +1,4 @@
-function Delete-DSRole {
+function Remove-DSRole {
     <#
     .SYNOPSIS
     Deletes a role
@@ -7,33 +7,32 @@ function Delete-DSRole {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)]
-        [string]$roleId
+        [ValidateNotNullOrEmpty()]
+        [guid]$roleId
     )
 
     BEGIN {
         Write-Verbose '[Delete-DSRole] Begining...'
-        $URI = "$Script:DSBaseURI/api/security/roleinfo/delete/$roleId"
-        $isSuccess = $true
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
         }
     }
 
     PROCESS {
+        $URI = "$Script:DSBaseURI/api/security/roleinfo/delete/$roleId"
+
         $params = @{
             Uri    = $URI
             Method = 'DELETE'
         }
 
         $res = Invoke-DS @params
-        $isSuccess = $res.isSuccess
         return $res
     }
 
     END {
-        If ($isSuccess) {
+        If ($res.isSuccess) {
             Write-Verbose '[Delete-DSRole] Completed Successfully.'
         }
         else {

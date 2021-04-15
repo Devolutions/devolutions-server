@@ -23,7 +23,7 @@ function New-DSPamCheckoutPolicy {
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
         [string]$name,
         [int]$checkoutApprovalMode,
         [int]$checkoutReasonMode,
@@ -39,7 +39,7 @@ function New-DSPamCheckoutPolicy {
         
         $URI = "$Script:DSBaseURI/api/pam/checkout-policies"
 
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken)) {
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
     }
@@ -101,7 +101,8 @@ function New-DSPamCheckoutPolicy {
                 Body   = $newCheckoutPolicyData | ConvertTo-Json
             }
 
-            return Invoke-DS @params
+            $res = Invoke-DS @params
+            return $res
         }
         catch {
             $exc = $_.Exception
@@ -112,7 +113,7 @@ function New-DSPamCheckoutPolicy {
     }
     
     END {
-        If ($?) {
+        If ($res.isSuccess) {
             Write-Verbose '[New-DSPamCheckoutPolicy] Completed Successfully.'
         }
         else {

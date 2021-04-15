@@ -1,7 +1,7 @@
-function Set-DSVaultsContext{
+function Get-DSEntriesTree{
     <#
     .SYNOPSIS
-    The Legacy API still has a "current" Vault in context.
+    
     .DESCRIPTION
     
     .EXAMPLE
@@ -14,14 +14,12 @@ function Set-DSVaultsContext{
         [OutputType([ServerResponse])]
         param(			
             [Parameter(Mandatory)]
-            [string]$vaultId
+            [string]$VaultId
         )
         
         BEGIN {
-            Write-Verbose '[Set-DSVaultsContext] begin...'
+            Write-Verbose '[Get-DSEntriesTree] begin...'
     
-            $URI = "$Script:DSBaseURI/api/security/vaults/change"
-
     		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{
 				throw "Session does not seem authenticated, call New-DSSession."
@@ -29,26 +27,30 @@ function Set-DSVaultsContext{
         }
     
         PROCESS {
+
+            $URI = "$Script:DSBaseURI/api/connections/partial/tree/$($VaultId)"
+
             try
-            {   	
+            {   
+                Set-DSVaultsContext $VaultId | out-null
+
                 $params = @{
-                    Uri         = $URI
-                    Method      = 'PUT'
-                    Body = """$vaultId"""
+                    Uri = $URI
+                    Method = 'GET'
+                    LegacyResponse = $true
                 }
 
-                Write-Verbose "[Set-DSVaultsContext] about to call with $params.Uri"
+                Write-Verbose "[Get-DSEntriesTree] about to call $Uri"
 
                 [ServerResponse] $response = Invoke-DS @params
 
-                if ($response.isSuccess)
+                if (!$response.isSuccess)
                 { 
-                    $content = $response.originalResponse.Content | ConvertFrom-Json
-                    Write-Verbose "[Set-DSVaultsContext] $($content)"
+                    Write-Verbose "[Get-DSEntriesTree] Got $($response)"
                 }
                 
                 If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
-                        Write-Debug "[Response.Body] $($response.Body)"
+                    Write-Debug "[Response.Body] $($response.Body)"
                 }
 
                 return $response
@@ -56,7 +58,6 @@ function Set-DSVaultsContext{
             catch
             {
                 $exc = $_.Exception
-                Write-Verbose '[Set-DSVaultsContext] Exception occurred ...'
                 If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
                         Write-Debug "[Exception] $exc"
                 } 
@@ -64,6 +65,6 @@ function Set-DSVaultsContext{
         }
     
         END {
-            Write-Verbose '[Set-DSVaultsContext] End'
+            Write-Verbose '[Get-DSEntriesTree] ...end'
         }
     }

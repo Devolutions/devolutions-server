@@ -27,7 +27,7 @@ function Get-DSVaultsModern{
     
             $URI = "$Script:DSBaseURI/api/v3/vaults"
 
-    		if ([string]::IsNullOrWhiteSpace($Script:DSSessionToken))
+    		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{
 				throw "Session does not seem authenticated, call New-DSSession."
 			}

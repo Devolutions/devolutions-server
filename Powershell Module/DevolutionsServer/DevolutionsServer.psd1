@@ -6,7 +6,7 @@
     RootModule             = 'DevolutionsServer.psm1'
     
     # Version number of this module.
-    ModuleVersion          = '2021.2.0'
+    ModuleVersion          = '2021.3.0'
 
     # Supported PSEditions
     CompatiblePSEditions   = 'Desktop', 'Core'
@@ -64,15 +64,15 @@
     
     FunctionsToExport      = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Protect-ResourceToHexString',
         'Get-DSSecureMessages',
-        'Get-DSVaults', 
-        'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData',  
+        'Get-DSVaults', 'Get-DSVault', 'Get-DSVaultPermissions', 
+        'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData', 'Get-DSEntriesTree', 'Get-DSFolder', 'Get-DSEntriesPermissions'
         'New-DSCredentialEntry', 
-        'Get-DSPamProviders', 'New-DSPamProvider', 
-        'Get-DSPamFolders', 'New-DSPamTeamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder', 
+        'Get-DSPamProviders', 'New-DSPamProvider', 'Remove-DSPamProvider', 'Update-DSPamProvider', 
+        'Get-DSPamFolders', 'Get-DSPamFolder', 'New-DSPamTeamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder', 
         'Get-DSPamAccounts', 'New-DSPamAccount', 'Remove-DSPamAccount', 
- #       'Get-DSPamCheckoutPolicies', 'New-DSPamCheckoutPolicy', 'Remove-DSPamCheckoutPolicy', 'Update-DSPamCheckoutPolicy',
-        'New-DSRole', 'Get-DSRoles', 'Update-DSRole', 'Delete-DSRole',
-        'New-DSCustomUser', 'Update-DSCustomUser', 'Delete-DSUser', 'Get-DSUsers')
+        #'Get-DSPamCheckoutPolicies', 'New-DSPamCheckoutPolicy', 'Remove-DSPamCheckoutPolicy', 'Update-DSPamCheckoutPolicy',
+        'New-DSRole', 'Get-DSRoles', 'Update-DSRole', 'Remove-DSRole',
+        'New-DSCustomUser', 'Update-DSCustomUser', 'Remove-DSUser', 'Get-DSUsers')
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport        = @()

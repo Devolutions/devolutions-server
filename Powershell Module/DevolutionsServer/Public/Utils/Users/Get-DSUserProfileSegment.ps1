@@ -27,9 +27,9 @@ function Get-DSUserProfileSegment {
                 address               = if ($address) { $address } else { "" }
                 cellPhone             = if ($cellPhone) { $cellPhone } else { "" }
                 companyName           = if ($companyName) { $companyName } else { "" }
-                countryCode           = "" #TODO
+                countryCode           = ""
                 countryName           = if ($countryName) { $countryName } else { "" }
-                culture               = "" #TODO
+                culture               = ""
                 department            = if ($department) { $department } else { "" }
                 fax                   = if ($fax) { $fax } else { "" }
                 firstName             = if ($firstName) { $firstName } else { "" }
