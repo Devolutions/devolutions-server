@@ -38,6 +38,8 @@ Describe "Integration tests - these will pollute the backend" {
             accountID   = ''
             newPolicyID = ''
         }
+
+        $Temp = @{}
     }
 
     AfterAll {
@@ -137,15 +139,27 @@ Describe "Integration tests - these will pollute the backend" {
         Context "Creating entries" {
             It "Should create a credential entry in the default vault" {
                 $credParams = @{
-                    VaultId   = ([guid]::Empty)
-                    EntryName = "rootlocal $runSuffix"
-                    Username  = "root $runSuffix"
-                    Password  = $testPassword
-                    Folder    = "Powershell rules $runSuffix"
+                    VaultId                                  = ([guid]::Empty)
+                    EntryName                                = "rootlocal $runSuffix"
+                    Username                                 = "root $runSuffix"
+                    Password                                 = $testPassword
+                    Folder                                   = "Powershell rules $runSuffix"
+                    credentialViewedCommentIsRequired        = $true
+                    credentialViewedPrompt                   = $true
+                    ticketNumberIsRequiredOnCredentialViewed = $true
+                    checkOutMode                             = "Not available"
+                    Description                              = "This is a description"
+                    Tags                                     = "1 2 3 4 5"
                 }
         
                 $res = New-DSCredentialEntry @credParams -Verbose -Debug
+                $Temp["credID"] = $res.Body.data.id
                 $res.IsSuccess | Should -Be $true
+            }
+
+            It "should delete newly created entry" {
+                $res = Remove-DSCredentialEntry -CandidEntryID $Temp.credID
+                $res.isSuccess | Should -be $true
             }
         }
 
@@ -173,16 +187,6 @@ Describe "Integration tests - these will pollute the backend" {
         
                 $res = New-DSPamTeamFolder @newFolderData -Debug
 
-                $PamTemp.TFId = $res.Body.id
-                $res.isSuccess | Should -be $true
-            }
-
-            It "Should create new folder in newly created folder" {
-                $newFolderData = @{
-                    name = "Pam Folder 2 $runSuffix"
-                }
-        
-                $res = New-DSPamTeamFolder @newFolderData -Debug
                 $PamTemp.TFId = $res.Body.id
                 $res.isSuccess | Should -be $true
             }

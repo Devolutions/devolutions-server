@@ -120,7 +120,7 @@ to be found.
                     #delete checkoutPolicy, for exemple, does NOT return "response.content.result". If code is 204, deletion was successful.
                     #TODO:Remove-DSPamProvider return a WebResponseObject, not a basic one....
 #                    return [ServerResponse]::new($true, $null, $null, $null, $null, 204)
-                    return [ServerResponse]::new($true, $null, $null, $null, $null, 204)
+                    return [ServerResponse]::new($true, $response, $null, $null, $null, 204)
                 }
                 else {
                     #Any unhandled response will end here.
