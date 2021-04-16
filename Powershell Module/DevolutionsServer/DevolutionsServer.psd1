@@ -66,7 +66,7 @@
         'Get-DSSecureMessages',
         'Get-DSVaults', 'Get-DSVault', 'Get-DSVaultPermissions', 
         'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData', 'Get-DSEntriesTree', 'Get-DSFolder', 'Get-DSEntriesPermissions'
-        'New-DSCredentialEntry', 'Remove-DSCredentialEntry' ,
+        'New-DSCredentialEntry', 'Remove-DSCredentialEntry' , 'Update-DSCredentialEntry'
         'Get-DSPamProviders', 'New-DSPamProvider', 'Remove-DSPamProvider', 'Update-DSPamProvider', 
         'Get-DSPamFolders', 'Get-DSPamFolder', 'New-DSPamTeamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder', 
         'Get-DSPamAccounts', 'New-DSPamAccount', 'Remove-DSPamAccount', 
