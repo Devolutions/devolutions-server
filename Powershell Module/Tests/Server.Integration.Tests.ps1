@@ -157,6 +157,20 @@ Describe "Integration tests - these will pollute the backend" {
                 $res.IsSuccess | Should -Be $true
             }
 
+            It "should update values for newly created entry" {
+                $baseCredValues = (Get-DSEntry -EntryId $Temp["credID"]).Body.data
+
+                $updatedCredParams = @{
+                    CandidEntryID = $Temp["credID"]
+                    name          = "rootlocalrenamed"
+                }
+    
+                $res = Update-DSCredentialEntry @updatedCredParams -Verbose
+                $baseCredValues.name -eq $res.Body.data.name | Should -be $false
+                $res.isSuccess | Should -be $true
+            }
+
+
             It "should delete newly created entry" {
                 $res = Remove-DSCredentialEntry -CandidEntryID $Temp.credID
                 $res.isSuccess | Should -be $true

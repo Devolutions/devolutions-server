@@ -5,16 +5,11 @@ function Update-DSCredentialEntry {
 
         #Base credential data
         [string]$name,
-        [string]$Username,
-        [string]$Password,
-        [string]$UserDomain,
-        [string]$Folder,
-        [string]$Description,
-        [string]$Tags,
-
-        #Security
-        [ValidateSet('Default', 'Not available', 'Automatic', 'Manual', 'Inherited', 'Optional')]
-        [string]$checkOutMode
+        [string]$username,
+        [string]$domain,
+        [string]$group,
+        [string]$description,
+        [string]$keywords
     )
 
     BEGIN {
