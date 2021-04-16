@@ -24,25 +24,29 @@ function Close-DSSession{
 			LegacyResponse = $true
 		}
 
-		$response = Invoke-DS @params
+		try {
+			$response = Invoke-DS @params
+		}
+		catch {
+			#if we have an exception doing the logoff, its better that clear the variables anyway...
+		}
 
-		Clear-Variable -Name DSBaseURI -Scope Script
-		Clear-Variable -Name DSKeyExp -Scope Script
-		Clear-Variable -Name DSKeyMod -Scope Script
-		Clear-Variable -Name DSSafeSessionKey -Scope Script
-		Clear-Variable -Name DSInstanceVersion -Scope Global
-		Clear-Variable -Name DSInstanceName -Scope Script
-		Clear-Variable -Name DSSessionToken -Scope Global
-		Clear-Variable -Name WebSession -Scope Global
+		#script scope
+		if ($Script:DSBaseURI) { try { Remove-Variable -Name DSBaseURI -Scope Script -Force } catch { } }
+		if ($Script:DSKeyExp) { try { Remove-Variable -Name DSKeyExp -Scope Script -Force } catch { } }
+		if ($Script:DSKeyMod) { try { Remove-Variable -Name DSKeyMod -Scope Script -Force } catch { } }
+		if ($Script:DSSafeSessionKey) { try { Remove-Variable -Name DSSafeSessionKey -Scope Script -Force } catch { } }
+		if ($Script:DSInstanceName) { try { Remove-Variable -Name DSInstanceName -Scope Script -Force } catch { } }
 
-		$response
+		#global scope
+		if ($Global:DSSessionToken) { try { Remove-Variable -Name DSSessionToken -Scope Global -Force } catch { } }
+		if ($Global:WebSession) { try { Remove-Variable -Name WebSession -Scope Global -Force } catch { } }
+		if ($Global:DSInstanceVersion) { try { Remove-Variable -Name DSInstanceVersion -Scope Global -Force } catch { } }
+
+		$response 
 	}
 
 	END {   
-		If ($?) {
-			Write-Verbose '[Close-DSSession] Completed Successfully.'
-	  	} else {
-			Write-Verbose '[Close-DSSession] ended with errors...'
-	  	}
+		Write-Verbose '[Close-DSSession] ...end'
 	}
 }

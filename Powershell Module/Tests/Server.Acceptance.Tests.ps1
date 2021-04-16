@@ -63,15 +63,19 @@ Describe NormalWorkflow {
 
         It "Should get the default Vault permissions - Applications" {
             $principals = [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'Applications')
+            Write-Debug $principals.Length
         }
         It "Should get the default Vault permissions - Users" {
             $principals =  [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'Users')
+            Write-Debug $principals.Length
         }
         It "Should get the default Vault permissions - Roles" {
             $principals =  [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'Roles') 
+            Write-Debug $principals.Length
         }
         It "Should get the default Vault permissions - All" {
             $principals =  [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'All') 
+            Write-Debug $principals.Length
         }
         
     } #context Vault endpoints
@@ -95,10 +99,10 @@ Describe NormalWorkflow {
         }
 
         BeforeAll {
-            $entries = $null
             $res = Get-DSEntries -VaultId ([guid]::Empty) 
             $res.IsSuccess | Should -Be $true
-            $entries = $res.body.data
+            $entries = [array]$res.body.data
+            write-debug $entries.Length
         }
     }
     

@@ -11,13 +11,29 @@
 # You could also customize certain variable below for managing the resulting
 # data.
 #
+# Running this script will generate a LOT database access as well as intensive
+# logging activity.  Ideally,
+#       1. Do NOT run this during normal hours
+#       2. Ensure you have used our auto-archiving feature for logs
+#
 ################################################################################
 #until we publish the module in the PSGallery we load it by path...
 $DSModulePath =  "..\DevolutionsServer"
 $OutputPath = $PSScriptRoot
 
 $VaultsSummaryFilename = "VaultsSummary.csv"
+$EntriesSummaryFilename = "EntriesSummary.csv"
+$indentSpace = 4
 ################################################################################
+$indentString = ''
+#----------------------------->>    Helpers
+function SetIndent($indent) {
+    $Script:IndentString = ' '.PadLeft($indent*$Script:indentSpace)
+}
+
+function WriteIndentedOutput($str) { 
+    write-output "$($Script:indentString)$($str)"
+}
 
 #----------------------------->>    Setup
 if (-Not(Test-Path env:DS_USER) -or -Not(Test-Path env:DS_PASSWORD)) {
@@ -43,16 +59,19 @@ $sess = New-DSSession -Credential $creds -BaseURI $dvlsURI
 if ($null -eq $sess.Body.data.tokenId) {
     throw "unable to authenticate"
 }
-
+$indent = 0
 Write-Output ""
 Write-Output "Generating permissions report..."
 
-#----------------------------->>    Vaults
-Write-Output "    Processing vaults"
+#----------------------------->>    Main
+Write-Output ""
+SetIndent($Indent++)
+WriteIndentedOutput "Processing vaults"
 $vaults = @()
 [int]$currentPage = 1
 [int]$totalPages = 1
 [int]$pageSize = 100
+#this loop will be moved inside the cmdlet code to reduce complexity for consumers of the module
 Do {
     $res = Get-DSVaults -PageNumber $currentPage -PageSize $pageSize 
     $totalPages = $res.Body.totalPage
@@ -62,20 +81,33 @@ Do {
 } while ($currentPage -lt $totalPages)
 #now that we have all vaults, we must get the assigned permissions by distinct Vaults
 $vaultsSummary = @()
+$EntriesSummary = @()
 foreach ($vault in $vaults) {
-    Write-Output "        Processing vault : $($vault.Name)"
+    SetIndent($Indent++)
+    WriteIndentedOutput "Processing vault : $($vault.Name)"
+
+    SetIndent($Indent++)
+    WriteIndentedOutput "... permissions"
     $principals = Get-DSVaultPermissions -VaultID $vault.ID -PrincipalTypes 'All' 
     $vaultsSummary += ($principals | Select-Object -Property @{Name = 'Vault'; Expression = {"$($vault.Name)"}}, Kind, Description, Name)
+    WriteIndentedOutput "... content"
+    $EntriesSummary += Get-DSEntriesPermissions -vaultId $vault.ID -vaultName $vault.Name
+
+    SetIndent($Indent--)
+
+    SetIndent($Indent--)
 }
-$vaultsSummary | Export-Csv -NoTypeInformation -UseCulture -Path (Join-Path -Path $OutputPath -ChildPath $VaultsSummaryFilename)
-
-#----------------------------->>    Root level folders
-
-#----------------------------->>    Intermediate folders
-
-#----------------------------->>    Entries
+Write-Output ""
+SetIndent($Indent--)
+$vfn = (Join-Path -Path $OutputPath -ChildPath $VaultsSummaryFilename)
+WriteIndentedOutput "Saving file $($vfn)"
+$vaultsSummary | Export-Csv -NoTypeInformation -UseCulture -Path $vfn
+$efn = (Join-Path -Path $OutputPath -ChildPath $EntriesSummaryFilename)
+WriteIndentedOutput "Saving file $($efn)"
+$EntriesSummary | Export-Csv -NoTypeInformation -UseCulture -Path $efn
 
 #----------------------------->>    Teardown
+Close-DSSession | out-null
+Write-Output ""
 Write-Output "...Done!"
 Write-Output ""
-Close-DSSession | out-null

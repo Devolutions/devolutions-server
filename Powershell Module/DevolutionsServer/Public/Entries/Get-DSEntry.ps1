@@ -10,11 +10,12 @@ function Get-DSEntry {
     
     .LINK
     #>
-    [CmdletBinding()]
-    param(			
-        [ValidateNotNullOrEmpty()]
-        [guid]$EntryId       
-    )
+        [CmdletBinding()]
+        param(			
+            [ValidateNotNullOrEmpty()]
+            [GUID]$EntryId,
+            [switch]$IncludeAdvancedProperties
+        )
         
     BEGIN {
         Write-Verbose '[Get-DSEntry] begin...'

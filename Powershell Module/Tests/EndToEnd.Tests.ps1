@@ -1,14 +1,20 @@
 BeforeAll {
     $modulePath = Resolve-Path -Path "..\DevolutionsServer"
     Import-Module -Name $modulePath -Verbose -Force
-    $dvlsURI = "http://localhost/dps"
 
+    
     if (-Not(Test-Path env:DS_USER) -or -Not(Test-Path env:DS_PASSWORD)) {
         throw "please initialize the credentials in the environment variables"  
     }
-      
+
+    if ([string]::IsNullOrEmpty($env:DS_URL)) {
+        throw "Please initialize DS_URL environement variable."
+    }
+          
     [string]$credUser = $env:DS_USER
     [string]$credPassword = $env:DS_PASSWORD
+    [string]$dvlsURI = $env:DS_URL
+
     [securestring]$secPassword = ConvertTo-SecureString $credPassword -AsPlainText -Force
     [pscredential]$creds = New-Object System.Management.Automation.PSCredential ($credUser, $secPassword)
 }

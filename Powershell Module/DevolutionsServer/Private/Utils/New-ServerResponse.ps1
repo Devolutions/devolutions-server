@@ -15,13 +15,17 @@ to be found.
     [OutputType([ServerResponse])]
     param(
         [Parameter(Mandatory)]
-        [Microsoft.PowerShell.Commands.WebResponseObject]$response,
+        $response,
         [Parameter(Mandatory)]
         [string]$method
     )
     PROCESS {
         $responseContentJson = $response.Content | ConvertFrom-Json
-        $HasResult = Get-Member -InputObject $responseContentJson -Name "result"
+        if ($null -eq $responseContentJson) {
+            $HasResult = $false
+        } else {
+            $HasResult = Get-Member -InputObject $responseContentJson -Name "result"
+        }
 
         if ($HasResult) {
             switch ($responseContentJson.result) {
@@ -44,7 +48,7 @@ to be found.
         switch ($method) {
             "GET" {
                 #patch
-                if (($null -ne $responseContentHash) -and ($HasResult)) {
+                if (($null -ne $responseContentJson) -and ($HasResult)) {
                     switch ($responseContentJson.result) {
                         ( [Devolutions.RemoteDesktopManager.SaveResult]::Error ) { 
                             return [ServerResponse]::new($false , $response, $null, $null, "TODO: Unhandled error.", 500) 
@@ -63,7 +67,7 @@ to be found.
                 }
                 else {
                     if ($response.StatusCode -eq 200) {
-                        if ($responseContentJson -ne $null) {
+                        if ($null -ne $responseContentJson) {
                             return [ServerResponse]::new($true , $response, $responseContentJson, $null, $null, $response.StatusCode)
                         }
                         else {
@@ -105,17 +109,18 @@ to be found.
             "DELETE" {
                 if (($null -ne $responseContentJson) -and ($HasResult)) {
                     #delete users, for exemple, returns "response.content.result", so we'll make use of that to detect errors and send back appropriate error message.
-                    if ($responseContentJson.result -eq 1) {
-                        return [ServerResponse]::new($true, $response, ($response.Content | ConvertFrom-JSon), $null, $null, 200)
+                    if ($responseContentJson.result -eq [Devolutions.RemoteDesktopManager.SaveResult]::Success) {
+                        return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, 200)
                     }
                     else {
                         return [ServerResponse]::new($false, $response, $responseContentJson, $null, $responseContentJson.errorMessage, 404)
                     }
                 }
                 elseif ($response.StatusCode -eq 204) {
-                    #Delete checkoutPolicy, for exemple, does NOT return "response.content.result". If code is 204, deletion was successful.
-                    return [ServerResponse]::new($true, $response, $null, $null, $null, 204)
-                    
+                    #delete checkoutPolicy, for exemple, does NOT return "response.content.result". If code is 204, deletion was successful.
+                    #TODO:Remove-DSPamProvider return a WebResponseObject, not a basic one....
+#                    return [ServerResponse]::new($true, $null, $null, $null, $null, 204)
+                    return [ServerResponse]::new($true, $null, $null, $null, $null, 204)
                 }
                 else {
                     #Any unhandled response will end here.

@@ -6,7 +6,7 @@
     RootModule             = 'DevolutionsServer.psm1'
     
     # Version number of this module.
-    ModuleVersion          = '2021.2.0'
+    ModuleVersion          = '2021.3.0'
 
     # Supported PSEditions
     CompatiblePSEditions   = 'Desktop', 'Core'
@@ -65,7 +65,7 @@
     FunctionsToExport      = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Protect-ResourceToHexString',
         'Get-DSSecureMessages',
         'Get-DSVaults', 'Get-DSVault', 'Get-DSVaultPermissions', 
-        'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData',  
+        'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData', 'Get-DSEntriesTree', 'Get-DSFolder', 'Get-DSEntriesPermissions'
         'New-DSCredentialEntry', 
         'Get-DSPamProviders', 'New-DSPamProvider', 'Remove-DSPamProvider', 'Update-DSPamProvider', 
         'Get-DSPamFolders', 'Get-DSPamFolder', 'New-DSPamTeamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder', 

@@ -1,4 +1,4 @@
-function Get-DSEntryLegacy{
+function Get-DSEntriesTree{
     <#
     .SYNOPSIS
     
@@ -13,14 +13,13 @@ function Get-DSEntryLegacy{
         [CmdletBinding()]
         [OutputType([ServerResponse])]
         param(			
-            [ValidateNotNullOrEmpty()]
-            [GUID]$EntryId,
-            [switch]$IncludeAdvancedProperties            
+            [Parameter(Mandatory)]
+            [string]$VaultId
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSEntryLegacy] begin...'
-
+            Write-Verbose '[Get-DSEntriesTree] begin...'
+    
     		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{
 				throw "Session does not seem authenticated, call New-DSSession."
@@ -28,32 +27,30 @@ function Get-DSEntryLegacy{
         }
     
         PROCESS {
-            if ($IncludeAdvancedProperties.IsPresent)
-            {
-                $URI = "$Script:DSBaseURI/api/Connections/partial/$($EntryId)/resolved-variables"
-            } else {
-                $URI = "$Script:DSBaseURI/api/Connections/partial/$($EntryId)"
-            }
-            $PSBoundParameters.Remove('IncludeAdvancedProperties') | out-null
+
+            $URI = "$Script:DSBaseURI/api/connections/partial/tree/$($VaultId)"
+
             try
             {   
+                Set-DSVaultsContext $VaultId | out-null
+
                 $params = @{
                     Uri = $URI
                     Method = 'GET'
                     LegacyResponse = $true
                 }
 
-                Write-Verbose "[Get-DSEntryLegacy] about to call $Uri"
+                Write-Verbose "[Get-DSEntriesTree] about to call $Uri"
 
                 [ServerResponse] $response = Invoke-DS @params
 
-                if ($response.isSuccess)
+                if (!$response.isSuccess)
                 { 
-                    Write-Verbose "[Get-DSEntryLegacy] Got $($response.Body.Length)"
+                    Write-Verbose "[Get-DSEntriesTree] Got $($response)"
                 }
                 
                 If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
-                        Write-Debug "[Response.Body] $($response.Body)"
+                    Write-Debug "[Response.Body] $($response.Body)"
                 }
 
                 return $response
@@ -68,10 +65,6 @@ function Get-DSEntryLegacy{
         }
     
         END {
-           If ($?) {
-                Write-Verbose '[Get-DSEntryLegacy] Completed Successfully.'
-            } else {
-                Write-Verbose '[Get-DSEntryLegacy] ended with errors...'
-            }
+            Write-Verbose '[Get-DSEntriesTree] ...end'
         }
     }

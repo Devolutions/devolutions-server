@@ -24,14 +24,16 @@ function Get-DSEntrySensitiveData {
     
     PROCESS {
         try {        
-            if (($LegacyRequested) -or (Confirm-DSServerVersionAtLeast -CandidVersion "2020.3.17")) {
+#            if (($LegacyRequested) -or (Confirm-DSServerVersionAtLeast -CandidVersion "2020.3.17")) {
+            if (Confirm-DSServerVersionAtLeast -CandidVersion "2020.3.17") {
                 [ServerResponse]$response = Get-DSEntrySensitiveDataLegacy @PSBoundParameters
-                return $response
             }
             else {
                 #TODO Get-DSEntrySensitiveDataModern ?
                 throw [System.Exception]::new("Retreiving entries's sensitive data is supported only for DVLS v2020.3.17 and later. Please consider updating your DVLS instance.")
             }
+
+            return $response
         }
         catch {
             $Exception = $_.Exception
