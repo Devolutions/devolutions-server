@@ -1,5 +1,5 @@
-function Get-DSServerInfo{
-<#
+function Get-DSServerInfo {
+	<#
 .SYNOPSIS
 
 .DESCRIPTION
@@ -18,15 +18,13 @@ This endpoint does not require authentication.
 	)
 	
 	BEGIN {
-        Write-Verbose '[Get-DSServerInfo] begin...'
+		Write-Verbose '[Get-DSServerInfo] begin...'
 
 		<# 
 		We can call the api repeatedly, even after we've established the session.  We must close the existing session only if we change the URI
 		 #>
-		if ($Script:DSBaseURI -ne $BaseURI)
-		{
-			if ($Global:DSSessionToken)
-			{
+		if ($Script:DSBaseURI -ne $BaseURI) {
+			if ($Global:DSSessionToken) {
 				throw "Session already established, Close it before switching servers."
 			}
 		}
@@ -37,17 +35,17 @@ This endpoint does not require authentication.
 
 	PROCESS {
 
-		try
-		{
+		try {
 			$response = Invoke-WebRequest -URI $URI -Method 'GET' #-SessionVariable Global:WebSession
+			$resContentJson = $response.Content | ConvertFrom-Json
 
-			If ($null -ne $response) {
+			If (($null -ne $resContentJson) -and ($null -eq $resContentJson.errorMessage)) {
 				$jsonContent = $response.Content | ConvertFrom-JSon
 	
 				Write-Verbose "[Get-DSServerInfo] Got response from ""$($jsonContent.data.servername)"""
 				
 				If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
-						Write-Debug "[Response.Data] $($jsonContent)"
+					Write-Debug "[Response.Data] $($jsonContent)"
 				}
 				
 				$publickey_mod = $jsonContent.data.publicKey.modulus
@@ -67,22 +65,24 @@ This endpoint does not require authentication.
 
 				return [ServerResponse]::new(($response.StatusCode -eq 200), $response, $jsonContent, $null, "", $response.StatusCode)
 			}
-			return [ServerResponse]::new(($false), $null, $null, $null, "", 500)	
+			else {
+				throw [Exception]::new("Could not connect to database. Make sure your database is running and you have the right credentials in DVLS Console.")
+			}
 		}
-		catch
-		{
+		catch {
 			$exc = $_.Exception
-			If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
-					Write-Debug "[Exception] $exc"
+			If ([System.Management.Automation.ActionPreference]::Break -ne $DebugPreference) {
+				Write-Debug "[Exception] $exc"
 			} 
 		}
 	}
 
 	END {
-	   If ($?) {
-          Write-Verbose '[Get-DSServerInfo] Completed Successfully.'
-        } else {
-	        Write-Verbose '[Get-DSServerInfo] ended with errors...'
+		If ($?) {
+			Write-Verbose '[Get-DSServerInfo] Completed Successfully.'
+		}
+		else {
+			Write-Verbose '[Get-DSServerInfo] ended with errors...'
 		}
 	}
 }
