@@ -29,7 +29,7 @@ function Get-DSPamProviders {
             $params = @{
                 Uri            = $URI
                 Method         = 'GET'
-                LegacyResponse = $true
+                #LegacyResponse = $true
             }
 
             Write-Verbose "[Get-DSPamProviders] about to call with $params.Uri"
