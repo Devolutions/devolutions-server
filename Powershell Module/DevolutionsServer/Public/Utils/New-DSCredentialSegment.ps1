@@ -1,4 +1,4 @@
-function New-DSCredentialSegment{
+function New-DSCredentialSegment {
     <#
     .SYNOPSIS
         Returns the a SensitiveData object which is needed to handle safe transfer of credentials
@@ -8,33 +8,35 @@ function New-DSCredentialSegment{
         [string]$Username,
         [string]$Password,
         [string]$UserDomain,
-        [string]$MnemonicPassword
+        [string]$MnemonicPassword,
+        [bool]$PromptForPassword
     )
 
-    <# {
-} #>
-    $escapedPassword = EscapeForJSon $Password
-    $SensitiveData = @{
-        allowClipboard = $false
-        credentialConnectionId = ""
-        pamCredentialId = ""
-        pamCredentialName = ""
-        credentialMode = 0
-        userName =  $Username
-        mnemonicPassword = $MnemonicPassword
-        promptForPassword = $false
-        domain = $UserDomain
-        passwordItem = @{
-            hasSensitiveData = -not [string]::IsNullOrEmpty($escapedPassword)
-            sensitiveData = $escapedPassword
+    PROCESS {
+        $escapedPassword = EscapeForJSon $Password
+        
+        $SensitiveData = @{
+            allowClipboard         = $false
+            credentialConnectionId = ""
+            pamCredentialId        = ""
+            pamCredentialName      = ""
+            credentialMode         = 0
+            userName               = $Username
+            mnemonicPassword       = $MnemonicPassword
+            promptForPassword      = $PromptForPassword
+            domain                 = $UserDomain
+            passwordItem           = @{
+                hasSensitiveData = -not [string]::IsNullOrEmpty($escapedPassword)
+                sensitiveData    = $escapedPassword
+            }
+            credentials            = @{
+                domain   = $UserDomain
+                password = $escapedPassword
+                username = $Username
+                status   = 0
+            }
         }
-        credentials = @{
-            domain = $UserDomain
-            password = $escapedPassword
-            username = $Username
-            status = 0
-        }
+    
+        return $SensitiveData
     }
-
-    return ($SensitiveData)
 }
