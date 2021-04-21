@@ -14,7 +14,7 @@ function New-DSEntry {
         [ValidateNotNullOrEmpty()]
         [Devolutions.RemoteDesktopManager.ConnectionType]$ConnectionType,
         [ValidateNotNullOrEmpty()]
-        [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]$CredentialSubType = [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default,
+        [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]$ConnectionSubType = [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default,
     
         #Base credential data
         [ValidateNotNullOrEmpty()]

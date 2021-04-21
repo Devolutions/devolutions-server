@@ -6,7 +6,7 @@ function Confirm-PrivateKey {
     )
 
     BEGIN {
-        Write-Verbose '[]'
+        Write-Verbose '[Confirm-PrivateKey] Begining...'
         
         $URI = "$Env:DS_URL/api/private-key/upload"
 
@@ -38,10 +38,20 @@ function Confirm-PrivateKey {
 
         $res = Invoke-DS @RequestParams
 
+        #FIXME Maybe this isn't right and we should decrypt data instead, but the decrypt cmdlet is supposed to be legacy. Check with Maurice
         if ($res.Body.result -eq [Devolutions.RemoteDesktopManager.SaveResult]::Success) {
-           $res.Body | Add-Member -NotePropertyName 'privateKeyData' -NotePropertyValue $FileContent
+            $res.Body | Add-Member -NotePropertyName 'privateKeyData' -NotePropertyValue $FileContent
         }
 
         return $res
+    }
+
+    END {
+        if ($res.isSuccess) {
+            Write-Verbose "[Confirm-PrivateKey] Completed successfully!"
+        }
+        else {
+            Write-Verbose "[Confirm-PrivateKey] Ended with errors..."
+        }
     }
 }

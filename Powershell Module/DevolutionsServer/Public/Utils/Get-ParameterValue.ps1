@@ -31,19 +31,20 @@ function Get-ParameterValues {
     $BoundParameters = Get-Variable -Scope 1 -Name PSBoundParameters -ValueOnly
     
     $ParameterValues = @{}
-    foreach($parameter in $Invocation.MyCommand.Parameters.GetEnumerator()) {
+    foreach ($parameter in $Invocation.MyCommand.Parameters.GetEnumerator()) {
         # gm -in $parameter.Value | Out-Default
         try {
             $key = $parameter.Key
-            if($null -ne ($value = Get-Variable -Name $key -ValueOnly -ErrorAction Ignore)) {
-                if(($value -ne ($null -as $parameter.Value.ParameterType)) -or $parameter.Value.ParameterType -eq [System.Boolean]) {
+            if ($null -ne ($value = Get-Variable -Name $key -ValueOnly -ErrorAction Ignore)) {
+                if (($value -ne ($null -as $parameter.Value.ParameterType)) -or $parameter.Value.ParameterType -eq [System.Boolean]) {
                     $ParameterValues[$key] = $value
                 }
             }
-            if($BoundParameters.ContainsKey($key)) {
+            if ($BoundParameters.ContainsKey($key)) {
                 $ParameterValues[$key] = $BoundParameters[$key]
             }
-        } finally {}
+        }
+        finally {}
     }
     $ParameterValues
-  }
+}

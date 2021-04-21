@@ -28,19 +28,23 @@ function New-DSCredentialEntry {
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
-
-        if ($ParamList.CredentialSubType -notin $SupportedSubType) {
-            throw "Credential of type $($ParamList.CredentialSubType) are not supported yet."
-        }
     }
 
     PROCESS {
         try {
-            #Validate vault's existance
-            $VaultCtx = Set-DSVaultsContext $ParamList.VaultID
+            if ($ParamList.ConnectionSubType -notin $SupportedSubType) {
+                throw "Credential of type $($ParamList.ConnectionSubType) are not supported yet."
+            }
 
-            if ($VaultCtx.Body.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) { 
+            #Validate if vault exists
+            if ((Set-DSVaultsContext $ParamList.VaultID).Body.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) { 
                 throw [System.Management.Automation.ItemNotFoundException]::new("Vault could not be found. Please make sure you provide a valid vault ID.") 
+            } 
+            
+            #Validate private key
+            $PrivateKeyCtx = Confirm-PrivateKey $ParamList.PrivateKeyPath
+            if (![string]::IsNullOrEmpty($ParamList.PrivateKeyPath) -and $PrivateKeyCtx.Body.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) { 
+                throw [System.Management.Automation.ItemNotFoundException]::new("Private key could not be parsed. Please make sure you provide a valid .ppk file.") 
             }  
 
             #Get base segment for credentials
@@ -67,6 +71,8 @@ function New-DSCredentialEntry {
                 connectionType = 26
                 repositoryID   = $ParamList.VaultID
                 name           = $ParamList.EntryName
+                privateKeyData = if ($PrivateKeyCtx.isSuccess) { $PrivateKeyCtx.Body.privateKeyData } else { $null }
+                privateKeyType = if ($PrivateKeyCtx.isSuccess) { $ParamList.PrivateKeyType } else { $null }
             }
             $EncryptedEntryData = Protect-ResourceToHexString ($EntryData | ConvertTo-Json)
 
@@ -74,7 +80,7 @@ function New-DSCredentialEntry {
                 checkOutMode      = $ParamList.CheckoutMode
                 group             = $Folder
                 connectionType    = 26
-                connectionSubType = [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::$ParamList.connectionSubType
+                connectionSubType = $ParamList.ConnectionSubType.ToString()
                 data              = $EncryptedEntryData
                 repositoryId      = $ParamList.VaultID
                 name              = $ParamList.EntryName
@@ -95,11 +101,16 @@ function New-DSCredentialEntry {
         }
         catch {
             $Exception = $_.Exception
-            Write-Host
         }
     }
 
     END {
-
+        if ($res.isSuccess) {
+            Write-Verbose "[New-DSCredentialEntry] Completed successfully!"
+        }
+        else {
+            Write-Verbose "[New-DSCredentialEntry] Ended with errors..."
+            Write-Error $Exception.Message
+        }
     } 
 }

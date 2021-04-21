@@ -23,7 +23,8 @@ to be found.
         $responseContentJson = $response.Content | ConvertFrom-Json
         if ($null -eq $responseContentJson) {
             $HasResult = $false
-        } else {
+        }
+        else {
             $HasResult = Get-Member -InputObject $responseContentJson -Name "result"
         }
 
@@ -91,6 +92,9 @@ to be found.
                         ([Devolutions.RemoteDesktopManager.SaveResult]::NotFound) {
                             return [ServerResponse]::new($false, $response, $responseContentJson, $null, "Resource could not be found. Please make sure you are using an existing ID.", 404)
                         }
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::InvalidData) {
+                            return [ServerResponse]::new($false, $response, $responseContentJson, $null, "The data you submitted was invalid. Please refer to the CMDlet help section for guidance.", 200)
+                        }
                         Default {
                             return [ServerResponse]::new($false, $response, $responseContentJson, $null, "[POST] Unhandled error. If you see this, please contact your system administrator for help.", $response.StatusCode)
                         }
@@ -119,7 +123,7 @@ to be found.
                 elseif ($response.StatusCode -eq 204) {
                     #delete checkoutPolicy, for exemple, does NOT return "response.content.result". If code is 204, deletion was successful.
                     #TODO:Remove-DSPamProvider return a WebResponseObject, not a basic one....
-#                    return [ServerResponse]::new($true, $null, $null, $null, $null, 204)
+                    #                    return [ServerResponse]::new($true, $null, $null, $null, $null, 204)
                     return [ServerResponse]::new($true, $response, $null, $null, $null, 204)
                 }
                 else {
