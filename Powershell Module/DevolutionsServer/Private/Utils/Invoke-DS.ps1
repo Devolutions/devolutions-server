@@ -20,6 +20,8 @@ function Invoke-DS {
         [Parameter(Mandatory)]
         [string]$URI,
 
+        [string]$ContentType = 'application/json',
+
         [string]$body,
 
         [switch]$LegacyResponse
@@ -31,9 +33,9 @@ function Invoke-DS {
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
-        
+
         $PSBoundParameters.Add("WebSession", $Global:WebSession)
-        $PSBoundParameters.Add("ContentType", 'application/json')
+        if (!($PSBoundParameters.ContainsKey('ContentType'))) { $PSBoundParameters.Add("ContentType", $ContentType) }
         $PSBoundParameters.Remove('LegacyResponse') | out-null
     }
 
