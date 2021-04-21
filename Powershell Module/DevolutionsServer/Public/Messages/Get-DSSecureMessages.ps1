@@ -44,7 +44,7 @@ function Get-DSSecureMessages{
                 }
 
                 foreach ($item in $response.Body.data) {
-                    $decryptedinfo = Decrypt-String $Script:DSSessionKey $item.JsonData
+                    $decryptedinfo = Decrypt-String $Global:DSSessionKey $item.JsonData
                     $item.JsonData = $decryptedinfo
                 }
                 

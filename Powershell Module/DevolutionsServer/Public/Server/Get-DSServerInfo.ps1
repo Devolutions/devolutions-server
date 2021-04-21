@@ -55,7 +55,7 @@ This endpoint does not require authentication.
 				Set-Variable -Name DSBaseURI -Value $BaseURI -Scope Script
 				Set-Variable -Name DSKeyExp -Value $publickey_exp -Scope Script
 				Set-Variable -Name DSKeyMod -Value $publickey_mod -Scope Script
-				Set-Variable -Name DSSessionKey -Value $session_Key -Scope Script
+				Set-Variable -Name DSSessionKey -Value $session_Key -Scope Global
 				Set-Variable -Name DSSafeSessionKey -Value $safeSessionKey -Scope Script
 				Set-Variable -Name DSInstanceVersion -Value $instanceVersion -Scope Global
 				Set-Variable -Name DSInstanceName -Value $jsonContent.data.serverName -Scope Script

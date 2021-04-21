@@ -1,5 +1,5 @@
-function Close-DSSession{
-<#
+function Close-DSSession {
+	<#
 .SYNOPSIS
 
 .DESCRIPTION
@@ -19,8 +19,8 @@ function Close-DSSession{
 	PROCESS {
 
 		$params = @{
-			Uri = $URI
-			Method = 'GET'
+			Uri            = $URI
+			Method         = 'GET'
 			LegacyResponse = $true
 		}
 
@@ -39,6 +39,7 @@ function Close-DSSession{
 		if ($Script:DSInstanceName) { try { Remove-Variable -Name DSInstanceName -Scope Script -Force } catch { } }
 
 		#global scope
+		if ($Global:DSSessionKey) {	try { Remove-Variable -Name DSSessionKey -Scope Global -Force } catch { } }
 		if ($Global:DSSessionToken) { try { Remove-Variable -Name DSSessionToken -Scope Global -Force } catch { } }
 		if ($Global:WebSession) { try { Remove-Variable -Name WebSession -Scope Global -Force } catch { } }
 		if ($Global:DSInstanceVersion) { try { Remove-Variable -Name DSInstanceVersion -Scope Global -Force } catch { } }
