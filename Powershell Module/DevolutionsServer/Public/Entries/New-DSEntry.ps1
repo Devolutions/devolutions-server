@@ -34,9 +34,9 @@ function New-DSEntry {
         [string]$Expiration, #ISO-8601 format (yyyy-mm-ddThh:mm:ss.000Z)
 
         #Events
-        [bool]$CredentialViewedCommentIsRequired = $false,
-        [bool]$CredentialViewedPrompt = $false,
-        [bool]$TicketNumberIsRequiredOnCredentialViewed = $false,
+        [bool]$CredentialViewedCommentIsRequired = $False,
+        [bool]$CredentialViewedPrompt = $False,
+        [bool]$TicketNumberIsRequiredOnCredentialViewed = $False,
 
         #Security
         [Devolutions.RemoteDesktopManager.CheckOutMode]$CheckoutMode = [Devolutions.RemoteDesktopManager.CheckOutMode]::Default,
@@ -44,7 +44,8 @@ function New-DSEntry {
 
         #PrivateKey specifics...
         [ValidateSet('NoKey', 'Data')]
-        [Devolutions.RemoteDesktopManager.PrivateKeyType]$PrivateKeyType = [Devolutions.RemoteDesktopManager.PrivateKeyType]::Data
+        [Devolutions.RemoteDesktopManager.PrivateKeyType]$PrivateKeyType = [Devolutions.RemoteDesktopManager.PrivateKeyType]::Data,
+        [string]$PrivateKeyPath
     )
 
     BEGIN {
@@ -57,17 +58,10 @@ function New-DSEntry {
 
     PROCESS {
         try {
-            if (!($PSBoundParameters.ContainsKey("VaultID"))) { $PSBoundParameters.Add("VaultID", $VaultID) }
-            
-            if (!($PSBoundParameters.ContainsKey("CredentialViewedCommentIsRequired"))) { $PSBoundParameters.Add("CredentialViewedCommentIsRequired", $CredentialViewedCommentIsRequired) }
-            if (!($PSBoundParameters.ContainsKey("CredentialViewedPrompt"))) { $PSBoundParameters.Add("CredentialViewedPrompt", $CredentialViewedPrompt) }
-            if (!($PSBoundParameters.ContainsKey("TicketNumberIsRequiredOnCredentialViewed"))) { $PSBoundParameters.Add("TicketNumberIsRequiredOnCredentialViewed", $TicketNumberIsRequiredOnCredentialViewed) }
-            
-            if (!($PSBoundParameters.ContainsKey("CheckoutMode"))) { $PSBoundParameters.Add("CheckoutMode", $CheckoutMode) }
-            if (!($PSBoundParameters.ContainsKey("AllowOffline"))) { $PSBoundParameters.Add("AllowOffline", $AllowOffline) }
+            $Parameters = Get-ParameterValues
             
             $res = switch ($ConnectionType) {
-                ([Devolutions.RemoteDesktopManager.ConnectionType]::Credential) { New-DSCredentialEntry -ParamList $PSBoundParameters; break }
+                ([Devolutions.RemoteDesktopManager.ConnectionType]::Credential) { New-DSCredentialEntry -ParamList $Parameters; break }
                 Default { throw "Connection of type $ConnectionType are not supported yet." }
             }
 

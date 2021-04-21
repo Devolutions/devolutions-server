@@ -15,7 +15,7 @@ function New-DSCredentialEventsSegment {
         openCommentPrompt                        = $false
         openCommentPromptOnBrowserExtensionLink  = $false
         ticketNumberIsRequiredOnClose            = $false
-        ticketNumberIsRequiredOnCredentialViewed = $TicketNumberIsRequiredOnCredentialViewed
+        TicketNumberIsRequiredOnCredentialViewed = $TicketNumberIsRequiredOnCredentialViewed
         ticketNumberIsRequiredOnOpen             = $false
         warnIfAlreadyOpened                      = $false
     }
