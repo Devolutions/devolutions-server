@@ -5,7 +5,11 @@ function Update-DSCredentialEntry {
     )
     
     BEGIN {
-        
+        Write-Verbose "[Update-DSCredentialEntry] Begining..."
+
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
+            throw "Session does not seem authenticated, call New-DSSession."
+        }
     }
     
     PROCESS {
@@ -13,9 +17,9 @@ function Update-DSCredentialEntry {
         $EntrySensitiveData = (Get-DSEntrySensitiveData $CandidEntryID).Body.data | ConvertFrom-Json
 
         switch ($EntryResolvedVariables.connectionSubType) {
-            ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default) {  }
-            ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::PrivateKey) { PrivateKey $ParamList $EntryResolvedVariables $EntrySensitiveData }
-            Default {}
+            ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default) { Update-UsernamePassword $ParamList $EntryResolvedVariables $EntrySensitiveData }
+            ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::PrivateKey) { Update-PrivateKey $ParamList $EntryResolvedVariables $EntrySensitiveData }
+            Default { throw "Credential $($EntryResolvedVariables.connectionSubType) not supported." }
         }
 
         $RequestParams = @{
@@ -29,18 +33,81 @@ function Update-DSCredentialEntry {
     }
     
     END {
-        
+        if ($? -and $res.isSuccess) {
+            Write-Verbose "[Update-DSCredentialEntry] Completed successfully!"
+        }
+        else {
+            Write-Verbose "[Update-DSCredentialEntry] Ended with errors..."
+        }
     }
 }
 
-function UsernamePassword {
+function Update-UsernamePassword {
     PARAM (
-        
+        [hashtable]$ParamList,
+        $EntryResolvedVariables,
+        $EntrySensitiveData
     )
-    
+    $ISORegex = "/^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/g"
+
+    foreach ($Param in $ParamList.GetEnumerator()) {
+        switch ($Param.Key) {
+            "EntryName" {
+                if ($Param.Value -ne $EntryResolvedVariables.name) { $EntryResolvedVariables.name = $Param.Value }
+            }
+            "Folder" { if ($Param.Value -ne $EntryResolvedVariables.group) { $EntryResolvedVariables.group = $Param.Value } }
+            "Username" { 
+                if ($Param.Value -ne $EntryResolvedVariables.data.userName) { $EntryResolvedVariables.data.userName = $Param.Value }
+            }
+            "Domain" {
+                if ($Param.Value -ne $EntryResolvedVariables.data.domain) { $EntryResolvedVariables.data.domain = $Param.Value }
+            }
+            "Password" {
+                if ($Param.Value -ne $EntryResolvedVariables.data.passwordItem) { @{"hasSensitiveData" = $True; "sensitiveData" = $Param.Value } | Out-Null }
+            }
+            "PromptForPassword" { 
+                if ("promptForPassword" -in $EntryResolvedVariables.data.PSObject.Properties.Name) {
+                    $EntryResolvedVariables.data.promptForPassword = $Param.Value
+                }
+                else {
+                    $EntryResolvedVariables.data | Add-Member -NotePropertyName "promptForPassword" -NotePropertyValue $Param.Value
+                }
+            }
+            "MnemonicPassword" {
+                if ($Param.Value -ne $EntryResolvedVariables.data.mnemonicPassword) { $EntryResolvedVariables.data.mnemonicPassword = $Param.Value }
+            }
+
+            "Description" {
+                if ($Param.Value -ne $EntryResolvedVariables.description) {
+                    $EntryResolvedVariables.description = $param.Value
+                } 
+            }
+            "Tags" { 
+                if ($Param.Value -ne $EntryResolvedVariables.keywords) {
+                    $EntryResolvedVariables.keywords = $Param.Value
+                }
+            }
+            "Expiration" {
+                if (($Param.Value -ne $EntryResolvedVariables.expiration) -and $Param.Value -match $ISORegex) {
+                    $EntryResolvedVariables.description = $param.Value
+                }  
+            }
+
+            "CredentialViewedCommentIsRequired" {
+                if ("credentialViewedCommentIsRequired" -in $EntryResolvedVariables.events.PSObject.Properties.Name) { $EntryResolvedVariables.events.credentialViewedCommentIsRequired = $Param.Value }
+            }
+            "CredentialViewedPrompt" {
+                if ("credentialViewedPrompt" -in $EntryResolvedVariables.events.PSObject.Properties.Name) { $EntryResolvedVariables.events.credentialViewedPrompt = $Param.Value }
+            }
+            "TicketNumberIsRequiredOnCredentialViewed" {
+                if ("ticketNumberIsRequiredOnCredentialViewed" -in $EntryResolvedVariables.events.PSObject.Properties.Name) { $EntryResolvedVariables.events.ticketNumberIsRequiredOnCredentialViewed = $Param.Value }
+            }
+            Default {}
+        }
+    }
 }
 
-function PrivateKey {
+function Update-PrivateKey {
     <#
         .NOTES
         Missing Tags, Expiration, CheckoutMode and AllowOffline

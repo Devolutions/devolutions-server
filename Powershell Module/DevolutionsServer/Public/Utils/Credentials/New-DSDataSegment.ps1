@@ -15,8 +15,8 @@ function New-DSDataSegment {
         $ParamList.Add("EscapedPassword", (EscapeForJSon $ParamList.Password))
         
         $data = switch ($ParamList.ConnectionSubType) {
-            ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default) { UsernamePassword $ParamList; break; }
-            ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::PrivateKey) { PrivateKey $ParamList; break; }
+            ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default) { New-UsernamePassword $ParamList; break; }
+            ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::PrivateKey) { New-PrivateKey $ParamList; break; }
             Default { $null }
         }
 
@@ -24,7 +24,7 @@ function New-DSDataSegment {
     }
 }
 
-function UsernamePassword {
+function New-UsernamePassword {
     PARAM ( $ParamList )
     
     $data = @{
@@ -44,7 +44,7 @@ function UsernamePassword {
     return $data
 }
 
-function PrivateKey {
+function New-PrivateKey {
     PARAM ( $ParamList )
     
     $data = @{

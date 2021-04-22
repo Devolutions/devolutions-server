@@ -54,10 +54,12 @@ function Update-DSEntry {
                 throw [System.Management.Automation.ItemNotFoundException]::new("Provided entry couldn't be found. Make sure you are using a valid entry ID.")
             }
 
-            switch ($EntryCtx.Body.data.connectionType) {
-                ([Devolutions.RemoteDesktopManager.ConnectionType]::Credential.value__) { Update-DSCredentialEntry -ParamList $Parameters}
+            $res = switch ($EntryCtx.Body.data.connectionType) {
+                ([Devolutions.RemoteDesktopManager.ConnectionType]::Credential.value__) { Update-DSCredentialEntry -ParamList $Parameters }
                 Default { throw "Entries of type $EntryData.connectionType are not supported yet." }
             }
+
+            return $res
         }
         catch {
             $Exception = $_.Exception
