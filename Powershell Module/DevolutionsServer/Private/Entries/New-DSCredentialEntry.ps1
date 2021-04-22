@@ -10,7 +10,6 @@ function New-DSCredentialEntry {
     #>
 
     PARAM (
-        #test
         $ParamList
     )
 
@@ -40,48 +39,29 @@ function New-DSCredentialEntry {
             if ((Set-DSVaultsContext $ParamList.VaultID).Body.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) { 
                 throw [System.Management.Automation.ItemNotFoundException]::new("Vault could not be found. Please make sure you provide a valid vault ID.") 
             } 
-            
-            #Validate private key
-            $PrivateKeyCtx = Confirm-PrivateKey $ParamList.PrivateKeyPath
-            if (![string]::IsNullOrEmpty($ParamList.PrivateKeyPath) -and $PrivateKeyCtx.Body.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) { 
-                throw [System.Management.Automation.ItemNotFoundException]::new("Private key could not be parsed. Please make sure you provide a valid .ppk file.") 
+
+            #Validate private key, if path was provided
+            if (![string]::IsNullOrEmpty($ParamList.PrivateKeyPath)) { 
+                $PrivateKeyCtx = Confirm-PrivateKey $ParamList.PrivateKeyPath
+                if ($PrivateKeyCtx.Body.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) {
+                    throw [System.Management.Automation.ItemNotFoundException]::new("Private key could not be parsed. Please make sure you provide a valid .ppk file.") 
+                }
+                $ParamList.Add("PrivateKeyCtx", $PrivateKeyCtx)
             }  
 
-            #Get base segment for credentials
-            $CredentialSegmentData = @{
-                Username          = $ParamList.Username
-                Password          = $ParamList.Password
-                UserDomain        = $ParamList.Domain
-                MnemonicPassword  = $ParamList.MnemonicPassword
-                PromptForPassword = $ParamList.PromptForPassword
-            }
-            $CredentialSegment = New-DSCredentialSegment @CredentialSegmentData
+            #Get the encrypted data, such as username/password/privatekey content/passphrase/etc...
+            $EncryptedDataSegment = New-DSDataSegment $ParamList
 
-            #Get "events" (log) segment
-            $EventsSegmentData = @{
-                CredentialViewedCommentIsRequired        = $ParamList.CredentialViewedCommentIsRequired
-                CredentialViewedPrompt                   = $ParamList.CredentialViewedPrompt
-                TicketNumberIsRequiredOnCredentialViewed = $ParamList.TicketNumberIsRequiredOnCredentialViewed
-            }
-            $EventsSegment = New-DSCredentialEventsSegment @EventsSegmentData
-  
-            #Prepare data for encryption
-            $EntryData = $CredentialSegment + @{
-                group          = $ParamList.Folder
-                connectionType = 26
-                repositoryID   = $ParamList.VaultID
-                name           = $ParamList.EntryName
-                privateKeyData = if ($PrivateKeyCtx.isSuccess) { $PrivateKeyCtx.Body.privateKeyData } else { $null }
-                privateKeyType = if ($PrivateKeyCtx.isSuccess) { $ParamList.PrivateKeyType } else { $null }
-            }
-            $EncryptedEntryData = Protect-ResourceToHexString ($EntryData | ConvertTo-Json)
+            #Get "events" segment
+            $EventsSegment = New-DSCredentialEventsSegment $ParamList
 
+            #Prepare request body (parts of partialConnection object)
             $CredentialBody = @{
                 checkOutMode      = $ParamList.CheckoutMode
                 group             = $Folder
                 connectionType    = 26
                 connectionSubType = $ParamList.ConnectionSubType.ToString()
-                data              = $EncryptedEntryData
+                data              = $EncryptedDataSegment
                 repositoryId      = $ParamList.VaultID
                 name              = $ParamList.EntryName
                 events            = $EventsSegment

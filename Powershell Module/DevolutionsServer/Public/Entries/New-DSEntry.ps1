@@ -45,7 +45,9 @@ function New-DSEntry {
         #PrivateKey specifics...
         [ValidateSet('NoKey', 'Data')]
         [Devolutions.RemoteDesktopManager.PrivateKeyType]$PrivateKeyType = [Devolutions.RemoteDesktopManager.PrivateKeyType]::Data,
-        [string]$PrivateKeyPath
+        [string]$PrivateKeyPath,
+        [string]$PrivateKeyPassphrase,
+        [bool]$PromptForPassphrase
     )
 
     BEGIN {
@@ -62,7 +64,7 @@ function New-DSEntry {
             
             $res = switch ($ConnectionType) {
                 ([Devolutions.RemoteDesktopManager.ConnectionType]::Credential) { New-DSCredentialEntry -ParamList $Parameters; break }
-                Default { throw "Connection of type $ConnectionType are not supported yet." }
+                Default { throw "Entries of type $ConnectionType are not supported yet." }
             }
 
             return $res

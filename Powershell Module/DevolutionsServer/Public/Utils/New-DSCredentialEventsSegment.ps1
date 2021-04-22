@@ -1,21 +1,19 @@
 function New-DSCredentialEventsSegment {
     [CmdletBinding()]
     param(
-        [bool]$CredentialViewedCommentIsRequired,
-        [bool]$CredentialViewedPrompt,
-        [bool]$TicketNumberIsRequiredOnCredentialViewed
+        $ParamList
     )
 
     $EventsSegment = @{
         closeCommentIsRequired                   = $false
         closeCommentPrompt                       = $false
-        credentialViewedCommentIsRequired        = $CredentialViewedCommentIsRequired
-        credentialViewedPrompt                   = $CredentialViewedPrompt
+        credentialViewedCommentIsRequired        = $ParamList.CredentialViewedCommentIsRequired
+        credentialViewedPrompt                   = $ParamList.CredentialViewedPrompt
         openCommentIsRequired                    = $false
         openCommentPrompt                        = $false
         openCommentPromptOnBrowserExtensionLink  = $false
         ticketNumberIsRequiredOnClose            = $false
-        TicketNumberIsRequiredOnCredentialViewed = $TicketNumberIsRequiredOnCredentialViewed
+        TicketNumberIsRequiredOnCredentialViewed = $ParamList.TicketNumberIsRequiredOnCredentialViewed
         ticketNumberIsRequiredOnOpen             = $false
         warnIfAlreadyOpened                      = $false
     }
