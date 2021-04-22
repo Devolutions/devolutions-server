@@ -8,7 +8,7 @@ function New-DSDataSegment {
     #>
     [CmdletBinding()]
     PARAM(
-        $ParamList
+        [hashtable]$ParamList
     )
 
     PROCESS {

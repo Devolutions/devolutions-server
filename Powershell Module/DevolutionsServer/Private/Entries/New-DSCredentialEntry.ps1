@@ -10,14 +10,14 @@ function New-DSCredentialEntry {
     #>
 
     PARAM (
-        $ParamList
+        [hashtable]$ParamList
     )
 
     BEGIN {
         Write-Verbose '[New-DSEntry] Begining...'
 
         $URI = "$Script:DSBaseURI/api/connections/partial/save"
-        $Method = "PUT"
+        $Method = "POST"
     
         $SupportedSubType = @(
             [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default,

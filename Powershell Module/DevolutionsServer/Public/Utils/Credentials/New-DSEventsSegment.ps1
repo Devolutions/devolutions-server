@@ -1,7 +1,7 @@
 function New-DSCredentialEventsSegment {
     [CmdletBinding()]
     param(
-        $ParamList
+        [hashtable]$ParamList
     )
 
     $EventsSegment = @{

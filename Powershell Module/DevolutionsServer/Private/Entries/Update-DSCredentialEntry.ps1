@@ -1,0 +1,114 @@
+function Update-DSCredentialEntry {
+    [CmdletBinding()]
+    PARAM (
+        [hashtable]$ParamList
+    )
+    
+    BEGIN {
+        
+    }
+    
+    PROCESS {
+        $EntryResolvedVariables = (Get-DSEntry -EntryId $CandidEntryID -IncludeAdvancedProperties).Body.data
+        $EntrySensitiveData = (Get-DSEntrySensitiveData $CandidEntryID).Body.data | ConvertFrom-Json
+
+        switch ($EntryResolvedVariables.connectionSubType) {
+            ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default) {  }
+            ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::PrivateKey) { PrivateKey $ParamList $EntryResolvedVariables $EntrySensitiveData }
+            Default {}
+        }
+
+        $RequestParams = @{
+            Uri    = "http://localhost/dps/api/connections/partial/save"
+            Method = "PUT"
+            Body   = $EntryResolvedVariables | ConvertTo-Json
+        }
+
+        $res = Invoke-DS @RequestParams -Verbose
+        return $res
+    }
+    
+    END {
+        
+    }
+}
+
+function UsernamePassword {
+    PARAM (
+        
+    )
+    
+}
+
+function PrivateKey {
+    <#
+        .NOTES
+        Missing Tags, Expiration, CheckoutMode and AllowOffline
+    #>
+    PARAM (
+        [hashtable]$ParamList,
+        $EntryResolvedVariables,
+        $EntrySensitiveData
+    )
+    
+    #Validate private key, if path was provided. If it exists, replace current ppk data with new ppk data
+    if (![string]::IsNullOrEmpty($ParamList.PrivateKeyPath)) { 
+        $PrivateKeyCtx = Confirm-PrivateKey $ParamList.PrivateKeyPath
+
+        if ($PrivateKeyCtx.Body.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) {
+            throw [System.Management.Automation.ItemNotFoundException]::new("Private key could not be parsed. Please make sure you provide a valid .ppk file.") 
+        }
+
+        $EntryResolvedVariables.data.privateKeyData = $PrivateKeyCtx.Body.privateKeyData
+    }
+
+    foreach ($Param in $ParamList.GetEnumerator()) {
+        switch ($Param.Key) {
+            "Username" {
+                $EntryResolvedVariables.userName = $Param.Value
+                if ($Param.Value -ne $EntryResolvedVariables.data.privateKeyOverrideUsername) { $EntryResolvedVariables.data.privateKeyOverrideUsername = $Param.Value }
+            }
+            "Password" { 
+                if ($Param.Value -ne $EntrySensitiveData.privateKeyOverridePasswordItem.sensitiveData) { $EntryResolvedVariables.data.privateKeyOverridePasswordItem = @{"hasSensitiveData" = $true; "sensitiveData" = $Param.Value } }
+            }
+            "PrivateKeyPassphrase" {
+                if ($Param.Value -ne $EntrySensitiveData.privateKeyPassPhraseItem.sensitiveData) { $EntryResolvedVariables.data.privateKeyOverridePasswordItem = @{"hasSensitiveData" = $true; "sensitiveData" = $Param.Value } }
+            }
+            "PromptForPassphrase" {
+                if ("privateKeyPromptForPassPhrase" -in $EntryResolvedVariables.data.PSObject.Properties.Name) { $EntryResolvedVariables.data.privateKeyPromptForPassPhrase = $Param.Value }
+                else { $EntryResolvedVariables.data | Add-Member -NotePropertyName "privateKeyPromptForPassPhrase" -NotePropertyValue $Param.Value }
+            }
+            "PrivateKeyType" {
+                if ($Param.Value.value__ -ne $EntryResolvedVariables.data.privateKeyType) { $EntryResolvedVariables.data.privateKeyType = $Param.Value.value__ }
+            }
+
+            "VaultID" {
+                if ($Param.Value -ne $EntryResolvedVariables.repositoryId) { $EntryResolvedVariables.repositoryId = $Param.Value }
+            }
+            "Folder" {
+                if ($Param.Value -ne $EntryResolvedVariables.group) { $EntryResolvedVariables.group = $Param.Value }
+            }
+            "EntryName" {
+                if ($Param.Value -ne $EntryResolvedVariables.name) { $EntryResolvedVariables.name = $Param.Value }
+            }
+
+            "CredentialViewedCommentIsRequired" {
+                if ("credentialViewedCommentIsRequired" -in $EntryResolvedVariables.events.PSObject.Properties.Name) { $EntryResolvedVariables.events.credentialViewedCommentIsRequired = $Param.Value }
+            }
+            "CredentialViewedPrompt" {
+                if ("credentialViewedPrompt" -in $EntryResolvedVariables.events.PSObject.Properties.Name) { $EntryResolvedVariables.events.credentialViewedPrompt = $Param.Value }
+            }
+            "TicketNumberIsRequiredOnCredentialViewed" {
+                if ("ticketNumberIsRequiredOnCredentialViewed" -in $EntryResolvedVariables.events.PSObject.Properties.Name) { $EntryResolvedVariables.events.ticketNumberIsRequiredOnCredentialViewed = $Param.Value }
+            }
+
+            Default { 
+                if (($Param.Key -in $EntryResolvedVariables.PSObject.Properties.Name) -and ($Param.Value -ne $EntryResolvedVariables.($Param.Key))) { 
+                    $EntryResolvedVariables.($Param.Key) = $Param.Value 
+                }
+            }
+        }
+    }
+
+    $EntryResolvedVariables.data = Protect-ResourceToHexString ($EntryResolvedVariables.data | ConvertTo-Json)
+}
