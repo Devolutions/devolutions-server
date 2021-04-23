@@ -35,8 +35,9 @@ This endpoint does not require authentication.
 
 		try {
 			$response = Invoke-WebRequest -URI $URI -Method 'GET' #-SessionVariable Global:WebSession
+			$resContentJson = $response.Content | ConvertFrom-Json
 
-			If ($null -ne $response) {
+			If (($null -ne $resContentJson) -and ($null -eq $resContentJson.errorMessage)) {
 				$jsonContent = $response.Content | ConvertFrom-JSon
 	
 				Write-Verbose "[Get-DSServerInfo] Got response from ""$($jsonContent.data.servername)"""
@@ -62,7 +63,9 @@ This endpoint does not require authentication.
 
 				return [ServerResponse]::new(($response.StatusCode -eq 200), $response, $jsonContent, $null, "", $response.StatusCode)
 			}
-			return [ServerResponse]::new(($false), $null, $null, $null, "", 500)	
+			else {
+				throw [Exception]::new("Could not connect to database. Make sure your database is running and you have the right credentials in DVLS Console.")
+			}
 		}
 		catch {
 			$exc = $_.Exception
