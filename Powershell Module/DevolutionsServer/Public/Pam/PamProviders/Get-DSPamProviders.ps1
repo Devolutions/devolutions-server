@@ -50,7 +50,7 @@ function Get-DSPamProviders {
     }
     
     END {
-        If ($res.isSuccess) {
+        If ($response.isSuccess) {
             Write-Verbose '[Get-DSPamProviders] Completed Successfully.'
         }
         else {
