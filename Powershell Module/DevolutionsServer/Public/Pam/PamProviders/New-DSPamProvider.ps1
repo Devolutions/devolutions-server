@@ -34,17 +34,10 @@ function New-DSPamProvider {
     
     PROCESS {
         try {
-            [int] $credentialTypeValue
-            switch ( $credentialType ) {
-                'LocalUser' {
-                    $credentialTypeValue = 2
-                }
-                'DomainUser' {
-                    $credentialTypeValue = 3
-                }
-                'SqlServer' {
-                    $credentialTypeValue = 5
-                }
+            $credentialTypeValue = switch ( $credentialType ) {
+                'LocalUser' { 2; break }
+                'DomainUser' { 3; break }
+                'SqlServer' { 5; break }
             }
 
             $newProviderData = @{
