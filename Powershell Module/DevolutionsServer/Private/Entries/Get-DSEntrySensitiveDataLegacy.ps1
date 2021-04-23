@@ -51,7 +51,7 @@ function Get-DSEntrySensitiveDataLegacy {
                 return $response
             }
 
-            $decryptedinfo = Decrypt-String $Script:DSSessionKey $response.Body.Data
+            $decryptedinfo = Decrypt-String $Global:DSSessionKey $response.Body.Data
             $response.Body.data = $decryptedinfo
             
             return $response

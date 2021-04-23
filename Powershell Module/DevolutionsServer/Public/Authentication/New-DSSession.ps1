@@ -1,5 +1,5 @@
 function New-DSSession {
-<#
+	<#
 .SYNOPSIS
 Establishes a session with a Devolutions Server
 
@@ -15,30 +15,26 @@ Establishes a session with a Devolutions Server
 		[PSCredential]$Credentials,
 		[parameter(Mandatory)]
 		[string]$BaseURI
-)
+	)
 
 	BEGIN { 
-        Write-Verbose '[New-DSSession] begin...'
+		Write-Verbose '[New-DSSession] begin...'
 
-		if ($Script:DSBaseURI -ne $BaseURI)
-		{
-			if ($Global:DSSessionToken)
-			{
+		if ($Script:DSBaseURI -ne $BaseURI) {
+			if ($Global:DSSessionToken) {
 				throw "Session already established, Close it before switching servers."
 			}
 		}
 
 		#Get-ServerInfo must be called to get encryption keys...
-		if ([string]::IsNullOrWhiteSpace($Script:DSSessionKey))
-		{
+		if ([string]::IsNullOrWhiteSpace($Global:DSSessionKey)) {
 			$info = Get-DSServerInfo -BaseURI $BaseURI
-			if ($false -eq $info.IsSuccess)
-			{
+			if ($false -eq $info.IsSuccess) {
 				throw "Unable to get server information"
 			}
 		}
 
-		$URI = "$Script:DSBaseURI/api/login/partial"
+		$URI = "$Env:DS_URL/api/login/partial"
 	
 	}
 
@@ -47,14 +43,14 @@ Establishes a session with a Devolutions Server
 		$safePassword = Protect-ResourceToHexString $Credentials.GetNetworkCredential().Password
 
 		$Body = @{
-			userName = $Credentials.UserName
+			userName            = $Credentials.UserName
 			RDMOLoginParameters = @{
-				SafePassword = $safePassword
-				SafeSessionKey = $Script:DSSafeSessionKey
-				Client = 'Scripting'
-				Version = $MyInvocation.MyCommand.Module.Version.ToString()
+				SafePassword     = $safePassword
+				SafeSessionKey   = $Script:DSSafeSessionKey
+				Client           = 'Scripting'
+				Version          = $MyInvocation.MyCommand.Module.Version.ToString()
 				LocalMachineName = [Environment]::MachineName
-				LocalUserName = [Environment]::UserName
+				LocalUserName    = [Environment]::UserName
 			}
 		}
 		
@@ -66,7 +62,7 @@ Establishes a session with a Devolutions Server
 			Write-Verbose "[New-DSSession] Connected to ""$($jsonContent.data.serverInfo.servername)"""
 
 			If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
-					Write-Debug "[Response.Data] $($jsonContent.data)"
+				Write-Debug "[Response.Data] $($jsonContent.data)"
 			}
 
 			Set-Variable -Name DSSessionToken -Value $jsonContent.data.tokenId -Scope Global
@@ -81,7 +77,8 @@ Establishes a session with a Devolutions Server
 	END { 
 		if ($?) {
 			Write-Verbose '[New-DSSession ] Completed Successfully.'
-		} else {
+		}
+		else {
 			Write-Verbose '[New-DSSession ] ended with errors...'
 		}
 	}

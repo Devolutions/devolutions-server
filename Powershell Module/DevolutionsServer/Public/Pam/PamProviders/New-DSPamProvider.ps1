@@ -73,7 +73,6 @@ function New-DSPamProvider {
                 Write-Debug "[Exception] $exc"
             } 
         }
-        
     }
     
     END {

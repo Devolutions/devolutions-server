@@ -7,7 +7,7 @@ Describe "Integration tests - these will pollute the backend" {
         
     BeforeAll {
         $modulePath = Resolve-Path -Path "..\DevolutionsServer"
-        Import-Module -Name $modulePath -Verbose -Force
+        Import-Module -Name $modulePath -Force
         
         if (-Not(Test-Path env:DS_USER) -or -Not(Test-Path env:DS_PASSWORD)) {
             throw "please initialize the credentials in the environment variables"  
@@ -23,7 +23,7 @@ Describe "Integration tests - these will pollute the backend" {
         [securestring]$secPassword = ConvertTo-SecureString $credPassword -AsPlainText -Force
         [pscredential]$creds = New-Object System.Management.Automation.PSCredential ($credUser, $secPassword)
 
-        $sess = New-DSSession -Credential $creds -BaseURI $dvlsURI -Verbose
+        $sess = New-DSSession -Credential $creds -BaseURI $dvlsURI
         if ($null -eq $sess.Body.data.tokenId) {
             throw "unable to authenticate"
         }
@@ -38,21 +38,23 @@ Describe "Integration tests - these will pollute the backend" {
             accountID   = ''
             newPolicyID = ''
         }
+
+        $Temp = @{}
     }
 
     AfterAll {
-        $res = Close-DSSession -Verbose
+        $res = Close-DSSession
         $res.IsSuccess | Should -Be $true
     }
 
     Describe NormalWorkflow {
         Context "Connecting to server" {
             It "Should get server information" {
-                $res = Get-DSServerInfo -BaseURI $dvlsURI -Verbose
+                $res = Get-DSServerInfo -BaseURI $dvlsURI
                 $res.Body.data.version | Should -Not -BeNullOrEmpty
             }
             It "Should authenticate" {
-                $res = New-DSSession -Credential $creds -BaseURI $dvlsURI -Verbose
+                $res = New-DSSession -Credential $creds -BaseURI $dvlsURI
                 $res.IsSuccess | Should -Be $true
             }
         }
@@ -77,7 +79,7 @@ Describe "Integration tests - these will pollute the backend" {
                     authenticationType      = 0
                 }
         
-                $res = New-DSCustomUser @newUserData -Verbose
+                $res = New-DSCustomUser @newUserData
                 $res.isSuccess | Should -be $true
                 $hash.newUserId = $res.Body.data.id
                 return $res
@@ -97,18 +99,18 @@ Describe "Integration tests - these will pollute the backend" {
                 allowDragAndDrop = $false
             }
 
-            $res = New-DSRole @newRoleData -Verbose
+            $res = New-DSRole @newRoleData
             $hash.newRoleId = $res.Body.data.id
             $res.isSuccess | Should -be $true
         }
 
         It "should delete newly created role" {
-            $res = Delete-DSRole -roleId $hash.newRoleId -Verbose
+            $res = Delete-DSRole -roleId $hash.newRoleId
             $res.isSuccess | Should -be $true
         }
         
         It "should get all user groups" {
-            $res = Get-DSRoles -Verbose
+            $res = Get-DSRoles
             $res.isSuccess | Should -be $true
         }
         
@@ -128,7 +130,7 @@ Describe "Integration tests - these will pollute the backend" {
                 denyAddInRoot    = $true
             }
 
-            $res = Update-DSRole @updatedRoleData -Verbose
+            $res = Update-DSRole @updatedRoleData
             $res.isSuccess | Should -be $true
         }
     } 
@@ -137,15 +139,50 @@ Describe "Integration tests - these will pollute the backend" {
         Context "Creating entries" {
             It "Should create a credential entry in the default vault" {
                 $credParams = @{
-                    VaultId   = ([guid]::Empty)
-                    EntryName = "rootlocal $runSuffix"
-                    Username  = "root $runSuffix"
-                    Password  = $testPassword
-                    Folder    = "Powershell rules $runSuffix"
+                    ConnectionType                           = [Devolutions.RemoteDesktopManager.ConnectionType]::Credential
+                    VaultId                                  = ([guid]::Empty)
+                    EntryName                                = "rootlocal $runSuffix"
+                    Username                                 = "root $runSuffix"
+                    Password                                 = $testPassword
+                    Folder                                   = "Powershell rules $runSuffix"
+                    credentialViewedCommentIsRequired        = $true
+                    credentialViewedPrompt                   = $true
+                    ticketNumberIsRequiredOnCredentialViewed = $true
+                    checkOutMode                             = "Default"
+                    Description                              = "This is a description"
+                    Tags                                     = "1 2 3 4 5"
                 }
         
-                $res = New-DSCredentialEntry @credParams -Verbose -Debug
+                $res = New-DSEntry @credParams
+                $Temp["credID"] = $res.Body.data.id
                 $res.IsSuccess | Should -Be $true
+            }
+
+            It "should update values for newly created entry" {
+                $credParams = @{
+                    CandidEntryID                            = $Temp.credID
+                    VaultId                                  = ([guid]::Empty)
+                    EntryName                                = "updated"
+                    Username                                 = "root $runSuffix"
+                    Password                                 = $testPassword
+                    Folder                                   = "Powershell rules $runSuffix"
+                    credentialViewedCommentIsRequired        = $true
+                    credentialViewedPrompt                   = $true
+                    ticketNumberIsRequiredOnCredentialViewed = $true
+                    checkOutMode                             = "Default"
+                    Description                              = "This is a description"
+                    Tags                                     = "1 2 3 4 5"
+                }
+    
+                $res = Update-DSEntry @credParams
+                $res.Body.data.name | Should -be "updated"
+                $res.isSuccess | Should -be $true
+            }
+
+
+            It "should delete newly created entry" {
+                $res = Remove-DSEntry -CandidEntryID $Temp.credID
+                $res.isSuccess | Should -be $true
             }
         }
 
@@ -160,7 +197,7 @@ Describe "Integration tests - these will pollute the backend" {
                     username       = -join ((97..122) | Get-Random -Count 8 | ForEach-Object { [char]$_ })
                 }
         
-                $res = New-DSPamProvider @newProviderData -Debug
+                $res = New-DSPamProvider @newProviderData #-Debug
 
                 $PamTemp.providerID = $res.Body.id
                 $res.isSuccess | Should -be $true
@@ -173,16 +210,6 @@ Describe "Integration tests - these will pollute the backend" {
         
                 $res = New-DSPamTeamFolder @newFolderData -Debug
 
-                $PamTemp.TFId = $res.Body.id
-                $res.isSuccess | Should -be $true
-            }
-
-            It "Should create new folder in newly created folder" {
-                $newFolderData = @{
-                    name = "Pam Folder 2 $runSuffix"
-                }
-        
-                $res = New-DSPamTeamFolder @newFolderData -Debug
                 $PamTemp.TFId = $res.Body.id
                 $res.isSuccess | Should -be $true
             }
@@ -202,10 +229,11 @@ Describe "Integration tests - these will pollute the backend" {
 
                 $PamTemp.accountID = $res.Body.id
                 $res.StandardizedStatusCode | Should -be 201
+                $res.isSuccess | Should -be $true
             }
 
             It "Should get PAM Accounts" {    
-                $res = Get-DSPamAccounts -folderID $PamTemp.TFId -Verbose
+                $res = Get-DSPamAccounts -folderID $PamTemp.TFId
                 $res.StandardizedStatusCode | Should -be 200
                 $res.IsSuccess | Should -be $true
             }
@@ -217,13 +245,13 @@ Describe "Integration tests - these will pollute the backend" {
             }
 
             It "Should delete created folder" {
-                $res = Remove-DSPamFolder $PamTemp.TFId -Verbose
+                $res = Remove-DSPamFolder $PamTemp.TFId
                 $res.StandardizedStatusCode | Should -be 204
                 $res.isSuccess | Should -be $true
             }
 
             It "Should delete created provider" {
-                $res = Remove-DSPamProvider $PamTemp.providerID -Verbose
+                $res = Remove-DSPamProvider $PamTemp.providerID
                 $res.StandardizedStatusCode | Should -be 204
                 $res.isSuccess | Should -be $true
             }

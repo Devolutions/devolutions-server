@@ -18,11 +18,9 @@ This endpoint does not require authentication.
 	)
 	
 	BEGIN {
-		Write-Verbose '[Get-DSServerInfo] begin...'
+		Write-Verbose '[Get-DSServerInfo] Begin...'
 
-		<# 
-		We can call the api repeatedly, even after we've established the session.  We must close the existing session only if we change the URI
-		 #>
+		#We can call the api repeatedly, even after we've established the session.  We must close the existing session only if we change the URI
 		if ($Script:DSBaseURI -ne $BaseURI) {
 			if ($Global:DSSessionToken) {
 				throw "Session already established, Close it before switching servers."
@@ -30,7 +28,7 @@ This endpoint does not require authentication.
 		}
 
 		#only time we use baseURI as provided, we will set variable only upon success
-		$URI = "$BaseURI/api/server-information"
+		$URI = "$env:DS_URL/api/server-information"
 	}
 
 	PROCESS {
@@ -58,7 +56,7 @@ This endpoint does not require authentication.
 				Set-Variable -Name DSBaseURI -Value $BaseURI -Scope Script
 				Set-Variable -Name DSKeyExp -Value $publickey_exp -Scope Script
 				Set-Variable -Name DSKeyMod -Value $publickey_mod -Scope Script
-				Set-Variable -Name DSSessionKey -Value $session_Key -Scope Script
+				Set-Variable -Name DSSessionKey -Value $session_Key -Scope Global
 				Set-Variable -Name DSSafeSessionKey -Value $safeSessionKey -Scope Script
 				Set-Variable -Name DSInstanceVersion -Value $instanceVersion -Scope Global
 				Set-Variable -Name DSInstanceName -Value $jsonContent.data.serverName -Scope Script
@@ -71,7 +69,7 @@ This endpoint does not require authentication.
 		}
 		catch {
 			$exc = $_.Exception
-			If ([System.Management.Automation.ActionPreference]::Break -ne $DebugPreference) {
+			If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
 				Write-Debug "[Exception] $exc"
 			} 
 		}

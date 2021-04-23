@@ -12,14 +12,14 @@ function Protect-ResourceToHexString {
     )
 
     BEGIN{
-        if ([string]::IsNullOrWhiteSpace($Script:DSSessionKey))
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionKey))
         {
             throw "Session Key is missing, you must call Get-ServerInfo before using this method"
         }
     }
     
     PROCESS{    
-        $bytes = Encrypt-String $Script:DSSessionKey $unencryptedString
+        $bytes = Encrypt-String $Global:DSSessionKey $unencryptedString
         return Convert-BytesToHex $bytes
     }
 }
