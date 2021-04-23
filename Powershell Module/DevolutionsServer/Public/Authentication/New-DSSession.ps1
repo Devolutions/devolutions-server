@@ -20,14 +20,14 @@ Establishes a session with a Devolutions Server
 	BEGIN { 
 		Write-Verbose '[New-DSSession] begin...'
 
-		if ($Script:DSBaseURI -ne $BaseURI) {
+		if ((Get-Variable DSBaseURI -Scope Script -ErrorAction SilentlyContinue) -and ($Script:DSBaseURI -ne $BaseURI)) {
 			if ($Global:DSSessionToken) {
 				throw "Session already established, Close it before switching servers."
 			}
 		}
 
 		#Get-ServerInfo must be called to get encryption keys...
-		if ([string]::IsNullOrWhiteSpace($Global:DSSessionKey)) {
+		if (!(Get-Variable DSSessionKey -Scope Global -ErrorAction SilentlyContinue) -or [string]::IsNullOrWhiteSpace($Global:DSSessionKey)) {
 			$info = Get-DSServerInfo -BaseURI $BaseURI
 			if ($false -eq $info.IsSuccess) {
 				throw "Unable to get server information"

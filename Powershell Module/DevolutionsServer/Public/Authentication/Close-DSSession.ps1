@@ -32,19 +32,17 @@ function Close-DSSession {
 		}
 
 		#script scope
-		if ($Script:DSBaseURI) { try { Remove-Variable -Name DSBaseURI -Scope Script -Force } catch { } }
-		if ($Script:DSHdr) { try { Remove-Variable -Name DSHdr -Scope Script -Force } catch { } }
-		if ($Script:DSInstanceName) { try { Remove-Variable -Name DSInstanceName -Scope Script -Force } catch { } }
-		if ($Script:DSKeyExp) { try { Remove-Variable -Name DSKeyExp -Scope Script -Force } catch { } }
-		if ($Script:DSKeyMod) { try { Remove-Variable -Name DSKeyMod -Scope Script -Force } catch { } }
-		if ($Script:DSSafeSessionKey) { try { Remove-Variable -Name DSSafeSessionKey -Scope Script -Force } catch { } }
-		if ($Script:DSSessionKey) { try { Remove-Variable -Name DSSessionKey -Scope Script -Force } catch { } }
+		if (Get-Variable DSBaseUri -Scope Script -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSBaseURI -Scope Script -Force } catch { } }
+		if (Get-Variable DSKeyExp -Scope Script -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSKeyExp -Scope Script -Force } catch { } }
+		if (Get-Variable DSKeyMod -Scope Script -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSKeyMod -Scope Script -Force } catch { } }
+		if (Get-Variable DSSafeSessionKey -Scope Script -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSSafeSessionKey -Scope Script -Force } catch { } }
+		if (Get-Variable DSInstanceName -Scope Script -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSInstanceName -Scope Script -Force } catch { } }
 
 		#global scope
-		if ($Global:DSInstanceVersion) { try { Remove-Variable -Name DSInstanceVersion -Scope Global -Force } catch { } }
-		if ($Global:DSSessionKey) {	try { Remove-Variable -Name DSSessionKey -Scope Global -Force } catch { } }
-		if ($Global:DSSessionToken) { try { Remove-Variable -Name DSSessionToken -Scope Global -Force } catch { } }
-		if ($Global:WebSession) { try { Remove-Variable -Name WebSession -Scope Global -Force } catch { } }
+		if (Get-Variable DSSessionKey -Scope Global -ErrorAction SilentlyContinue) {	try { Remove-Variable -Name DSSessionKey -Scope Global -Force } catch { } }
+		if (Get-Variable DSSessionToken -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSSessionToken -Scope Global -Force } catch { } }
+		if (Get-Variable WebSession -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name WebSession -Scope Global -Force } catch { } }
+		if (Get-Variable DSInstanceVersion -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSInstanceVersion -Scope Global -Force } catch { } }
 
 		$response 
 	}
