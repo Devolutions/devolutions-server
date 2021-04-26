@@ -14,7 +14,7 @@ function Update-DSCredentialEntry {
     
     PROCESS {
         $EntryResolvedVariables = (Get-DSEntry -EntryId $CandidEntryID -IncludeAdvancedProperties).Body.data
-        $EntrySensitiveData = (Get-DSEntrySensitiveData $CandidEntryID).Body.data | ConvertFrom-Json
+        $EntrySensitiveData = (Get-DSEntrySensitiveData $CandidEntryID).Body.data
 
         switch ($EntryResolvedVariables.connectionSubType) {
             ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default) { Update-UsernamePassword $ParamList $EntryResolvedVariables $EntrySensitiveData }

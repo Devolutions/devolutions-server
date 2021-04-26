@@ -4,6 +4,8 @@ function Update-DSEntry {
         [ValidateNotNullOrEmpty()]
         [guid]$CandidEntryID,
 
+        [switch]$ClearCredentials,
+
         #Base credential data
         [ValidateNotNullOrEmpty()]
         [string]$EntryName,
@@ -55,14 +57,17 @@ function Update-DSEntry {
             }
 
             $res = switch ($EntryCtx.Body.data.connectionType) {
-                ([Devolutions.RemoteDesktopManager.ConnectionType]::Credential.value__) { Update-DSCredentialEntry -ParamList $Parameters }
-                Default { throw "Entries of type $EntryData.connectionType are not supported yet." }
+                ([Devolutions.RemoteDesktopManager.ConnectionType]::Credential.value__) { Update-DSCredentialEntry $Parameters; break }
+                ([Devolutions.RemoteDesktopManager.ConnectionType]::Group.value__) { Update-DSFolderCredentials $Parameters; break }
+                Default { throw "Entries of type $($EntryCtx.Body.data.connectionType) are not supported yet."; break }            
             }
+
+            Write-Verbose "[Update-DSEntry] Currently updating entry of type $($EntryCtx.Body.data.connectionType)"
 
             return $res
         }
         catch {
-            $Exception = $_.Exception
+            Write-Error $_.Exception.Message
         }
     }
 
