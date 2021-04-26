@@ -30,8 +30,8 @@ function Get-DSEntrySensitiveDataLegacy {
     PROCESS {
         try {   
             $params = @{
-                Uri            = $URI
-                Method         = 'POST' #FIXME ???
+                Uri    = $URI
+                Method = 'POST' #FIXME ???
             }
 
             Write-Verbose "[Get-DSEntrySensitiveDataLegacy] About to call $Uri"
@@ -52,7 +52,7 @@ function Get-DSEntrySensitiveDataLegacy {
             }
 
             $decryptedinfo = Decrypt-String $Global:DSSessionKey $response.Body.Data
-            $response.Body.data = $decryptedinfo
+            $response.Body.data = $decryptedinfo | ConvertFrom-Json
             
             return $response
         }
