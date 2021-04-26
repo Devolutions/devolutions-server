@@ -34,7 +34,7 @@ This endpoint does not require authentication.
 	PROCESS {
 
 		try {
-			$response = Invoke-WebRequest -URI $URI -Method 'GET' #-SessionVariable Global:WebSession
+			$response = Invoke-WebRequest -URI $URI -Method 'GET' -SessionVariable Global:WebSession
 			$resContentJson = $response.Content | ConvertFrom-Json
 
 			If (($null -ne $resContentJson) -and ($null -eq $resContentJson.errorMessage)) {

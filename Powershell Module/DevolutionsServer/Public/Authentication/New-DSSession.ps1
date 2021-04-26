@@ -15,7 +15,7 @@ Establishes a session with a Devolutions Server
 		[PSCredential]$Credentials,
 		[parameter(Mandatory)]
 		[string]$BaseURI
-	)
+)
 
 	BEGIN { 
 		Write-Verbose '[New-DSSession] begin...'
@@ -53,11 +53,27 @@ Establishes a session with a Devolutions Server
 				LocalUserName    = [Environment]::UserName
 			}
 		}
+
+		if ($Script:hdr) {
+			$Global:WebSession.Headers.Add($Script:DSHdr)
+		}
 		
 		#body is typed as a HashTable, I'd like to offer an override that pushes the conversion downstream
-		$response = Invoke-WebRequest -URI $URI -Method Post -ContentType 'application/json'  -Body ($Body | ConvertTo-Json) -SessionVariable Global:WebSession
+		$response = Invoke-WebRequest -URI $URI -Method Post -ContentType 'application/json'  -Body ($Body | ConvertTo-Json) -WebSession $Global:WebSession
 		If ($null -ne $response) {
 			$jsonContent = $response.Content | ConvertFrom-JSon
+
+			if ($null -eq $jsonContent) {
+				$HasResult = $false
+			} else {
+				$HasResult = Get-Member -InputObject $jsonContent -Name "result"
+			}
+
+			if (($HasResult) -and ('0' -eq $jsonContent.result)) {
+				# some error occurred, we need to grab the message
+				return [ServerResponse]::new(($false), $response, $jsonContent, $null, $jsonContent.data.message, [System.Net.HttpStatusCode]::Unauthorized)
+			}
+	
 			Write-Verbose "[New-DSSession] Got authentication token $($jsonContent.data.tokenId)"
 			Write-Verbose "[New-DSSession] Connected to ""$($jsonContent.data.serverInfo.servername)"""
 
