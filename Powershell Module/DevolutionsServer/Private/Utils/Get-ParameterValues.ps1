@@ -1,7 +1,7 @@
 function Get-ParameterValues {
     <#
         .Synopsis
-            Get the actual values of parameters which have manually set (non-null) default values or values passed in the call
+            Get the actual values of parameters which have manually set default values or values passed in the call
         .Description
             Unlike $PSBoundParameters, the hashtable returned from Get-ParameterValues includes non-empty default parameter values.
             NOTE: Default values that are the same as the implied values are ignored (e.g.: empty strings, zero numbers, nulls).
@@ -32,8 +32,13 @@ function Get-ParameterValues {
     
     $ParameterValues = @{}
     foreach ($parameter in $Invocation.MyCommand.Parameters.GetEnumerator()) {
-        # gm -in $parameter.Value | Out-Default
         try {
+            $key = $parameter.Key
+            $value = Get-Variable -Name $key -ValueOnly -ErrorAction Ignore
+
+            if ($BoundParameters.ContainsKey($key)) { $ParameterValues[$key] = $BoundParameters[$key] } else { $ParameterValues[$key] = $value }
+
+            <#
             $key = $parameter.Key
             if ($null -ne ($value = Get-Variable -Name $key -ValueOnly -ErrorAction Ignore)) {
                 if (($value -ne ($null -as $parameter.Value.ParameterType)) -or $parameter.Value.ParameterType -eq [System.Boolean]) {
@@ -43,6 +48,7 @@ function Get-ParameterValues {
             if ($BoundParameters.ContainsKey($key)) {
                 $ParameterValues[$key] = $BoundParameters[$key]
             }
+            #>
         }
         finally {}
     }
