@@ -1,54 +1,54 @@
 function Get-DSUserProfileSegment {
     <#
-    .SYNOPSIS
+        .SYNOPSIS
         Returns a segment containing user profile infos required for creating a new user.
     #>
     [CmdletBinding()]
-    param(
-        [string]$address,
-        [string]$cellPhone,
-        [string]$companyName,
-        [string]$countryName,
-        [string]$department,
-        [string]$fax,
-        [string]$firstName,
-        [string]$gravatarEmail,
-        [string]$jobTitle,
-        [string]$lastName,
-        [string]$phone,
-        [string]$state,
-        [string]$workphone
+    PARAM(
+        [PSCustomObject]$ParamList
     )
     PROCESS {
         try {
-            $profileData = @{
-                gravatarUrl           = ""
-                fullName              = ""
-                address               = if ($address) { $address } else { "" }
-                cellPhone             = if ($cellPhone) { $cellPhone } else { "" }
-                companyName           = if ($companyName) { $companyName } else { "" }
-                countryCode           = ""
-                countryName           = if ($countryName) { $countryName } else { "" }
-                culture               = ""
-                department            = if ($department) { $department } else { "" }
-                fax                   = if ($fax) { $fax } else { "" }
-                firstName             = if ($firstName) { $firstName } else { "" }
-                gravatarEmail         = if ($gravatarEmail) { $gravatarEmail } else { "" }
-                jobTitle              = if ($jobTitle) { $jobTitle } else { "" }
-                lastName              = if ($lastName) { $lastName } else { "" }
-                phone                 = if ($phone) { $phone } else { "" }
-                serial                = ""
-                state                 = if ($state) { $state } else { "" }
-                subscribeToNewsLetter = $false
-                workphone             = if ($workphone) { $workphone } else { "" }
-
+            $ProfileSegment = @{
+                Address               = $ParamList.Address
+                CellPhone             = $ParamList.Mobile
+                CompanyName           = $ParamList.CompanyName
+                CountryCode           = ""
+                CountryName           = $ParamList.Country
+                CreationDate          = ""
+                Culture               = ""
+                Department            = $ParamList.Department
+                Fax                   = $ParamList.Fax
+                FirstName             = $ParamList.FirstName
+                FullName              = if (![string]::IsNullOrEmpty($ParamList.FirstName) -and ![string]::IsNullOrEmpty($ParamList.LastName)) {
+                    "$($ParamList.FirstName) $($ParamList.LastName)"
+                }
+                elseif ([string]::IsNullOrEmpty($ParamList.FirstName) -and ![string]::IsNullOrEmpty($ParamList.LastName)) {
+                    "$($ParamList.FirstName)"
+                }
+                elseif (![string]::IsNullOrEmpty($ParamList.FirstName) -and [string]::IsNullOrEmpty($ParamList.LastName)) {
+                    "$($ParamList.LastName)"
+                }
+                else {
+                    ""
+                }
+                GravatarEmail         = $ParamList.GravatarEmail
+                GravatarUrl           = ""
+                #ID
+                JobTitle              = $ParamList.JobTitle
+                LastName              = $ParamList.LastName
+                Phone                 = $ParamList.Phone
+                Serial                = ""
+                State                 = ""
+                SubscribeToNewsletter = $false
+                #UserID
+                Workphone             = $ParamList.Workphone
             }
-        
-            return ($profileData)
+            
+            return $ProfileSegment
         }
         catch {
-            throw $_.Exception
+            Write-Error $_.Exception.Message
         }
-        
     }
 }

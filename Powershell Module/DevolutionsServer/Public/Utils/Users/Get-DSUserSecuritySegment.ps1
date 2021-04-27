@@ -4,101 +4,63 @@ function Get-DSUserSecuritySegment {
         Returns a segment containing user profile infos required for creating a new user.
     #>
     [CmdletBinding()]
-    param(
-        [string]$name,
-        [int]$userType,
-        [bool]$isAdministrator,
-        [bool]$isEnabled,
-        [bool]$isLockedOut,
-        #[string]$departments,
-        #[string]$securityKey,
-        #[string]$accountSettings,
-        [bool]$canAdd,
-        [bool]$canDelete,
-        [bool]$canEdit,
-        [string]$customSecurity,
-        [bool]$canAddCredentials,
-        [bool]$canAddDataEntry,
-        [bool]$canEditCredentials,
-        [bool]$canEditDataEntry,
-        [bool]$canDeleteCredentials,
-        [bool]$canDeleteDataEntry,
-        #[int]$failedPasswordAttemptCount,
-        [string]$UPN, #?
-        [int]$authenticationType,
-        [string]$loginEmail,
-        [bool]$hasAccessRDM,
-        #[bool]$hasAccessPVM,
-        [bool]$hasAccessWeb,
-        [bool]$hasAccessWebLogin,
-        [int]$userLicenseTypeMode,
-        [bool]$hasAccessLauncher,
-        [bool]$hasAccessCli
-        #[string]$assigned
-        #[string]$identityProviderId
-
+    PARAM(
+        [PSCustomObject]$ParamList
     )
-    BEGIN {
-    }
     PROCESS {
         try {
             $securityData = @{
-                Name                 = if ($name) { $name } else { "" }
-                #departments                = if ($departments) { $departments } else { "" }
-                #securityKey                = if ($securityKey) { $securityKey } else { "" }
-                #accountSettings            = if ($accountSettings) { $accountSettings } else { "" }  
-                customSecurity       = if ($customSecurity) { $customSecurity } else { "" }
-                #failedPasswordAttemptCount = if ($failedPasswordAttemptCount++ -gt 3) {  } else { $failedPasswordAttemptCount++ } #Probably not needed, else probably needs a check of some sort
-                UPN                  = if ($UPN) { $UPN } else { "" }
-                loginEmail           = if ($loginEmail) { $loginEmail } else { "" }
-                #assigned                   = if ($assigned) { $assigned } else { "" }
-                #identityProviderId         = if ($identityProviderId) { $identityProviderId } else { "" }
-                isAdministrator      = $false #$isAdministrator
-                isEnabled            = $true #$isEnabled
-                isLockedOut          = $false #$isLockedOut
-                canAdd               = $true #$canAdd
-                canDelete            = $true #$canDelete
-                canEdit              = $true #$canEdit
-                canAddCredentials    = $true #$canAddCredentials
-                canAddDataEntry      = $true #$canAddDataEntry
-                canEditCredentials   = $true #$canEditCredentials
-                canEditDataEntry     = $true #$canEditDataEntry
-                canDeleteCredentials = $true #$canDeleteCredentials
-                canDeleteDataEntry   = $true #$canDeleteDataEntry
-                hasAccessRDM         = $hasAccessRDM
-                #hasAccessPVM               = $hasAccessPVM
-                hasAccessWeb         = $hasAccessWeb
-                hasAccessWebLogin    = $hasAccessWebLogin
-                hasAccessLauncher    = $hasAccessLauncher
-                hasAccessCli         = $true #$hasAccessCli
+                Assigned                = $null
+                AuthenticationType      = [Devolutions.RemoteDesktopManager.ServerUserType]::($ParamList.AuthenticationType).value__
+                CanAdd                  = $true
+                CanDelete               = $true
+                CanEdit                 = $true
+                CreatedByLoggedUsername = ""
+                CreatedByUserName       = ""
+                CreationDate            = ""
+                CustomSecurity          = ""
+                CustomSecurityEntity    = @{
+                    AllowDragAndDrop    = $ParamList.AllowDragAndDrop
+                    CanViewInformations = $ParamList.CanViewInformations
+                    CanViewGlobalLogs   = $ParamList.CanViewGlobalLogs
+                    CanImport           = $ParamList.CanImport
+                    CanExport           = $ParamList.CanExport
+                    OfflineMode         = [Devolutions.RemoteDesktopManager.OfflineMode]::($ParamList.OfflineMode)
 
-                userType             = switch ($userType) {
-                    0 { [Devolutions.RemoteDesktopManager.UserType]::Admin }
-                    1 { [Devolutions.RemoteDesktopManager.UserType]::User }
-                    2 { [Devolutions.RemoteDesktopManager.UserType]::Restricted }
-                    3 { [Devolutions.RemoteDesktopManager.UserType]::ReadOnly }
-                    Default { throw "Invalid user type. Value must be between 0 and 3." }
                 }
-                userLicenseTypeMode  = switch ($userLicenseTypeMode) {
-                    0 { [Devolutions.RemoteDesktopManager.UserLicenceTypeMode]::Default }
-                    1 { [Devolutions.RemoteDesktopManager.UserLicenceTypeMode]::ConnectionManagement }
-                    2 { [Devolutions.RemoteDesktopManager.UserLicenceTypeMode]::PasswordManagement }
-                    Default { throw "Invalid user license type mode. Value must be between 0 and 2 inclusivly." }
-                }
-                authenticationType   = switch ($authenticationType) {
-                    0 { [Devolutions.RemoteDesktopManager.ServerUserType]::Builtin }
-                    3 { [Devolutions.RemoteDesktopManager.ServerUserType]::Domain }
-                    5 { [Devolutions.RemoteDesktopManager.ServerUserType]::None }
-                    8 { [Devolutions.RemoteDesktopManager.ServerUserType]::Office365 }
-                    9 { [Devolutions.RemoteDesktopManager.ServerUserType]::Application }
-                    Default { throw "Unsupported authentication type. Please select a" }
-                }
+                DeleteSQLLogin          = [Devolutions.RemoteDesktopManager.DefaultBoolean]::Default
+                HasAccessCli            = $ParamList.HasAccessCLI
+                HasAccessLauncher       = $ParamList.HasAccessLauncher
+                HasAccessRDM            = $ParamList.HasAccessRDM
+                HasAccessWeb            = $ParamList.HasAccessWeb
+                HasAccessWebLogin       = $ParamList.HasAccesWebLogin
+                #ID
+                IsAdministrator         = if ($ParamList.UserType -eq [Devolutions.RemoteDesktopManager.UserType]::Admin) { $true } else { $false }
+                IsEnabled               = $ParamList.Enabled
+                IsLockedOut             = $false
+                IsServerUserTypeAssumed = $false
+                LastLockoutDate         = $null
+                ModifiedDate            = ""
+                ModifiedLoggedUserName  = ""
+                ModifiedUserName        = ""
+                Name                    = $ParamList.Username
+                #Repositories            = ""
+                #RepositoryEntities      = ""
+                #RepositoryNames         = "Default"
+                RoleNames               = ""
+                SecurityKey             = ""
+                ServerUserType          = [Devolutions.RemoteDesktopManager.ServerUserType]::($ParamList.AuthenticationType)
+                ServerUserTypeString    = [Devolutions.RemoteDesktopManager.ServerUserType]::($ParamList.AuthenticationType).ToString()
+                UPN                     = ""
+                UserLicenseType         = [Devolutions.RemoteDesktopManager.UserLicenceTypeMode]::($ParamList.UserLicenseType)
+                UserType                = 0 #[Devolutions.RemoteDesktopManager.UserType]::($ParamList.UserType)
+                UserTypeString          = [Devolutions.RemoteDesktopManager.UserType]::($ParamList.UserType).ToString()
             }
 
-            return ($securityData)
+            return $securityData
         }
         catch {
-            throw  $_.Exception
+            Write-Error $_.Exception.Message
         }
     }    
 }

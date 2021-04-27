@@ -1,33 +1,30 @@
 function Get-DSUserAccountSegment {
     <#
-    .SYNOPSIS
+        .SYNOPSIS
         Returns a segment containing user profile infos required for creating a new user.
     #>
     [CmdletBinding()]
-    param(
-        [bool]$isChangePasswordAllowed,
-        [Parameter(Mandatory)]
-        [string]$password,
-        [string]$email,
-        [string]$fullName,
-        [bool]$userMustChangePasswordAtNextLogin
+    PARAM(
+        [PSCustomObject]$ParamList
     )
     PROCESS {
         try {
-            $accountData = @{
+            $AccountSegment = @{
                 hasPrivateVault                   = $false
                 hasSpecificSettings               = $false
-                isChangePasswordAllowed           = $isChangePasswordAllowed
-                password                          = $password
+                isChangePasswordAllowed           = $false
+                password                          = $ParamList.Password
                 passwordFormat                    = 1
                 twoFactorInfo                     = $null
                 connectionOverrides               = ""
                 connectionOverridesCacheID        = ""
                 createdByLoggedUsername           = ""
                 createdByUsername                 = ""
+                creationDate                      = ""
                 data                              = ""
-                email                             = $email
-                fullName                          = $fullName
+                email                             = $ParamList.Email
+                fullName                          = ""
+                id                                = ""
                 isOwner                           = $false
                 isTemplate                        = $false
                 lastLoginDate                     = $null
@@ -36,13 +33,13 @@ function Get-DSUserAccountSegment {
                 modifiedUsername                  = ""
                 resetTwoFactor                    = $false
                 securityKey                       = ""
-                userMustChangePasswordAtNextLogin = $userMustChangePasswordAtNextLogin
+                userMustChangePasswordAtNextLogin = $ParamList.ChangePasswordNextLogon
             }
         
-            return ($accountData)
+            return $AccountSegment
         }
         catch {
-            throw  $_.Exception
+            Write-Error $_.Exception.Message
         }
     }    
 }
