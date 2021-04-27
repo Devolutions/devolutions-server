@@ -54,7 +54,7 @@ Establishes a session with a Devolutions Server
 			}
 		}
 
-		if ($Script:hdr) {
+		if ($Script:DSHdr) {
 			$Global:WebSession.Headers.Add($Script:DSHdr)
 		}
 		
