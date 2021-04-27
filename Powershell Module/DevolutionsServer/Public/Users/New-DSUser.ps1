@@ -25,24 +25,24 @@ function New-DSUser {
         [ValidateSet("English", "French", "German", "Spanish", "Hungarian", "Italian", "Dutch", "Polish (Poland)", "Russian", "Swedish", "Ukrainian", "Chinese (Simplified) Legacy", "Chinese (Traditional, Taiwan)", "Czech")]
         [string]$Language = "English",
         [bool]$Enabled = $true,
-        [bool]$ChangePasswordNextLogon = $false,
+        [bool]$UserMustChangePasswordAtNextLogin = $false,
 
         #Information tab
-        [string]$Company = "",
+        [string]$CompanyName = "",
         [string]$JobTitle = "",
         [string]$Department = "",
         [string]$GravatarEmail = "",
         [string]$Address = "",
         [string]$State = "",
-        [string]$Country = "", #TODO Find a way to validateset country name
+        [string]$CountryName = "", #TODO Find a way to validateset country name
         [string]$Phone = "",
-        [string]$Work = "",
-        [string]$Mobile = "",
+        [string]$Workphone = "",
+        [string]$CellPhone = "",
         [string]$Fax = "",
 
         #Application access tab
         [bool]$HasAccessRDM = $true,
-        [bool]$HasAccesWebLogin = $true,
+        [bool]$HasAccessWebLogin = $true,
         [bool]$HasAccessLauncher = $true,
         [bool]$HasAccessWeb = $true,
         [bool]$HasAccessCLI = $true,
@@ -62,6 +62,10 @@ function New-DSUser {
         Write-Verbose "[New-DSUser] Begining..."
 
         $URI = "$env:DS_URL/api/security/user/save?csToXml=1"
+
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
+            throw "Session invalid. Please call New-DSSession."
+        }
     }
     
     PROCESS {

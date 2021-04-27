@@ -33,7 +33,7 @@ function Get-DSUserAccountSegment {
                 modifiedUsername                  = ""
                 resetTwoFactor                    = $false
                 securityKey                       = ""
-                userMustChangePasswordAtNextLogin = $ParamList.ChangePasswordNextLogon
+                userMustChangePasswordAtNextLogin = $ParamList.UserMustChangePasswordAtNextLogin
             }
         
             return $AccountSegment

@@ -5,7 +5,7 @@ function Remove-DSUser {
     [CmdletBinding()]
     param(
         [ValidateNotNullOrEmpty()]
-        [guid]$candidUserId
+        [guid]$CandidUserId
     )
 
     BEGIN {

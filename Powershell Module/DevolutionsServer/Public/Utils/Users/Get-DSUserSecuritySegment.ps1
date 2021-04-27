@@ -33,7 +33,7 @@ function Get-DSUserSecuritySegment {
                 HasAccessLauncher       = $ParamList.HasAccessLauncher
                 HasAccessRDM            = $ParamList.HasAccessRDM
                 HasAccessWeb            = $ParamList.HasAccessWeb
-                HasAccessWebLogin       = $ParamList.HasAccesWebLogin
+                HasAccessWebLogin       = $ParamList.HasAccessWebLogin
                 #ID
                 IsAdministrator         = if ($ParamList.UserType -eq [Devolutions.RemoteDesktopManager.UserType]::Admin) { $true } else { $false }
                 IsEnabled               = $ParamList.Enabled
