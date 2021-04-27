@@ -134,10 +134,10 @@ to be found.
             "PUT" {
                 if (($null -ne $responseContentJson) -and ($HasResult)) {
                     switch ($responseContentJson.result) {
-                        ([Devolutions.RemoteDesktopManager.SaveResult]::Success) { 
-                            return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode)
-                        }
-                        Default { return [ServerResponse]::new($false, $response, $responseContentJson, $null, "[PUT] Unhandled error. If you see this, please contact your system administrator for help.", 500) }
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::Success) { return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode); break }
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::Error) { return [ServerResponse]::new($false, $response, $responseContentJson, $null, $responseContentJson.errorMessage, 400); break }
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::AlreadyExists) { return [ServerResponse]::new($false, $response, $responseContentJson, $null, "New resource seems to be a duplicate entry. Please make sure the username is not already in use.", 409); break }
+                        Default { return [ServerResponse]::new($false, $response, $responseContentJson, $null, "[PUT] Unhandled error. If you see this, please contact your system administrator for help.", 500); break }
                     }
                 }
                 else {
