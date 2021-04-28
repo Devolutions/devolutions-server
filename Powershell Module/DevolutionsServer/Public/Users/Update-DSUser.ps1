@@ -112,7 +112,17 @@ function Update-DSUser {
                         #Key is in UserSecurity segment
                         else {
                             if ($_.Key -eq "UserType") {
-                                $User.userSecurity.userTypeString = $_.Value
+                                switch ($_.Value) {
+                                    ([Devolutions.RemoteDesktopManager.UserType]::Admin) { $User.userSecurity | Add-Member -NotePropertyName "isAdministrator" -NotePropertyValue $true -Force; break }
+                                    ([Devolutions.RemoteDesktopManager.UserType]::User) { $User.userSecurity.isAdministrator = $false; break }
+                                    ([Devolutions.RemoteDesktopManager.UserType]::ReadOnly) { 
+                                        $User.userSecurity.canAdd = $false
+                                        $User.userSecurity.canDelete = $false
+                                        $User.userSecurity.canEdit = $false
+                                        break
+                                    }
+                                    Default { throw "Unsupported user type." }
+                                }
                             }
                             else {
                                 if ($_.Key -in $User.userSecurity.PSObject.Properties.Name) {
