@@ -68,8 +68,6 @@ function Update-DSUser {
     
     PROCESS {
         try {
-            $PSBoundParameters
-
             $User = if (($response = Get-DSUsers -candidUserId $UserID).isSuccess) {
                 $response.Body.data
             }
