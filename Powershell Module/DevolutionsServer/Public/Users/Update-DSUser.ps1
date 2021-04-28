@@ -10,8 +10,8 @@ function Update-DSUser {
 
         [ValidateNotNullOrEmpty()]
         [string]$Username,
-        
         [string]$Password,
+
         [string]$FirstName = "",
         [string]$LastName = "",
         [string]$Email = "",
@@ -77,6 +77,10 @@ function Update-DSUser {
 
             $PSBoundParameters.GetEnumerator() | ForEach-Object {
                 if ($_.Key -notin @("UserID", "Verbose")) {
+                    if ($_.Key -eq "Password") {
+                        Set-DSUserPassword $User.display (Protect-ResourceToHexString $_.Value)
+                    }
+
                     #Key is in UserAccount segment
                     if ($_.Key -in $UserAccountParams) {
                         if ($_.Key -in $User.userAccount.PSObject.Properties.Name) { 
@@ -123,6 +127,7 @@ function Update-DSUser {
                                     }
                                     Default { throw "Unsupported user type." }
                                 }
+
                             }
                             else {
                                 if ($_.Key -in $User.userSecurity.PSObject.Properties.Name) {

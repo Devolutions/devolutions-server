@@ -10,14 +10,15 @@ function New-DSUser {
     [CmdletBinding()]
     PARAM (
         #General tab
-        [validateset([Devolutions.RemoteDesktopManager.ServerUserType]::Builtin, [Devolutions.RemoteDesktopManager.ServerUserType]::Domain)]
+        [ValidateSet([Devolutions.RemoteDesktopManager.ServerUserType]::Builtin, [Devolutions.RemoteDesktopManager.ServerUserType]::Domain)]
         [string]$AuthenticationType = [Devolutions.RemoteDesktopManager.ServerUserType]::Builtin,
-
         [Devolutions.RemoteDesktopManager.UserType]$UserType = [Devolutions.RemoteDesktopManager.UserType]::User, #TODO Maybe not needed
         [Devolutions.RemoteDesktopManager.UserLicenceTypeMode]$UserLicenseType = [Devolutions.RemoteDesktopManager.UserLicenceTypeMode]::Default,
 
         [ValidateNotNullOrEmpty()]
-        [string]$Username,
+        [string]$Username = $(throw "Username is null or empty. Please provide a valid username and try again."),
+        [ValidateNotNullOrEmpty()]
+        [string]$Password,
 
         [string]$FirstName = "",
         [string]$LastName = "",
@@ -69,6 +70,14 @@ function New-DSUser {
     }
     
     PROCESS {
+        if (($AuthenticationType -eq [Devolutions.RemoteDesktopManager.ServerUserType]::Builtin) -and !(Get-Variable -Name Password)) {
+            throw "Password is required when creating new user of type custom. Please provide a valid password and try again."
+        }
+
+        if (Get-Variable -Name Password) {
+            $Password = Protect-ResourceToHexString $Password
+        }
+
         $Parameters = Get-ParameterValues
         
         $User = @{
