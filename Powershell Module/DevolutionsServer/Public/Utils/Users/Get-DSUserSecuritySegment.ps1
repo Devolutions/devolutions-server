@@ -54,7 +54,7 @@ function Get-DSUserSecuritySegment {
                 UPN                     = ""
                 UserLicenseType         = [Devolutions.RemoteDesktopManager.UserLicenceTypeMode]::($ParamList.UserLicenseType)
                 UserType                = 0 #[Devolutions.RemoteDesktopManager.UserType]::($ParamList.UserType)
-                UserTypeString          = [Devolutions.RemoteDesktopManager.UserType]::($ParamList.UserType).ToString()
+                UserTypeString          = ""
             }
 
             return $securityData
