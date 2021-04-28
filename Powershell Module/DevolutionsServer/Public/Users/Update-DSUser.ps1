@@ -102,22 +102,14 @@ function Update-DSUser {
                     #Key is in UserSecurity segment or in UserSecurity.CustomSecurityEntity
                     if (($_.Key -in $UserSecurityParams) -or ($_.Key -in $CustomSecurityParams)) {
                         #Key is in CustomSecurityEntity
-                        if ($_.Key -in $CustomSecurityParams) {
-                            $tempName = switch ($_.Key) {
-                                'AllowDragAndDrop' { "allowDragAndDrop" }
-                                'CanViewInformations' { "canViewInformations" }
-                                'CanViewGlobalLogs' { "canViewGlobalLogs" }
-                                'CanImport' { "canImport" }
-                                'CanExport' { "canExport" }
-                                'OfflineMode' { "offlineMode" }
-                            }
-
-                            if ($tempName -in $User.userSecurity.customSecurityEntity.PSObject.Properties.Name) {
+                        if ($_.Key -in $CustomSecurityParams) {                            
+                            if ($_.Key -in $User.userSecurity.customSecurityEntity.PSObject.Properties.Name) {
                                 $User.userSecurity.customSecurityEntity.($_.Key) = $_.Value
                             }
                             else {
-                                $User.userSecurity.customSecurityEntity | Add-Member -NotePropertyName $tempName -NotePropertyValue $_.Value 
+                                $User.userSecurity.customSecurityEntity | Add-Member -NotePropertyName $_.Key -NotePropertyValue $_.Value 
                             }
+                            
                         }
                         #Key is in UserSecurity segment
                         else {
@@ -137,12 +129,13 @@ function Update-DSUser {
                 }
             }
 
-            $User.userSecurity.repositoryEntities = @{}
+            $User.userSecurity.repositoryEntities = @(@{ "id" = [guid]::Empty.ToString() })
+            $User.userSecurity.customSecurity = ""
 
             $RequestParams = @{
                 URI    = $URI
                 Method = "PUT"
-                Body   = $User | ConvertTo-Json
+                Body   = $User | ConvertTo-Json -Depth 10
             }
 
             $res = Invoke-DS @RequestParams -Verbose
