@@ -71,7 +71,8 @@
         'Get-DSPamAccounts', 'New-DSPamAccount', 'Remove-DSPamAccount', 
         #'Get-DSPamCheckoutPolicies', 'New-DSPamCheckoutPolicy', 'Remove-DSPamCheckoutPolicy', 'Update-DSPamCheckoutPolicy',
         'New-DSRole', 'Get-DSRoles', 'Update-DSRole', 'Remove-DSRole',
-        'New-DSCustomUser', 'Update-DSCustomUser', 'Remove-DSUser', 'Get-DSUsers'
+        #'New-DSCustomUser', 'Update-DSCustomUser',
+        'New-DSUser', 'Update-DSUser', 'Remove-DSUser', 'Get-DSUsers'
     )
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
