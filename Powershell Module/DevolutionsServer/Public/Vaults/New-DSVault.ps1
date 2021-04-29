@@ -1,13 +1,38 @@
 function New-DSVault {
+    <#
+        .SYNOPSIS
+        Creates a new vault.
+        .DESCRIPTION
+        Creates a new vault and add users, applications and roles to it if the respective list is supplied.
+        .EXAMPLE
+        $Vault = @{
+                Name                   = 'NewVault'
+                Description            = 'This is a description for the new vault.'
+                IsAllowedOffline       = $true
+                Password               = 'Pa$$w0rd!'
+                AllowedUsernameList    = @("User1")
+                AllowedRolesList       = @("Role1", "Role2")
+                AllowedApplicationList = @("App1")
+            }
+
+            $response = New-DSVault @Vault
+    #>
     [CmdletBinding()]
     PARAM (
         [ValidateNotNullOrEmpty()]
+        #Vault's name
         [string]$Name = $(throw "Vault name is null or empty. Please provide a valid vault name and try again."),
+        #Vault's master password. Backend does not verify password complexity, so you should use New-DSPassword and choose a password in the list
         [string]$Password,
+        #Vault's description
         [string]$Description = "",
+        #Specify if the vault is allowed to be used while offline
         [bool]$IsAllowedOffline = $true,
+        #Accept an array of strings containing usernames (not id) to add to the vault
         [string[]]$AllowedUsernameList = @(),
+        #Accept an array of strings containing application names (not app id) to add to the vault
         [string[]]$AllowedApplicationList = @(),
+        #Accept an array of strings containing user group's name (not id) to add to the vault
         [string[]]$AllowedRolesList = @()
     )
     
