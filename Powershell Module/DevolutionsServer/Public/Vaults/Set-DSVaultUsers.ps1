@@ -1,9 +1,46 @@
 function Set-DSVaultUsers {
+    <#
+    .SYNOPSIS
+        Sets the allowed users for a given vault.
+        .DESCRIPTION
+        Sets which users have access to a given vault. If the "Update" flag is present and a supplied username is already a member of the vault, it will remove this user.
+        .EXAMPLE
+        No update flag, no users allowed
+        Current users allowed in vault:
+        None
+
+        Set-DSVaultUsers @("User1", "User2")
+        -> Allowed users: User1, User2
+        .EXAMPLE
+        No update flag, some users allowed
+        Current users allowed in vault:
+        User1, User2
+
+        Set-DSVaultUsers @("User3")
+        -> Allowed users: User3
+        .EXAMPLE
+        Update flag present, some users allowed (Add another)
+        Current users allowed in vault:
+        User1
+
+        Set-DSVaultUsers @("User2") -Update 
+        -> Allowed users: User1, User2
+        .EXAMPLE
+        Update flag present, some users allowed (Remove a user)
+        Current users allowed in vault:
+        User1, User2
+
+        Set-DSVaultUsers @("User2", "User3") -Update 
+        -> Allowed users: User1, User3
+    #>
     [CmdletBinding()]
     PARAM (
         [ValidateNotNullOrEmpty()]
+        #Vault's ID to update
         [guid]$VaultID,
+        #String array with application names (Not ID's) to allow in vault
         [string[]]$AllowedUsernameList,
+        #Used to know if we're creating a vault or updating a currently existing one
         [switch]$Update
     )
 
