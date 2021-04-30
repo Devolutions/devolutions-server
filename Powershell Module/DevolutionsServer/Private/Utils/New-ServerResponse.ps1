@@ -136,7 +136,7 @@ to be found.
                     switch ($responseContentJson.result) {
                         ([Devolutions.RemoteDesktopManager.SaveResult]::Success) { return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode); break }
                         ([Devolutions.RemoteDesktopManager.SaveResult]::Error) { return [ServerResponse]::new($false, $response, $responseContentJson, $null, $responseContentJson.errorMessage, 400); break }
-                        ([Devolutions.RemoteDesktopManager.SaveResult]::AlreadyExists) { return [ServerResponse]::new($false, $response, $responseContentJson, $null, "New resource seems to be a duplicate entry. Please make sure the username is not already in use.", 409); break }
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::AlreadyExists) { return [ServerResponse]::new($false, $response, $responseContentJson, $null, "The resource you are trying to create seems to already exist. Please provide a unique name/username for the resource you're trying to create.", 409); break }
                         Default { return [ServerResponse]::new($false, $response, $responseContentJson, $null, "[PUT] Unhandled error. If you see this, please contact your system administrator for help.", 500); break }
                     }
                 }
