@@ -3,17 +3,23 @@ function Set-DSVaultUsers {
     PARAM (
         [ValidateNotNullOrEmpty()]
         [guid]$VaultID,
-        [string[]]$AllowedUsernameList
+        [string[]]$AllowedUsernameList,
+        [switch]$Update
     )
 
     PROCESS {
         try {
-            $Users = if (($res = Invoke-DS -URI "$env:DS_URL/api/security/users/list" -Method "GET").isSuccess) { 
-                if ($res.Body.data.Length -eq 0) { throw "No users were found." }
-                $res.Body.data 
-            } 
+            [object[]]$Users = if ($Update) {
+                (Invoke-DS -URI "$env:DS_URL/api/security/repositories/$VaultID/users" -Method "GET").Body.data
+            }
             else {
-                throw "Error getting user list." 
+                if (($res = Invoke-DS -URI "$env:DS_URL/api/security/users/list" -Method "GET").isSuccess) { 
+                    if ($res.Body.data.Length -eq 0) { throw "No users were found." }
+                    $res.Body.data 
+                } 
+                else {
+                    throw "Error getting user list." 
+                }
             }
 
             $UserListToSave = @()
@@ -23,11 +29,23 @@ function Set-DSVaultUsers {
                     description     = ""
                     gravatarUrl     = ""
                     isAdministrator = if ($_.isAdministrator) { $true } else { $false }
-                    isMember        = if ($_.name -in $AllowedUsernameList) { $true } else { $false }
+                    isMember        = if ($Update) {
+                        if ($_.name -in $AllowedUsernameList) {
+                            if ($_.isMember) {
+                                $false
+                                Write-Warning "Removed $($_.name) from allowed users."
+                            }
+                            else { $true }                
+                        }
+                        else { $_.isMember }            
+                    }
+                    else { 
+                        if ($_.name -in $AllowedUsernameList) { $true } else { $false } 
+                    }
                     isRole          = $false
                     name            = $_.name
                     repositoryId    = $VaultID
-                    userId          = $_.id
+                    userId          = if ($Update) { $_.userId } else { $_.id }
                 }
             }
 

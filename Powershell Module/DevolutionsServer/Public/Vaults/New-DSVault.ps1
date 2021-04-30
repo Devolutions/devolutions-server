@@ -71,8 +71,8 @@ function New-DSVault {
                 modifiedUserName       = ""
                 name                   = $Name
                 repositorySettings     = @{
-                    "quickAddEntries"    = @()
-                    "masterPasswordHash" = $null
+                    quickAddEntries    = @()
+                    masterPasswordHash = $null
                 }
                 selected               = $false
             }
