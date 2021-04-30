@@ -1,9 +1,46 @@
 function Set-DSVaultRoles {
+    <#
+    .SYNOPSIS
+        Sets the allowed user groups for a given vault.
+        .DESCRIPTION
+        Sets which user groups have access to a given vault. If the "Update" flag is present and a supplied user group's name is already a member of the vault, it will remove this user group.
+        .EXAMPLE
+        No update flag, no user groups allowed
+        Current user groups allowed in vault:
+        None
+
+        Set-DSVaultRoles @("Role1", "Role2")
+        -> Allowed user groups: Role1, Role2
+        .EXAMPLE
+        No update flag, some user groups allowed
+        Current user groups allowed in vault:
+        Role1, Role2
+
+        Set-DSVaultRoles @("Role3")
+        -> Allowed user groups: Role3
+        .EXAMPLE
+        Update flag present, some user groups allowed (Add another)
+        Current user groups allowed in vault:
+        Role1
+
+        Set-DSVaultRoles @("Role2") -Update 
+        -> Allowed user groups: Role1, Role2
+        .EXAMPLE
+        Update flag present, some user groups allowed (Remove an user group)
+        Current user groups allowed in vault:
+        Role1, Role2
+
+        Set-DSVaultRoles @("Role2", "Role3") -Update 
+        -> Allowed user groups: Role1, Role3
+    #>
     [CmdletBinding()]
     PARAM (
         [ValidateNotNullOrEmpty()]
+        #Vault's ID to update
         [guid]$VaultID,
+        #String array with user groups names (Not ID's) to allow in vault
         [string[]]$AllowedRolesList,
+        #Used to know if we're creating a vault or updating a currently existing one
         [switch]$Update
     )
 
