@@ -1,9 +1,28 @@
 function Update-DSVault {
+    <#
+        .SYNOPSIS
+        Updates a vault.
+        .DESCRIPTION
+        Updates a vault using the supplied parameters. If name is present, it cannot be null nor empty. Backend does not verify password complexity, so use New-DSPassword to generate a strong password with house policy.
+        .EXAMPLE
+        $UpdatedVault = @{
+                VaultID                = "36120922-539d-4550-8567-fc4f21d77352"
+                Name                   = "Test"
+                Description            = "Test"
+                IsAllowedOffline       = $false
+                Password               = 'Pa$$w0rd!'
+                AllowedUsersList       = @("User1")
+                AllowedRolesList       = @("Role1")
+                AllowedApplicationList = @("App1")
+            }
+
+            Update-DSVault @NewVault -Verbose
+    #>
     [CmdletBinding()]
     PARAM (
         [ValidateNotNullOrEmpty()]
+        #Vault's ID to update
         [guid]$VaultID = $(throw "Vault ID is null or empty. Please provide a valid vault ID and try again."),
-
         #Vault's name
         [string]$Name,
         #Vault's master password. Backend does not verify password complexity, so you should use New-DSPassword and choose a password in the list
