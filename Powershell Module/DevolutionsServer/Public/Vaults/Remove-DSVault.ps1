@@ -1,14 +1,14 @@
 function Remove-DSVault {
     <#
         .SYNOPSIS
-
+        Deletes a vault.
         .DESCRIPTION
-
-        .EXAMPLE
+        Deletes a vault from DVLS instance and delete all entries inside of it. Be careful, this action is irreversible if you don't have a recent back-up.
     #>
     [CmdletBinding()]
     PARAM (
         [ValidateNotNullOrEmpty()]
+        #Vault's ID to delete
         [guid]$VaultID = $(throw "Vault ID is null or empty. Please provide a valid vault ID for deletion.")
     )
     
