@@ -25,7 +25,7 @@ function New-DSPamProvider {
     BEGIN {
         Write-Verbose '[New-DSPamProvider] Begin...'
     
-        $URI = "$Script:DSBaseURI/api/pam/providers"
+        $URI = "$Global:DSBaseURI/api/pam/providers"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."

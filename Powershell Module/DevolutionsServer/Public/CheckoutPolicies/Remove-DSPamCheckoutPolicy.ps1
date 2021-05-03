@@ -21,7 +21,7 @@ function Remove-DSPamCheckoutPolicy {
         }
     }
     PROCESS {
-        $URI = "$Script:DSBaseURI/api/pam/checkout-policies/$candidPolicyID"
+        $URI = "$Global:DSBaseURI/api/pam/checkout-policies/$candidPolicyID"
 
         $params = @{
             Uri    = $URI

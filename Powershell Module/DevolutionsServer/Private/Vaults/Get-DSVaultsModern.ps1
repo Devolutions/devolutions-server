@@ -25,7 +25,7 @@ function Get-DSVaultsModern{
         BEGIN {
             Write-Verbose '[Get-DSVaultsModern] begin...'
     
-            $URI = "$Script:DSBaseURI/api/v3/vaults"
+            $URI = "$Global:DSBaseURI/api/v3/vaults"
 
     		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{

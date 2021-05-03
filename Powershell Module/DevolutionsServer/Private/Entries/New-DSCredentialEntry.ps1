@@ -16,7 +16,7 @@ function New-DSCredentialEntry {
     BEGIN {
         Write-Verbose '[New-DSEntry] Begining...'
 
-        $URI = "$Script:DSBaseURI/api/connections/partial/save"
+        $URI = "$Global:DSBaseURI/api/connections/partial/save"
         $Method = "POST"
     
         $SupportedSubType = @(

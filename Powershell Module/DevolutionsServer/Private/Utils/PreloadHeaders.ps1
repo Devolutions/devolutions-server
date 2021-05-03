@@ -3,5 +3,5 @@ function PreloadHeaders{
     param(
         [Hashtable]$headers
     )
-    $Script:DSHdr = $headers
+    $Global:DSHdr = $headers
 }    

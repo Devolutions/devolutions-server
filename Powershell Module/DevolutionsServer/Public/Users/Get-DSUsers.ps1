@@ -19,13 +19,13 @@ function Get-DSUsers {
     }
     PROCESS { 
         $URI = if ($All) { 
-            "$Script:DSBaseURI/api/security/users/list" 
+            "$Global:DSBaseURI/api/security/users/list" 
         }
         elseif ($candidUserId) {
-            "$Script:DSBaseURI/api/security/user/${candidUserId}?csFromXml=1&loadGroup=1" 
+            "$Global:DSBaseURI/api/security/user/${candidUserId}?csFromXml=1&loadGroup=1" 
         }
         else { 
-            "$Script:DSBaseURI/api/v3/users?pageSize=$pageSize&pageNumber=$pageNumber&sortOrder=1&includeImages=false" 
+            "$Global:DSBaseURI/api/v3/users?pageSize=$pageSize&pageNumber=$pageNumber&sortOrder=1&includeImages=false" 
         }
 
         $params = @{
