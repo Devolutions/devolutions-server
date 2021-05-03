@@ -48,6 +48,7 @@ Describe "Integration tests - these will pollute the backend" {
     }
 
     Describe NormalWorkflow {
+        <#
         Context "Connecting to server" {
             It "Should get server information" {
                 $res = Get-DSServerInfo -BaseURI $dvlsURI
@@ -56,8 +57,9 @@ Describe "Integration tests - these will pollute the backend" {
             It "Should authenticate" {
                 $res = New-DSSession -Credential $creds -BaseURI $dvlsURI
                 $res.IsSuccess | Should -Be $true
-            }
+            } 
         }
+        #>
 
         <#Custom users
         Context "Custom users" {
