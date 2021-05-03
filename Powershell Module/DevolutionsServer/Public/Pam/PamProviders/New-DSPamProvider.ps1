@@ -25,7 +25,7 @@ function New-DSPamProvider {
     BEGIN {
         Write-Verbose '[New-DSPamProvider] Begin...'
     
-        $URI = "$Script:DSBaseURI/api/pam/providers"
+        $URI = "$Global:DSBaseURI/api/pam/providers"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
@@ -34,17 +34,10 @@ function New-DSPamProvider {
     
     PROCESS {
         try {
-            [int] $credentialTypeValue
-            switch ( $credentialType ) {
-                'LocalUser' {
-                    $credentialTypeValue = 2
-                }
-                'DomainUser' {
-                    $credentialTypeValue = 3
-                }
-                'SqlServer' {
-                    $credentialTypeValue = 5
-                }
+            $credentialTypeValue = switch ( $credentialType ) {
+                'LocalUser' { 2; break }
+                'DomainUser' { 3; break }
+                'SqlServer' { 5; break }
             }
 
             $newProviderData = @{

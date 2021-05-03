@@ -15,19 +15,17 @@ Establishes a session with a Devolutions Server
 		[PSCredential]$Credentials,
 		[parameter(Mandatory)]
 		[string]$BaseURI
-)
+	)
 
 	BEGIN { 
 		Write-Verbose '[New-DSSession] begin...'
 
-		if ($Script:DSBaseURI -ne $BaseURI) {
-			if ($Global:DSSessionToken) {
-				throw "Session already established, Close it before switching servers."
-			}
+		if (Get-Variable DSSessionKey -Scope Global -ErrorAction SilentlyContinue) {
+			throw "Session already established. Close it before switching servers."
 		}
 
 		#Get-ServerInfo must be called to get encryption keys...
-		if ([string]::IsNullOrWhiteSpace($Global:DSSessionKey)) {
+		if (!(Get-Variable DSSessionKey -Scope Global -ErrorAction SilentlyContinue) -or [string]::IsNullOrWhiteSpace($Global:DSSessionKey)) {
 			$info = Get-DSServerInfo -BaseURI $BaseURI
 			if ($false -eq $info.IsSuccess) {
 				throw "Unable to get server information"
@@ -35,18 +33,16 @@ Establishes a session with a Devolutions Server
 		}
 
 		$URI = "$Env:DS_URL/api/login/partial"
-	
 	}
 
 	PROCESS {
-
 		$safePassword = Protect-ResourceToHexString $Credentials.GetNetworkCredential().Password
 
 		$Body = @{
 			userName            = $Credentials.UserName
 			RDMOLoginParameters = @{
 				SafePassword     = $safePassword
-				SafeSessionKey   = $Script:DSSafeSessionKey
+				SafeSessionKey   = $Global:DSSafeSessionKey
 				Client           = 'Scripting'
 				Version          = $MyInvocation.MyCommand.Module.Version.ToString()
 				LocalMachineName = [Environment]::MachineName
@@ -54,8 +50,8 @@ Establishes a session with a Devolutions Server
 			}
 		}
 
-		if ($Script:DSHdr) {
-			$Global:WebSession.Headers.Add($Script:DSHdr)
+		if (Test-Path Global:DSHdr) {
+			$Global:WebSession.Headers.Add($Global:DSHdr)
 		}
 		
 		#body is typed as a HashTable, I'd like to offer an override that pushes the conversion downstream
@@ -65,7 +61,8 @@ Establishes a session with a Devolutions Server
 
 			if ($null -eq $jsonContent) {
 				$HasResult = $false
-			} else {
+			}
+			else {
 				$HasResult = Get-Member -InputObject $jsonContent -Name "result"
 			}
 

@@ -26,7 +26,7 @@ function Remove-DSPamFolder {
     
     PROCESS {
         try {
-            $URI = "$Script:DSBaseURI/api/pam/folders/$folderID"
+            $URI = "$Global:DSBaseURI/api/pam/folders/$folderID"
 
             $params = @{
                 Uri    = $URI

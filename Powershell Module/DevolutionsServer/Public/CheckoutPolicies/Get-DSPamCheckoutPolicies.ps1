@@ -30,14 +30,14 @@ function Get-DSPamCheckoutPolicies {
     PROCESS {
         try {  
             $URI = if ($Count) { 
-                "$Script:DSBaseURI/api/pam/checkout-policies/count"
+                "$Global:DSBaseURI/api/pam/checkout-policies/count"
             } 
             else { 
                 if (![string]::IsNullOrWhiteSpace($policyID)) {
-                    "$Script:DSBaseURI/api/pam/checkout-policies/$policyID"
+                    "$Global:DSBaseURI/api/pam/checkout-policies/$policyID"
                 }
                 else {
-                    "$Script:DSBaseURI/api/pam/checkout-policies"
+                    "$Global:DSBaseURI/api/pam/checkout-policies"
                 }
             }
 

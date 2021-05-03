@@ -20,7 +20,7 @@ function Get-DSEntriesLegacy{
         BEGIN {
             Write-Verbose '[Get-DSEntriesLegacy] begin...'
     
-            $URI = "$Script:DSBaseURI/api/Connections/list/all"
+            $URI = "$Global:DSBaseURI/api/Connections/list/all"
 
     		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{

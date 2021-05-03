@@ -75,7 +75,7 @@ function Invoke-DS {
     }
 
     END {
-        If ($res.isSuccess) {
+        If ($?) {
             Write-Verbose '[Invoke-DS] Completed Successfully.'
         }
         else {

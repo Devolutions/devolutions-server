@@ -17,7 +17,7 @@ function Get-DSPamProviders {
     BEGIN {
         Write-Verbose '[Get-DSPamProviders] begin...'
     
-        $URI = "$Script:DSBaseURI/api/pam/providers"
+        $URI = "$Global:DSBaseURI/api/pam/providers"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
                         throw "Session does not seem authenticated, call New-DSSession."
@@ -50,7 +50,7 @@ function Get-DSPamProviders {
     }
     
     END {
-        If ($res.isSuccess) {
+        If ($response.isSuccess) {
             Write-Verbose '[Get-DSPamProviders] Completed Successfully.'
         }
         else {

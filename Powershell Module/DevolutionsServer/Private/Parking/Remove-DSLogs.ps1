@@ -29,7 +29,7 @@ function Remove-DSLogs {
         BEGIN {
             Write-Verbose '[Remove-DSLogs] begin...'
 
-            $URI = "$Script:DSBaseURI/api/log/cleanup/run"
+            $URI = "$Global:DSBaseURI/api/log/cleanup/run"
     
     		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{

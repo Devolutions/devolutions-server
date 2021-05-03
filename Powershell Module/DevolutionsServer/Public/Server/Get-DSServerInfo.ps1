@@ -21,7 +21,7 @@ This endpoint does not require authentication.
 		Write-Verbose '[Get-DSServerInfo] Begin...'
 
 		#We can call the api repeatedly, even after we've established the session.  We must close the existing session only if we change the URI
-		if ($Script:DSBaseURI -ne $BaseURI) {
+		if ((Get-Variable DSBaseURI -Scope Global -ErrorAction SilentlyContinue) -and ($Global:DSBaseURI -ne $BaseURI)) {
 			if ($Global:DSSessionToken) {
 				throw "Session already established, Close it before switching servers."
 			}
@@ -53,13 +53,13 @@ This endpoint does not require authentication.
 
 				[System.Version]$instanceVersion = $jsonContent.data.version
 
-				Set-Variable -Name DSBaseURI -Value $BaseURI -Scope Script
-				Set-Variable -Name DSKeyExp -Value $publickey_exp -Scope Script
-				Set-Variable -Name DSKeyMod -Value $publickey_mod -Scope Script
+				Set-Variable -Name DSBaseURI -Value $BaseURI -Scope Global
+				Set-Variable -Name DSKeyExp -Value $publickey_exp -Scope Global
+				Set-Variable -Name DSKeyMod -Value $publickey_mod -Scope Global
 				Set-Variable -Name DSSessionKey -Value $session_Key -Scope Global
-				Set-Variable -Name DSSafeSessionKey -Value $safeSessionKey -Scope Script
+				Set-Variable -Name DSSafeSessionKey -Value $safeSessionKey -Scope Global
 				Set-Variable -Name DSInstanceVersion -Value $instanceVersion -Scope Global
-				Set-Variable -Name DSInstanceName -Value $jsonContent.data.serverName -Scope Script
+				Set-Variable -Name DSInstanceName -Value $jsonContent.data.serverName -Scope Global
 
 				return [ServerResponse]::new(($response.StatusCode -eq 200), $response, $jsonContent, $null, "", $response.StatusCode)
 			}

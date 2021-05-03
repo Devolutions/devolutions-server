@@ -11,7 +11,7 @@ function Get-DSPamAccounts {
     BEGIN {
         Write-Verbose '[Get-DSPamAccount] Begining...'
 
-        $URI = "$Script:DSBaseURI/api/pam/credentials"
+        $URI = "$Global:DSBaseURI/api/pam/credentials"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."

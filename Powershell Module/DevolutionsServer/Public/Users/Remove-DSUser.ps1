@@ -16,7 +16,7 @@ function Remove-DSUser {
         }
     }
     PROCESS {   
-        $URI = "$Script:DSBaseURI/api/security/userinfo/delete/$candidUserId"
+        $URI = "$Global:DSBaseURI/api/security/userinfo/delete/$candidUserId"
 
         $params = @{
             Uri    = $URI

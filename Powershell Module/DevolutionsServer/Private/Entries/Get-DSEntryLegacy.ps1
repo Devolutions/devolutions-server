@@ -30,9 +30,9 @@ function Get-DSEntryLegacy{
         PROCESS {
             if ($IncludeAdvancedProperties.IsPresent)
             {
-                $URI = "$Script:DSBaseURI/api/Connections/partial/$($EntryId)/resolved-variables"
+                $URI = "$Global:DSBaseURI/api/Connections/partial/$($EntryId)/resolved-variables"
             } else {
-                $URI = "$Script:DSBaseURI/api/Connections/partial/$($EntryId)"
+                $URI = "$Global:DSBaseURI/api/Connections/partial/$($EntryId)"
             }
             $PSBoundParameters.Remove('IncludeAdvancedProperties') | out-null
             try

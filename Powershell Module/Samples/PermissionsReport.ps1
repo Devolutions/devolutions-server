@@ -28,11 +28,11 @@ $indentSpace = 4
 $indentString = ''
 #----------------------------->>    Helpers
 function SetIndent($indent) {
-    $Script:IndentString = ' '.PadLeft($indent*$Script:indentSpace)
+    $Global:IndentString = ' '.PadLeft($indent*$Global:indentSpace)
 }
 
 function WriteIndentedOutput($str) { 
-    write-output "$($Script:indentString)$($str)"
+    write-output "$($Global:indentString)$($str)"
 }
 
 #----------------------------->>    Setup
