@@ -51,58 +51,80 @@ function Update-UsernamePassword {
     $ISORegex = "/^(-?(?:[1-9][0-9]*)?[0-9]{4})-(1[0-2]|0[1-9])-(3[01]|0[1-9]|[12][0-9])T(2[0-3]|[01][0-9]):([0-5][0-9]):([0-5][0-9])(.[0-9]+)?(Z)?$/g"
 
     foreach ($Param in $ParamList.GetEnumerator()) {
-        switch ($Param.Key) {
-            "EntryName" {
-                if ($Param.Value -ne $EntryResolvedVariables.name) { $EntryResolvedVariables.name = $Param.Value }
-            }
-            "Folder" { if ($Param.Value -ne $EntryResolvedVariables.group) { $EntryResolvedVariables.group = $Param.Value } }
-            "Username" { 
-                if ($Param.Value -ne $EntryResolvedVariables.data.userName) { $EntryResolvedVariables.data.userName = $Param.Value }
-            }
-            "Domain" {
-                if ($Param.Value -ne $EntryResolvedVariables.data.domain) { $EntryResolvedVariables.data.domain = $Param.Value }
-            }
-            "Password" {
-                if ($Param.Value -ne $EntryResolvedVariables.data.passwordItem) { @{"hasSensitiveData" = $True; "sensitiveData" = $Param.Value } | Out-Null }
-            }
-            "PromptForPassword" { 
-                if ("promptForPassword" -in $EntryResolvedVariables.data.PSObject.Properties.Name) {
-                    $EntryResolvedVariables.data.promptForPassword = $Param.Value
+        if (($null -ne $Param.Value) -and (![string]::IsNullOrWhiteSpace($Param.Value))) {
+            switch ($Param.Key) {
+                "EntryName" {
+                    if ($Param.Value -ne $EntryResolvedVariables.name) { 
+                        $EntryResolvedVariables.name = $Param.Value 
+                    }
                 }
-                else {
-                    $EntryResolvedVariables.data | Add-Member -NotePropertyName "promptForPassword" -NotePropertyValue $Param.Value
+                "Folder" { 
+                    if ($Param.Value -ne $EntryResolvedVariables.group) {
+                        $EntryResolvedVariables.group = $Param.Value 
+                    } 
                 }
-            }
-            "MnemonicPassword" {
-                if ($Param.Value -ne $EntryResolvedVariables.data.mnemonicPassword) { $EntryResolvedVariables.data.mnemonicPassword = $Param.Value }
-            }
+                "Username" { 
+                    if ($Param.Value -ne $EntryResolvedVariables.data.userName) {
+                        $EntryResolvedVariables.data.userName = $Param.Value 
+                    }
+                }
+                "Domain" {
+                    if ($Param.Value -ne $EntryResolvedVariables.data.domain) {
+                        $EntryResolvedVariables.data.domain = $Param.Value 
+                    }
+                }
+                "Password" {
+                    if ($Param.Value -ne $EntryResolvedVariables.data.passwordItem) { 
+                        @{"hasSensitiveData" = $True; "sensitiveData" = $Param.Value } | Out-Null 
+                    }
+                }
+                "PromptForPassword" { 
+                    if ("promptForPassword" -in $EntryResolvedVariables.data.PSObject.Properties.Name) {
+                        $EntryResolvedVariables.data.promptForPassword = $Param.Value
+                    }
+                    else {
+                        $EntryResolvedVariables.data | Add-Member -NotePropertyName "promptForPassword" -NotePropertyValue $Param.Value
+                    }
+                }
+                "MnemonicPassword" {
+                    if ($Param.Value -ne $EntryResolvedVariables.data.mnemonicPassword) {
+                        $EntryResolvedVariables.data.mnemonicPassword = $Param.Value 
+                    }
+                }
 
-            "Description" {
-                if ($Param.Value -ne $EntryResolvedVariables.description) {
-                    $EntryResolvedVariables.description = $param.Value
-                } 
-            }
-            "Tags" { 
-                if ($Param.Value -ne $EntryResolvedVariables.keywords) {
-                    $EntryResolvedVariables.keywords = $Param.Value
+                "Description" {
+                    if ($Param.Value -ne $EntryResolvedVariables.description) {
+                        $EntryResolvedVariables.description = $param.Value
+                    } 
                 }
-            }
-            "Expiration" {
-                if (($Param.Value -ne $EntryResolvedVariables.expiration) -and $Param.Value -match $ISORegex) {
-                    $EntryResolvedVariables.description = $param.Value
-                }  
-            }
+                "Tags" { 
+                    if ($Param.Value -ne $EntryResolvedVariables.keywords) {
+                        $EntryResolvedVariables.keywords = $Param.Value
+                    }
+                }
+                "Expiration" {
+                    if (($Param.Value -ne $EntryResolvedVariables.expiration) -and $Param.Value -match $ISORegex) {
+                        $EntryResolvedVariables.description = $param.Value
+                    }  
+                }
 
-            "CredentialViewedCommentIsRequired" {
-                if ("credentialViewedCommentIsRequired" -in $EntryResolvedVariables.events.PSObject.Properties.Name) { $EntryResolvedVariables.events.credentialViewedCommentIsRequired = $Param.Value }
+                "CredentialViewedCommentIsRequired" {
+                    if ("credentialViewedCommentIsRequired" -in $EntryResolvedVariables.events.PSObject.Properties.Name) {
+                        $EntryResolvedVariables.events.credentialViewedCommentIsRequired = $Param.Value 
+                    }
+                }
+                "CredentialViewedPrompt" {
+                    if ("credentialViewedPrompt" -in $EntryResolvedVariables.events.PSObject.Properties.Name) { 
+                        $EntryResolvedVariables.events.credentialViewedPrompt = $Param.Value 
+                    }
+                }
+                "TicketNumberIsRequiredOnCredentialViewed" {
+                    if ("ticketNumberIsRequiredOnCredentialViewed" -in $EntryResolvedVariables.events.PSObject.Properties.Name) {
+                        $EntryResolvedVariables.events.ticketNumberIsRequiredOnCredentialViewed = $Param.Value 
+                    }
+                }
+                Default {}
             }
-            "CredentialViewedPrompt" {
-                if ("credentialViewedPrompt" -in $EntryResolvedVariables.events.PSObject.Properties.Name) { $EntryResolvedVariables.events.credentialViewedPrompt = $Param.Value }
-            }
-            "TicketNumberIsRequiredOnCredentialViewed" {
-                if ("ticketNumberIsRequiredOnCredentialViewed" -in $EntryResolvedVariables.events.PSObject.Properties.Name) { $EntryResolvedVariables.events.ticketNumberIsRequiredOnCredentialViewed = $Param.Value }
-            }
-            Default {}
         }
     }
 }
