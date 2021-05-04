@@ -47,7 +47,14 @@ function New-DSEntry {
         [Devolutions.RemoteDesktopManager.PrivateKeyType]$PrivateKeyType = [Devolutions.RemoteDesktopManager.PrivateKeyType]::Data,
         [string]$PrivateKeyPath,
         [string]$PrivateKeyPassphrase,
-        [bool]$PromptForPassphrase
+        [bool]$PromptForPassphrase,
+
+        #RDP entry specifics...
+        [string]$Group = "",
+        [string]$HostName,
+        [bool]$AdminMode = $False,
+        [string]$Port = "3389",
+        [Devolutions.RemoteDesktopManager.RDPType]$RDPType = [Devolutions.RemoteDesktopManager.RDPType]::Normal
     )
 
     BEGIN {
@@ -64,6 +71,7 @@ function New-DSEntry {
             
             $res = switch ($ConnectionType) {
                 ([Devolutions.RemoteDesktopManager.ConnectionType]::Credential) { New-DSCredentialEntry -ParamList $Parameters; break }
+                ([Devolutions.RemoteDesktopManager.ConnectionType]::RDPConfigured) { New-DSRDPEntry -ParamList $Parameters; break }
                 Default { throw "Entries of type $ConnectionType are not supported yet." }
             }
 
