@@ -23,10 +23,19 @@ function New-DSRDPEntry {
                 group          = $ParamList.Folder
                 name           = $ParamList.EntryName
                 data           = @{
-                    host      = $ParamList.HostName 
-                    adminMode = $ParamList.AdminMode
-                    rdpType   = $ParamList.RDPType
-                    username  = $ParamList.Username
+                    host                        = $ParamList.HostName 
+                    adminMode                   = $ParamList.AdminMode
+                    rdpType                     = $ParamList.RDPType
+                    username                    = $ParamList.Username
+                    soundHook                   = $ParamList.SoundHook
+                    audioQualityMode            = $ParamList.AudioQualityMode
+                    usesClipboard               = $ParamList.UsesClipboard
+                    usesDevices                 = $ParamList.UsesDevices
+                    usesHardDrives              = $ParamList.UsesHardDrives
+                    usesPrinters                = $ParamList.UsesPrinters
+                    usesSerialPorts             = $ParamList.UsesSerialPorts
+                    usesSmartDevices            = $ParamList.UsesSmartDevices     
+                    audioCaptureRedirectionMode = $ParamList.AudioCaptureRedirectionMode
                 }
             }
 

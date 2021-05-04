@@ -86,7 +86,27 @@ function New-DSEntry {
         #Hyper-V Instance
         [string]$HyperVInstance = "{}",
         #Hyper-V enhanced session (Uses machine's local resources, such as USB drive or printer)
-        [bool]$UseEnhancedSessionMode = $False
+        [bool]$UseEnhancedSessionMode = $False,
+        
+        <# -- Local resources -- #>
+        #RDP access to clipboard
+        [bool]$UsesClipboard = $true,
+        #RDP access to "devices" (Such as cameras...)
+        [bool]$UsesDevices = $False,
+        #RDP access to hard drives
+        [bool]$UsesHardDrives = $true,
+        #RDP access to printers
+        [bool]$UsesPrinters = $False,
+        #RDP access to serial ports
+        [bool]$UsesSerialPorts = $true,
+        #RDP access to smart devices
+        [bool]$UsesSmartDevices = $False,
+        #Choose destination for sounds
+        [Devolutions.RemoteDesktopManager.SoundHook]$SoundHook = [Devolutions.RemoteDesktopManager.SoundHook]::BringToThisComputer,
+        #RDP Audio quality
+        [Devolutions.RemoteDesktopManager.RDPAudioQualityMode]$AudioQualityMode = [Devolutions.RemoteDesktopManager.RDPAudioQualityMode]::Dynamic,
+        #Record audio from RDP session
+        [bool]$AudioCaptureRedirectionMode = $true
     )
 
     BEGIN {
