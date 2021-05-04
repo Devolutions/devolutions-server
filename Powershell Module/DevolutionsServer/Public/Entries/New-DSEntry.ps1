@@ -86,7 +86,7 @@ function New-DSEntry {
         #Hyper-V Instance
         [string]$HyperVInstance = "{}",
         #Hyper-V enhanced session (Uses machine's local resources, such as USB drive or printer)
-        [bool]$UseEnhancedSessionMode
+        [bool]$UseEnhancedSessionMode = $False
     )
 
     BEGIN {
