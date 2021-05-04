@@ -1,60 +1,92 @@
 function New-DSEntry {
     <#
     .SYNOPSIS
-
+    Creates a new entry
     .DESCRIPTION
+    Creates a new entry in default vault's root if no other vault/folder are specified. For now, only entries of type "Credentials" (Default/PrivateKey) and "RDPConfigured"
+    are supported, but more will join them as time goes and requests come in.
+    .EXAMPLE 
 
-    .EXAMPLE
-
-    .NOTES
     #>
-
     [CmdletBinding()]
     PARAM (
         [ValidateNotNullOrEmpty()]
+        #Connection type (Supported entries are Credentials or RDPConfigured. More to come...)
         [Devolutions.RemoteDesktopManager.ConnectionType]$ConnectionType,
         [ValidateNotNullOrEmpty()]
+        #Connection sub-type. Used for connections of type Credentials. (Supported sub-type are Default or PrivateKey)
         [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]$ConnectionSubType = [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default,
     
-        #Base credential data
+        <# -- Base entry data -- #>
         [ValidateNotNullOrEmpty()]
+        #Entry's name
         [string]$EntryName,
+        #Entry's domain
         [string]$Domain,
         [ValidateNotNullOrEmpty()]
+        #Entry's username
         [string]$Username,
+        #Entry's password
         [string]$Password,
+        #Entry's mnemonic password
         [string]$MnemonicPassword,
+        #Entry's vault ID
         [guid]$VaultID = [guid]::Empty,
+        #Entry's location in the vault (Folder name, not ID)
         [string]$Folder,
+        #Entry's prompt for password when checkout
         [bool]$PromptForPassword,
     
-        #More
+        <# -- More -- #>
+        #Entry's description
         [string]$Description,
+        #Entry's tags (Keywords). Each word separeted by a space is considered a keyword.
         [string]$Tags,
-        [string]$Expiration, #ISO-8601 format (yyyy-mm-ddThh:mm:ss.000Z)
+        #Entry's expiration date (ISO-8601 format (yyyy-mm-ddThh:mm:ss.000Z)
+        [string]$Expiration,
 
-        #Events
+        <# -- Events -- #>
+        #A comment is required to view entry's credentials
         [bool]$CredentialViewedCommentIsRequired = $False,
-        [bool]$CredentialViewedPrompt = $False,
+        #A ticket number is required to view entry's credentials
         [bool]$TicketNumberIsRequiredOnCredentialViewed = $False,
+        #Prompt the user for comment/ticket number
+        [bool]$CredentialViewedPrompt = $False,
 
-        #Security
+        <# -- Security -- #>
+        #Entry's checkout mode
         [Devolutions.RemoteDesktopManager.CheckOutMode]$CheckoutMode = [Devolutions.RemoteDesktopManager.CheckOutMode]::Default,
+        #Entry's offline mode
         [Devolutions.RemoteDesktopManager.AllowOffline]$AllowOffline = [Devolutions.RemoteDesktopManager.AllowOffline]::Default,
 
-        #PrivateKey specifics...
+        <# -- PrivateKey specifics... -- #>
         [ValidateSet('NoKey', 'Data')]
+        #Private key type
         [Devolutions.RemoteDesktopManager.PrivateKeyType]$PrivateKeyType = [Devolutions.RemoteDesktopManager.PrivateKeyType]::Data,
+        #Full private key path (*.ppk)
         [string]$PrivateKeyPath,
+        #Private key passphrase
         [string]$PrivateKeyPassphrase,
+        #Prompt for passphrase before checkout
         [bool]$PromptForPassphrase,
 
-        #RDP entry specifics...
-        [string]$Group = "",
+        <# -- RDP entry specifics... -- #>
+        #RDP's host name (Address)
         [string]$HostName,
+        #Opens the adminstration console
         [bool]$AdminMode = $False,
+        #Port used by RDP
         [string]$Port = "3389",
-        [Devolutions.RemoteDesktopManager.RDPType]$RDPType = [Devolutions.RemoteDesktopManager.RDPType]::Normal
+        #RDP Type
+        [Devolutions.RemoteDesktopManager.RDPType]$RDPType = [Devolutions.RemoteDesktopManager.RDPType]::Normal,
+        #Azure Cloud Services role name
+        [string]$RoleName = "{}",
+        #Azure Cloud Service's instance ID
+        [int]$AzureInstanceID = 0,
+        #Hyper-V Instance
+        [string]$HyperVInstance = "{}",
+        #Hyper-V enhanced session (Uses machine's local resources, such as USB drive or printer)
+        [bool]$UseEnhancedSessionMode
     )
 
     BEGIN {
