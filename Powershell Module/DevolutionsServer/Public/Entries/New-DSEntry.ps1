@@ -128,8 +128,11 @@ function New-DSEntry {
             [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded, 
             [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Undocked
         )]
+        #Display mode used by RDP
         [string]$DisplayMode = [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded,
+        #Display monitor used by RDP
         [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayMonitor = [Devolutions.RemoteDesktopManager.DisplayMonitor]::Primary,
+        #Virtual desktop used by RPD
         [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayVirtualDesktop = [Devolutions.RemoteDesktopManager.DisplayVirtualDesktop]::Current
     )
 
