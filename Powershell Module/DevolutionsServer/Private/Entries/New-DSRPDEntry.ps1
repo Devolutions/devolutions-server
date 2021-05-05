@@ -19,10 +19,13 @@ function New-DSRDPEntry {
         try {
             #Default RDP entry, valid for all RDP type
             $RDPEntry = @{
-                connectionType = 1
-                group          = $ParamList.Folder
-                name           = $ParamList.EntryName
-                data           = @{
+                connectionType        = 1
+                group                 = $ParamList.Folder
+                name                  = $ParamList.EntryName
+                displayMode           = $ParamList.DisplayMode
+                DisplayMonitor        = $ParamList.DisplayMonitor
+                displayVirtualDesktop = $ParamList.DisplayVirtualDesktop
+                data                  = @{
                     host                        = $ParamList.HostName 
                     adminMode                   = $ParamList.AdminMode
                     rdpType                     = $ParamList.RDPType
@@ -74,7 +77,7 @@ function New-DSRDPEntry {
                 }
             }
 
-            #Alternate shell/RemoteApp program
+            #Alternate shell/RemoteApp program. Prioritizing RemoteApp, as it's preferred over alternative shell
             if (![string]::IsNullOrEmpty($ParamList.RemoteApplicationProgram)) {
                 $RDPEntry.data += @{ "remoteApp" = $true }
                 $RDPEntry.data += @{ "remoteApplicationProgram" = $ParamList.RemoteApplicationProgram }

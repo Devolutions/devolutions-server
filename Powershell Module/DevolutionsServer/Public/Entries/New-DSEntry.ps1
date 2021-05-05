@@ -88,7 +88,7 @@ function New-DSEntry {
         #Hyper-V enhanced session (Uses machine's local resources, such as USB drive or printer)
         [bool]$UseEnhancedSessionMode = $False,
         
-        <# -- Local resources tab -- #>
+        <# -- General -> Local resources tab -- #>
         #RDP access to clipboard
         [bool]$UsesClipboard = $true,
         #RDP access to "devices" (Such as cameras...)
@@ -108,22 +108,29 @@ function New-DSEntry {
         #Record audio from RDP session
         [bool]$AudioCaptureRedirectionMode = $true,
 
-        <# -- Programs tab -- #>
+        <# -- General -> Programs tab -- #>
         #Path (including filename) of application to launch in alternate shell
         [string]$AlternateShell,
         #Path for alternate shell directory
         [string]$ShellWorkingDirectory,
-
         #Path (including filename and extension) of application to launch after login
         [string]$AfterLoginProgram,
         #Delay (in miliseconds) to launch application after login
         [int]$AfterLoginDelay = 500,
-
         #Path (including filename and extension) of application to launch
         [string]$RemoteApplicationProgram,
         #Parameters for the remote application
-        [string]$RemoteApplicationCmdLine
+        [string]$RemoteApplicationCmdLine,
 
+        <# -- User interface tab -- #>
+        [ValidateSet(
+            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::External, 
+            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded, 
+            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Undocked
+        )]
+        [string]$DisplayMode = [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded,
+        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayMonitor = [Devolutions.RemoteDesktopManager.DisplayMonitor]::Primary,
+        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayVirtualDesktop = [Devolutions.RemoteDesktopManager.DisplayVirtualDesktop]::Current
     )
 
     BEGIN {
