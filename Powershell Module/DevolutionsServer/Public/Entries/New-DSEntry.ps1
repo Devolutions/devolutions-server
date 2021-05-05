@@ -123,21 +123,36 @@ function New-DSEntry {
         [string]$RemoteApplicationCmdLine,
 
         <# -- General -> Experience tab -- #>
+        #Connection speed to use for RDP
         [string]$NetworkConnectionType = [Devolutions.RemoteDesktopManager.RDPNetworkConnectionType]::Default,
+        #Enable desktop background
         [bool]$DesktopBackground = $true,
+        #Enable font smoothing
         [bool]$FontSmoothing = $False,
+        #Enable desktop composition
         [bool]$DesktopComposition = $False,
+        #Enable animations
         [bool]$Animations = $False,
+        #Enable visual styles
         [bool]$VisualStyles = $true,
+        #Enable network autodetection
         [bool]$NetworkAutoDetect = $False,
+        #Enable automatic reconnection if RDP drop
         [bool]$AutoReconnection = $true,
+        #Enable DirectX redirection
         [bool]$RedirectDirectX = $False,
+        #Enable video playback redirection
         [bool]$RedirectVideoPlayback = $False,
+        #Enable content showing while dragging across screen
         [bool]$ShowContentWhileDragging = $true,
+        #Enable data compression
         [bool]$DataCompression = $true,
+        #Enable persistent bitmap caching
         [bool]$PersistentBitmapCaching = $true,
+        #Enable bandwith autodetection
         [bool]$BandwidthAutoDetect = $true,
         [ValidateSet("Default", "Yes", "No")]
+        #Sets if addons load in embedded or not
         [string]$LoadAddonsMode = "Default",
        
         <# -- User interface tab -- #>

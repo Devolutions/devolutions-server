@@ -1,10 +1,11 @@
 function New-DSRDPEntry {
     <#
     .SYNOPSIS
-
+    Creates a new RDP entry
     .DESCRIPTION
-
+    Creates a new RDP entry with the parameters supplied. All fields have a default value corresponding to those of Remote Desktop Manager.
     .EXAMPLE
+    
     #>
     [CmdletBinding()]
     PARAM (
@@ -12,7 +13,6 @@ function New-DSRDPEntry {
     )
     
     BEGIN {
-        [Devolutions.RemoteDesktopManager.pl]
         $URI = "$env:DS_URL/api/connections/partial/save"
     }
     
