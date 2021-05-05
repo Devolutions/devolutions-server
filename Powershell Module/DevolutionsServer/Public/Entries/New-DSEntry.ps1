@@ -37,7 +37,7 @@ function New-DSEntry {
         #Entry's prompt for password when checkout
         [bool]$PromptForPassword,
     
-        <# -- More -- #>
+        <# -- More tab -- #>
         #Entry's description
         [string]$Description,
         #Entry's tags (Keywords). Each word separeted by a space is considered a keyword.
@@ -45,7 +45,7 @@ function New-DSEntry {
         #Entry's expiration date (ISO-8601 format (yyyy-mm-ddThh:mm:ss.000Z)
         [string]$Expiration,
 
-        <# -- Events -- #>
+        <# -- Events tab -- #>
         #A comment is required to view entry's credentials
         [bool]$CredentialViewedCommentIsRequired = $False,
         #A ticket number is required to view entry's credentials
@@ -53,7 +53,7 @@ function New-DSEntry {
         #Prompt the user for comment/ticket number
         [bool]$CredentialViewedPrompt = $False,
 
-        <# -- Security -- #>
+        <# -- Security tab -- #>
         #Entry's checkout mode
         [Devolutions.RemoteDesktopManager.CheckOutMode]$CheckoutMode = [Devolutions.RemoteDesktopManager.CheckOutMode]::Default,
         #Entry's offline mode
@@ -80,15 +80,15 @@ function New-DSEntry {
         #RDP Type
         [Devolutions.RemoteDesktopManager.RDPType]$RDPType = [Devolutions.RemoteDesktopManager.RDPType]::Normal,
         #Azure Cloud Services role name
-        [string]$RoleName = "{}",
+        [string]$RoleName = "",
         #Azure Cloud Service's instance ID
         [int]$AzureInstanceID = 0,
         #Hyper-V Instance
-        [string]$HyperVInstance = "{}",
+        [string]$HyperVInstance = "",
         #Hyper-V enhanced session (Uses machine's local resources, such as USB drive or printer)
         [bool]$UseEnhancedSessionMode = $False,
         
-        <# -- Local resources -- #>
+        <# -- Local resources tab -- #>
         #RDP access to clipboard
         [bool]$UsesClipboard = $true,
         #RDP access to "devices" (Such as cameras...)
@@ -106,7 +106,24 @@ function New-DSEntry {
         #RDP Audio quality
         [Devolutions.RemoteDesktopManager.RDPAudioQualityMode]$AudioQualityMode = [Devolutions.RemoteDesktopManager.RDPAudioQualityMode]::Dynamic,
         #Record audio from RDP session
-        [bool]$AudioCaptureRedirectionMode = $true
+        [bool]$AudioCaptureRedirectionMode = $true,
+
+        <# -- Programs tab -- #>
+        #Path (including filename) of application to launch in alternate shell
+        [string]$AlternateShell,
+        #Path for alternate shell directory
+        [string]$ShellWorkingDirectory,
+
+        #Path (including filename and extension) of application to launch after login
+        [string]$AfterLoginProgram,
+        #Delay (in miliseconds) to launch application after login
+        [int]$AfterLoginDelay = 500,
+
+        #Path (including filename and extension) of application to launch
+        [string]$RemoteApplicationProgram,
+        #Parameters for the remote application
+        [string]$RemoteApplicationCmdLine
+
     )
 
     BEGIN {

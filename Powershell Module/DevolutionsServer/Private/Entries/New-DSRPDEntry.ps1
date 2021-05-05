@@ -51,14 +51,39 @@ function New-DSRDPEntry {
 
             #Possible fields for RDP type "Azure"
             if ($ParamList.RDPType -eq [Devolutions.RemoteDesktopManager.RDPType]::Azure) {
-                $RDPEntry.data += @{"azureInstanceID" = $ParamList.AzureInstanceID }
-                $RDPEntry.data += @{"azureRoleName" = $ParamList.RoleName }
+                $RDPEntry.data += @{ "azureInstanceID" = $ParamList.AzureInstanceID }
+                $RDPEntry.data += @{ "azureRoleName" = $ParamList.RoleName }
             }
 
             #Possible fields for RDP type "HyperV"
             if ($ParamList.RDPType -eq [Devolutions.RemoteDesktopManager.RDPType]::HyperV) {
-                $RDPEntry.data += @{"hyperVInstanceID" = $ParamList.HyperVInstance }
-                $RDPEntry.data += @{"useEnhancedSessionMode" = $ParamList.UseEnhancedSessionMode }
+                $RDPEntry.data += @{ "hyperVInstanceID" = $ParamList.HyperVInstance }
+                $RDPEntry.data += @{ "useEnhancedSessionMode" = $ParamList.UseEnhancedSessionMode }
+            }
+
+            #After login program
+            if (![string]::IsNullOrEmpty($ParamList.AfterLoginProgram)) {
+                $RDPEntry.data += @{ "afterLoginExecuteProgram" = $true }
+                $RDPEntry.data += @{ "afterLoginProgram" = $ParamList.AfterLoginProgram }
+                $RDPEntry.data += @{
+                    "afterLoginDelay" = switch ($ParamList.AfterLoginDelay) {
+                        { $_ -lt 0 } { 0 }
+                        { $_ -lt 60000 } { 60000 }
+                        Default { $ParamList.AfterLoginDelay }
+                    }
+                }
+            }
+
+            #Alternate shell/RemoteApp program
+            if (![string]::IsNullOrEmpty($ParamList.RemoteApplicationProgram)) {
+                $RDPEntry.data += @{ "remoteApp" = $true }
+                $RDPEntry.data += @{ "remoteApplicationProgram" = $ParamList.RemoteApplicationProgram }
+                $RDPEntry.data += @{ "remoteApplicationCmdLine" = $ParamList.RemoteApplicationCmdLine }
+            }
+            elseif (![string]::IsNullOrEmpty($ParamList.AlternateShell)) {
+                $RDPEntry.data += @{ "useAlternateShell" = $true }
+                $RDPEntry.data += @{ "alternateShell" = $ParamList.AlternateShell }
+                $RDPEntry.data += @{ "shellWorkingDirectory" = $ParamList.ShellWorkingDirectory }
             }
 
             #Converts data to JSON, then encrypt the whole thing
