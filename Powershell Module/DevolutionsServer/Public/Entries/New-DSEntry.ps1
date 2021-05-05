@@ -3,10 +3,8 @@ function New-DSEntry {
     .SYNOPSIS
     Creates a new entry
     .DESCRIPTION
-    Creates a new entry in default vault's root if no other vault/folder are specified. For now, only entries of type "Credentials" (Default/PrivateKey) and "RDPConfigured"
-    are supported, but more will join them as time goes and requests come in.
-    .EXAMPLE 
-
+    Creates a new entry in default vault's root if no other vault/folder are specified. For now, only entries of type "Credentials" (Default/PrivateKey) and "RDPConfigured" are supported, but more will join them as time goes and requests come in.
+    
     #>
     [CmdletBinding()]
     PARAM (
@@ -18,8 +16,9 @@ function New-DSEntry {
         [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]$ConnectionSubType = [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default,
     
         <# -- Base entry data -- #>
-        [ValidateNotNullOrEmpty()]
+
         #Entry's name
+        [ValidateNotNullOrEmpty()]
         [string]$EntryName,
         #Entry's domain
         [string]$Domain,
@@ -28,7 +27,7 @@ function New-DSEntry {
         [string]$Username,
         #Entry's password
         [string]$Password,
-        #Entry's mnemonic password
+        #Entry's mnemonic passwordF
         [string]$MnemonicPassword,
         #Entry's vault ID
         [guid]$VaultID = [guid]::Empty,
@@ -38,6 +37,7 @@ function New-DSEntry {
         [bool]$PromptForPassword,
     
         <# -- More tab -- #>
+
         #Entry's description
         [string]$Description,
         #Entry's tags (Keywords). Each word separeted by a space is considered a keyword.
@@ -46,6 +46,7 @@ function New-DSEntry {
         [string]$Expiration,
 
         <# -- Events tab -- #>
+
         #A comment is required to view entry's credentials
         [bool]$CredentialViewedCommentIsRequired = $False,
         #A ticket number is required to view entry's credentials
@@ -54,14 +55,16 @@ function New-DSEntry {
         [bool]$CredentialViewedPrompt = $False,
 
         <# -- Security tab -- #>
+
         #Entry's checkout mode
         [Devolutions.RemoteDesktopManager.CheckOutMode]$CheckoutMode = [Devolutions.RemoteDesktopManager.CheckOutMode]::Default,
         #Entry's offline mode
         [Devolutions.RemoteDesktopManager.AllowOffline]$AllowOffline = [Devolutions.RemoteDesktopManager.AllowOffline]::Default,
 
         <# -- PrivateKey specifics... -- #>
-        [ValidateSet('NoKey', 'Data')]
+        
         #Private key type
+        [ValidateSet('NoKey', 'Data')]
         [Devolutions.RemoteDesktopManager.PrivateKeyType]$PrivateKeyType = [Devolutions.RemoteDesktopManager.PrivateKeyType]::Data,
         #Full private key path (*.ppk)
         [string]$PrivateKeyPath,
@@ -71,6 +74,7 @@ function New-DSEntry {
         [bool]$PromptForPassphrase,
 
         <# -- RDP entry specifics... -- #>
+
         #RDP's host name (Address)
         [string]$HostName,
         #Opens the adminstration console
@@ -89,6 +93,7 @@ function New-DSEntry {
         [bool]$UseEnhancedSessionMode = $False,
         
         <# -- General -> Local resources tab -- #>
+
         #RDP access to clipboard
         [bool]$UsesClipboard = $true,
         #RDP access to "devices" (Such as cameras...)
@@ -107,8 +112,11 @@ function New-DSEntry {
         [Devolutions.RemoteDesktopManager.RDPAudioQualityMode]$AudioQualityMode = [Devolutions.RemoteDesktopManager.RDPAudioQualityMode]::Dynamic,
         #Record audio from RDP session
         [bool]$AudioCaptureRedirectionMode = $true,
+        #Sets the destination for Windows key combinations (ALT+TAB, for example)
+        [Devolutions.RemoteDesktopManager.KeyboardHook]$KeyboardHook = [Devolutions.RemoteDesktopManager.KeyboardHook]::Default,
 
         <# -- General -> Programs tab -- #>
+
         #Path (including filename) of application to launch in alternate shell
         [string]$AlternateShell,
         #Path for alternate shell directory
@@ -123,6 +131,7 @@ function New-DSEntry {
         [string]$RemoteApplicationCmdLine,
 
         <# -- General -> Experience tab -- #>
+
         #Connection speed to use for RDP
         [string]$NetworkConnectionType = [Devolutions.RemoteDesktopManager.RDPNetworkConnectionType]::Default,
         #Enable desktop background
@@ -156,6 +165,7 @@ function New-DSEntry {
         [string]$LoadAddonsMode = "Default",
        
         <# -- User interface tab -- #>
+
         [ValidateSet(
             [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::External, 
             [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded, 

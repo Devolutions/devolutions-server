@@ -5,7 +5,7 @@ function New-DSRDPEntry {
     .DESCRIPTION
     Creates a new RDP entry with the parameters supplied. All fields have a default value corresponding to those of Remote Desktop Manager.
     .EXAMPLE
-    
+
     #>
     [CmdletBinding()]
     PARAM (
@@ -47,6 +47,7 @@ function New-DSRDPEntry {
                         "Yes" { 2 ; break }
                         "No" { 3 ; break }
                     }
+                    keyboardHook                = $ParamList.KeyboardHook
                 }
             }
 
