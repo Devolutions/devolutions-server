@@ -122,6 +122,24 @@ function New-DSEntry {
         #Parameters for the remote application
         [string]$RemoteApplicationCmdLine,
 
+        <# -- General -> Experience tab -- #>
+        [string]$NetworkConnectionType = [Devolutions.RemoteDesktopManager.RDPNetworkConnectionType]::Default,
+        [bool]$DesktopBackground = $true,
+        [bool]$FontSmoothing = $False,
+        [bool]$DesktopComposition = $False,
+        [bool]$Animations = $False,
+        [bool]$VisualStyles = $true,
+        [bool]$NetworkAutoDetect = $False,
+        [bool]$AutoReconnection = $true,
+        [bool]$RedirectDirectX = $False,
+        [bool]$RedirectVideoPlayback = $False,
+        [bool]$ShowContentWhileDragging = $true,
+        [bool]$DataCompression = $true,
+        [bool]$PersistentBitmapCaching = $true,
+        [bool]$BandwidthAutoDetect = $true,
+        [ValidateSet("Default", "Yes", "No")]
+        [string]$LoadAddonsMode = "Default",
+       
         <# -- User interface tab -- #>
         [ValidateSet(
             [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::External, 

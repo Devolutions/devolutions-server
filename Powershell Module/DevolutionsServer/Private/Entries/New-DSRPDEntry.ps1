@@ -12,6 +12,7 @@ function New-DSRDPEntry {
     )
     
     BEGIN {
+        [Devolutions.RemoteDesktopManager.pl]
         $URI = "$env:DS_URL/api/connections/partial/save"
     }
     
@@ -39,6 +40,13 @@ function New-DSRDPEntry {
                     usesSerialPorts             = $ParamList.UsesSerialPorts
                     usesSmartDevices            = $ParamList.UsesSmartDevices     
                     audioCaptureRedirectionMode = $ParamList.AudioCaptureRedirectionMode
+                    connectionType              = $ParamList.NetworkConnectionType
+                    videoPlaybackMode           = $ParamList.RedirectVideoPlayback
+                    loadAddOnsMode              = switch ($ParamList.LoadAddonsMode) {
+                        "Default" { 1; break }
+                        "Yes" { 2 ; break }
+                        "No" { 3 ; break }
+                    }
                 }
             }
 
