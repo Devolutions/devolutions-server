@@ -60,7 +60,7 @@ function New-DSUser {
     )
     
     BEGIN {
-        Write-Verbose "[New-DSUser] Begining..."
+        Write-Verbose "[New-DSUser] Beginning..."
 
         $URI = "$env:DS_URL/api/security/user/save?csToXml=1"
 

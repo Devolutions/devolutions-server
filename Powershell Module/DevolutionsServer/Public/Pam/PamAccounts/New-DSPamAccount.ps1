@@ -22,7 +22,7 @@ function New-DSPamAccount {
     )
 
     BEGIN {
-        Write-Verbose '[New-DSPamAccount] Begining...'
+        Write-Verbose '[New-DSPamAccount] Beginning...'
         $URI = "$Global:DSBaseURI/api/pam/credentials"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {

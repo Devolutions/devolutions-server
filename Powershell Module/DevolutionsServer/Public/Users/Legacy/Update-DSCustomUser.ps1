@@ -56,7 +56,7 @@ function Update-DSCustomUser {
     )
 
     BEGIN {
-        Write-Verbose '[Update-DSCustomUser] Begining...'
+        Write-Verbose '[Update-DSCustomUser] Beginning...'
         $URI = "$Global:DSBaseURI/api/security/user/save?csToXml=1"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {

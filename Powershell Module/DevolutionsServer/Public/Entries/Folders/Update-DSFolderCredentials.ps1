@@ -24,7 +24,7 @@ function Update-DSFolderCredentials {
     )
     
     BEGIN {
-        Write-Verbose "[Update-DSFolderEntry] Begining..."
+        Write-Verbose "[Update-DSFolderEntry] Beginning..."
 
         $URI = "$env:DS_URL/api/connections/partial/save"
 

@@ -12,7 +12,7 @@ function Remove-DSEntry {
     )
 
     BEGIN {
-        Write-Verbose "[Remove-DSEntry] Begining..." 
+        Write-Verbose "[Remove-DSEntry] Beginning..." 
         
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."

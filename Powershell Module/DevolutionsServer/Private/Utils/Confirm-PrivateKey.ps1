@@ -6,7 +6,7 @@ function Confirm-PrivateKey {
     )
 
     BEGIN {
-        Write-Verbose '[Confirm-PrivateKey] Begining...'
+        Write-Verbose '[Confirm-PrivateKey] Beginning...'
         
         $URI = "$Env:DS_URL/api/private-key/upload"
 

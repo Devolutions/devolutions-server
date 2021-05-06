@@ -9,7 +9,7 @@ function Get-DSPamAccounts {
     )
 
     BEGIN {
-        Write-Verbose '[Get-DSPamAccount] Begining...'
+        Write-Verbose '[Get-DSPamAccount] Beginning...'
 
         $URI = "$Global:DSBaseURI/api/pam/credentials"
 

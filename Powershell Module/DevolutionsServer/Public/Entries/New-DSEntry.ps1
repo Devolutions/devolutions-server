@@ -51,7 +51,7 @@ function New-DSEntry {
     )
 
     BEGIN {
-        Write-Verbose '[New-DSEntry] Begining...'
+        Write-Verbose '[New-DSEntry] Beginning...'
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."

@@ -14,7 +14,7 @@ function Remove-DSPamCheckoutPolicy {
     )
 
     BEGIN {
-        Write-Verbose '[Remove-DSPamCheckoutPolicy] Begining...'
+        Write-Verbose '[Remove-DSPamCheckoutPolicy] Beginning...'
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."

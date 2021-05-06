@@ -17,7 +17,7 @@ function Remove-DSPamAccount {
     )
 
     BEGIN {
-        Write-Verbose '[Remove-DSPamAccount] Begining...'        
+        Write-Verbose '[Remove-DSPamAccount] Beginning...'        
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."

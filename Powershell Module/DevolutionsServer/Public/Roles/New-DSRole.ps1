@@ -33,7 +33,7 @@ function New-DSRole {
     )
 
     BEGIN {
-        Write-Verbose '[New-DSRole] Begining...'
+        Write-Verbose '[New-DSRole] Beginning...'
         $URI = "$Global:DSBaseURI/api/security/role/save?csToXml=1"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {

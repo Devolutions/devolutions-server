@@ -52,7 +52,7 @@ function Update-DSUser {
     )
     
     BEGIN {
-        Write-Verbose "[Update-DSUser] Begining..."
+        Write-Verbose "[Update-DSUser] Beginning..."
 
         $URI = "$env:DS_URL/api/security/user/save?csToXml=1"
 
@@ -161,7 +161,7 @@ function Update-DSUser {
     
     END {
         if ($res.isSuccess) {
-            Write-Verbose "[Update-DSUser] Begining..."
+            Write-Verbose "[Update-DSUser] Beginning..."
         }
         else {
             Write-Verbose "[Update-DSUser] Ended with errors..."

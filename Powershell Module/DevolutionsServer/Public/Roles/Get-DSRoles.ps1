@@ -11,7 +11,7 @@ function Get-DSRoles {
     )
 
     BEGIN {
-        Write-Verbose '[Get-DSRoles] Begining...'
+        Write-Verbose '[Get-DSRoles] Beginning...'
         $URI = "$Global:DSBaseURI/api/v3/usergroups"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {

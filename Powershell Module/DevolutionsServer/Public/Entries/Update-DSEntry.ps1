@@ -40,7 +40,7 @@ function Update-DSEntry {
         [bool]$PromptForPassphrase
     )
     BEGIN {
-        Write-Verbose "[Update-DSEntry] Begining..."
+        Write-Verbose "[Update-DSEntry] Beginning..."
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."

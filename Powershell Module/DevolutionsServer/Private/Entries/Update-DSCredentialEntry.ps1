@@ -5,7 +5,7 @@ function Update-DSCredentialEntry {
     )
     
     BEGIN {
-        Write-Verbose "[Update-DSCredentialEntry] Begining..."
+        Write-Verbose "[Update-DSCredentialEntry] Beginning..."
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."

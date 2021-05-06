@@ -37,7 +37,7 @@ function New-DSVault {
     )
     
     BEGIN {
-        Write-Verbose "[New-DSVault] Begining..."
+        Write-Verbose "[New-DSVault] Beginning..."
 
         $URI = "$env:DS_URL/api/security/repositories"
 

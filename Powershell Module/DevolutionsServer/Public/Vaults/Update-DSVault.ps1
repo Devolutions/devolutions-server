@@ -40,7 +40,7 @@ function Update-DSVault {
     )
     
     BEGIN {
-        Write-Verbose "[Update-DSVault] Begining..."
+        Write-Verbose "[Update-DSVault] Beginning..."
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."

@@ -12,7 +12,7 @@ function Remove-DSRole {
     )
 
     BEGIN {
-        Write-Verbose '[Delete-DSRole] Begining...'
+        Write-Verbose '[Delete-DSRole] Beginning...'
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."

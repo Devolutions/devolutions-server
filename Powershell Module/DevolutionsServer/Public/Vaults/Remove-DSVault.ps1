@@ -13,7 +13,7 @@ function Remove-DSVault {
     )
     
     BEGIN {
-        Write-Verbose "[New-DSVault] Begining..."
+        Write-Verbose "[New-DSVault] Beginning..."
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
