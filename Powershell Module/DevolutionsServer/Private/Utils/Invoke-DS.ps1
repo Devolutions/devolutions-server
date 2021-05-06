@@ -30,7 +30,7 @@ function Invoke-DS {
     BEGIN {
         Write-Verbose '[Invoke-DS] begin...'
 
-        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
+        if (!(Get-Variable DSSessionToken -Scope Global -ErrorAction SilentlyContinue) -or ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
 
