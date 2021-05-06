@@ -13,27 +13,32 @@ function Update-DSCredentialEntry {
     }
     
     PROCESS {
-        $EntryResolvedVariables = (Get-DSEntry -EntryId $CandidEntryID -IncludeAdvancedProperties).Body.data
-        $EntrySensitiveData = (Get-DSEntrySensitiveData $CandidEntryID).Body.data
+        try {
+            $EntryResolvedVariables = (Get-DSEntry -EntryId $CandidEntryID -IncludeAdvancedProperties).Body.data
+            $EntrySensitiveData = (Get-DSEntrySensitiveData $CandidEntryID).Body.data
 
-        switch ($EntryResolvedVariables.connectionSubType) {
-            ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default) { Update-UsernamePassword $ParamList $EntryResolvedVariables $EntrySensitiveData }
-            ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::PrivateKey) { Update-PrivateKey $ParamList $EntryResolvedVariables $EntrySensitiveData }
-            Default { throw "Credential $($EntryResolvedVariables.connectionSubType) not supported." }
+            switch ($EntryResolvedVariables.connectionSubType) {
+                ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default) { Update-UsernamePassword $ParamList $EntryResolvedVariables $EntrySensitiveData }
+                ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::PrivateKey) { Update-PrivateKey $ParamList $EntryResolvedVariables $EntrySensitiveData }
+                Default { throw "Credential $($EntryResolvedVariables.connectionSubType) not supported." }
+            }
+
+            $RequestParams = @{
+                Uri    = "http://localhost/dps/api/connections/partial/save"
+                Method = "PUT"
+                Body   = $EntryResolvedVariables | ConvertTo-Json
+            }
+
+            $res = Invoke-DS @RequestParams -Verbose
+            return $res
         }
-
-        $RequestParams = @{
-            Uri    = "http://localhost/dps/api/connections/partial/save"
-            Method = "PUT"
-            Body   = $EntryResolvedVariables | ConvertTo-Json
+        catch {
+            Write-Error $_.Exception.Message
         }
-
-        $res = Invoke-DS @RequestParams -Verbose
-        return $res
     }
     
     END {
-        if ($? -and $res.isSuccess) {
+        if ($res.isSuccess) {
             Write-Verbose "[Update-DSCredentialEntry] Completed successfully!"
         }
         else {
@@ -127,6 +132,8 @@ function Update-UsernamePassword {
             }
         }
     }
+    
+    $EntryResolvedVariables.data = Protect-ResourceToHexString ($EntryResolvedVariables.data | ConvertTo-Json)
 }
 
 function Update-PrivateKey {
