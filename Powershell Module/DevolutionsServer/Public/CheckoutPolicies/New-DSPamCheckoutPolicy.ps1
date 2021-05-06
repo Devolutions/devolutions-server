@@ -24,7 +24,7 @@ function New-DSPamCheckoutPolicy {
     [CmdletBinding()]
     param(
         [ValidateNotNullOrEmpty()]
-        [string]$name,
+        [string]$name = $(throw "Name is null or empty. Please provide a name and try again."),
         [int]$checkoutApprovalMode,
         [int]$checkoutReasonMode,
         [int]$allowCheckoutOwnerAsApprover,
