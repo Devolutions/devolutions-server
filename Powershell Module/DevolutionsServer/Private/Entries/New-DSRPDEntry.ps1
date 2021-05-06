@@ -13,7 +13,13 @@ function New-DSRDPEntry {
     )
     
     BEGIN {
+        Write-Verbose "[New-DSRDPEntry] Beginning..."
+
         $URI = "$env:DS_URL/api/connections/partial/save"
+        
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
+            throw "Session does not seem authenticated, call New-DSSession."
+        }
     }
     
     PROCESS {
@@ -42,11 +48,8 @@ function New-DSRDPEntry {
                     audioCaptureRedirectionMode = $ParamList.AudioCaptureRedirectionMode
                     connectionType              = $ParamList.NetworkConnectionType
                     videoPlaybackMode           = $ParamList.RedirectVideoPlayback
-                    loadAddOnsMode              = switch ($ParamList.LoadAddonsMode) {
-                        "Default" { 1; break }
-                        "Yes" { 2 ; break }
-                        "No" { 3 ; break }
-                    }
+                    animations                  = $ParamList.Animations
+                    loadAddOnsMode              = $ParamList.LoadAddonsMode
                     keyboardHook                = $ParamList.KeyboardHook
                 }
             }

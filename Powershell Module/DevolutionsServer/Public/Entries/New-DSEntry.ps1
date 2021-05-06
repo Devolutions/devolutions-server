@@ -113,7 +113,12 @@ function New-DSEntry {
         #Record audio from RDP session
         [bool]$AudioCaptureRedirectionMode = $true,
         #Sets the destination for Windows key combinations (ALT+TAB, for example)
-        [Devolutions.RemoteDesktopManager.KeyboardHook]$KeyboardHook = [Devolutions.RemoteDesktopManager.KeyboardHook]::Default,
+        [ValidateSet(
+            [Devolutions.RemoteDesktopManager.KeyboardHook]::OnTheLocalComputer,
+            [Devolutions.RemoteDesktopManager.KeyboardHook]::InFullScreenMode,
+            [Devolutions.RemoteDesktopManager.KeyboardHook]::OnTheRemoteComputer
+        )]
+        [string]$KeyboardHook = [Devolutions.RemoteDesktopManager.KeyboardHook]::OnTheLocalComputer,
 
         <# -- General -> Programs tab -- #>
 
@@ -160,9 +165,13 @@ function New-DSEntry {
         [bool]$PersistentBitmapCaching = $true,
         #Enable bandwith autodetection
         [bool]$BandwidthAutoDetect = $true,
-        [ValidateSet("Default", "Yes", "No")]
+        [ValidateSet(
+            [Devolutions.RemoteDesktopManager.DefaultBoolean]::Default,
+            [Devolutions.RemoteDesktopManager.DefaultBoolean]::True,
+            [Devolutions.RemoteDesktopManager.DefaultBoolean]::False
+        )]
         #Sets if addons load in embedded or not
-        [string]$LoadAddonsMode = "Default",
+        [string]$LoadAddonsMode = [Devolutions.RemoteDesktopManager.DefaultBoolean],
        
         <# -- User interface tab -- #>
 
