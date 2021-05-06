@@ -6,10 +6,10 @@
     RootModule             = 'DevolutionsServer.psm1'
     
     # Version number of this module.
-    ModuleVersion          = '2021.3.0'
+    ModuleVersion          = '2021.4.0'
 
     # Supported PSEditions
-    CompatiblePSEditions   = 'Desktop', 'Core'
+    CompatiblePSEditions   = 'Core'
 
     # ID used to uniquely identify this module
     GUID                   = '1E867BE1-DB19-4260-B768-6A368276B470'
@@ -27,7 +27,7 @@
     Description            = 'Devolutions Server PowerShell Module'
 
     # Minimum version of the PowerShell engine required by this module
-    PowerShellVersion      = '5.1'
+    PowerShellVersion      = '7.0'
     
     # Name of the PowerShell host required by this module
     # PowerShellHostName = ''
@@ -36,10 +36,10 @@
     # PowerShellHostVersion = ''
     
     # Minimum version of Microsoft .NET Framework required by this module. This prerequisite is valid for the PowerShell Desktop edition only.
-    DotNetFrameworkVersion = '4.7.2'
+    #DotNetFrameworkVersion = '5.0.0'
     
     # Minimum version of the common language runtime (CLR) required by this module. This prerequisite is valid for the PowerShell Desktop edition only.
-    CLRVersion             = '4.0'
+    #CLRVersion             = '4.0'
     
     # Processor architecture (None, X86, Amd64) required by this module
     # ProcessorArchitecture = ''
@@ -98,7 +98,7 @@
         PSData = @{
 
             # Tags applied to this module. These help with module discovery in online galleries.
-            Tags       = 'Devolutions', 'Server', 'PAM', 'RemoteDesktop', 'RDM'
+            Tags       = 'Devolutions', 'Server', 'PAM', 'RemoteDesktop', 'RDM', 'DVLS'
 
             # A URL to the license for this module.
             LicenseUri = 'https://github.com/Devolutions/devolutionsserver/blob/master/LICENSE'
