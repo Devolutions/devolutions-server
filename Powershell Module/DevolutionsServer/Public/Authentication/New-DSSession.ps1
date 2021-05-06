@@ -12,9 +12,9 @@ Establishes a session with a Devolutions Server
 	[CmdletBinding()]
 	param(	
 		[ValidateNotNullOrEmpty()]
-		[PSCredential]$Credentials,
-		[parameter(Mandatory)]
-		[string]$BaseURI
+		[PSCredential]$Credentials = $(throw "Credentials are null or empty. Please provide a valid PSCredential object and try again."),
+		[ValidateNotNullOrEmpty()]
+		[string]$BaseURI = $(throw "BaseURI is null or empty. Please provide a valid URI and try again.")
 	)
 
 	BEGIN { 
