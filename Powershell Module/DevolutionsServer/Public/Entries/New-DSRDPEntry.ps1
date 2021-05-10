@@ -16,7 +16,7 @@ function New-DSRDPEntry {
 
         #Entry's name
         [ValidateNotNullOrEmpty()]
-        [string]$EntryName,
+        [string]$Name,
         #Entry's domain
         [string]$Domain,
         [ValidateNotNullOrEmpty()]
@@ -29,9 +29,9 @@ function New-DSRDPEntry {
         #Entry's vault ID
         [guid]$VaultID = [guid]::Empty,
         #Entry's location in the vault (Folder name, not ID)
-        [string]$Folder,
+        [string]$Group,
         #Entry's prompt for password when checkout
-        [bool]$PromptForPassword,
+        [bool]$PromptCredentials,
     
         <# -- More tab -- #>
 
@@ -65,15 +65,15 @@ function New-DSRDPEntry {
         #Opens the adminstration console
         [bool]$AdminMode = $False,
         #Port used by RDP
-        [string]$Port = "3389",
+        [string]$Port = '3389',
         #RDP Type
         [Devolutions.RemoteDesktopManager.RDPType]$RDPType = [Devolutions.RemoteDesktopManager.RDPType]::Normal,
         #Azure Cloud Services role name
-        [string]$RoleName = "",
+        [string]$RoleName = '',
         #Azure Cloud Service's instance ID
         [int]$AzureInstanceID = 0,
         #Hyper-V Instance
-        [string]$HyperVInstance = "",
+        [string]$HyperVInstance = '',
         #Hyper-V enhanced session (Uses machine's local resources, such as USB drive or printer)
         [bool]$UseEnhancedSessionMode = $False,
         
@@ -156,7 +156,7 @@ function New-DSRDPEntry {
             [Devolutions.RemoteDesktopManager.DefaultBoolean]::False
         )]
         #Sets if addons load in embedded or not
-        [string]$LoadAddonsMode = [Devolutions.RemoteDesktopManager.DefaultBoolean],
+        [string]$LoadAddonsMode = [Devolutions.RemoteDesktopManager.DefaultBoolean]::Default,
        
         <# -- User interface tab -- #>
 
@@ -174,7 +174,7 @@ function New-DSRDPEntry {
     )
     
     BEGIN {
-        Write-Verbose "[New-DSRDPEntry] Beginning..."
+        Write-Verbose '[New-DSRDPEntry] Beginning...'
 
     }
     
@@ -186,8 +186,8 @@ function New-DSRDPEntry {
             #Default RDP entry, valid for all RDP type
             $RDPEntry = @{
                 connectionType        = 1
-                group                 = $ParamList.Folder
-                name                  = $ParamList.EntryName
+                group                 = $ParamList.Group
+                name                  = $ParamList.Name
                 displayMode           = $ParamList.DisplayMode
                 DisplayMonitor        = $ParamList.DisplayMonitor
                 displayVirtualDesktop = $ParamList.DisplayVirtualDesktop
@@ -210,13 +210,14 @@ function New-DSRDPEntry {
                     animations                  = $ParamList.Animations
                     loadAddOnsMode              = $ParamList.LoadAddonsMode
                     keyboardHook                = $ParamList.KeyboardHook
+                    promptCredentials           = $ParamList.PromptCredentials
                 }
             }
 
             #Create passwordItem if password is present and not null
             if (![string]::IsNullOrWhiteSpace($ParamList.Password)) {
                 $RDPEntry.data += @{ 
-                    "passwordItem" = @{ 
+                    'passwordItem' = @{ 
                         hasSensitiveData = $false
                         sensitiveData    = $ParamList.Password 
                     } 
@@ -225,22 +226,22 @@ function New-DSRDPEntry {
 
             #Possible fields for RDP type "Azure"
             if ($ParamList.RDPType -eq [Devolutions.RemoteDesktopManager.RDPType]::Azure) {
-                $RDPEntry.data += @{ "azureInstanceID" = $ParamList.AzureInstanceID }
-                $RDPEntry.data += @{ "azureRoleName" = $ParamList.RoleName }
+                $RDPEntry.data += @{ 'azureInstanceID' = $ParamList.AzureInstanceID }
+                $RDPEntry.data += @{ 'azureRoleName' = $ParamList.RoleName }
             }
 
             #Possible fields for RDP type "HyperV"
             if ($ParamList.RDPType -eq [Devolutions.RemoteDesktopManager.RDPType]::HyperV) {
-                $RDPEntry.data += @{ "hyperVInstanceID" = $ParamList.HyperVInstance }
-                $RDPEntry.data += @{ "useEnhancedSessionMode" = $ParamList.UseEnhancedSessionMode }
+                $RDPEntry.data += @{ 'hyperVInstanceID' = $ParamList.HyperVInstance }
+                $RDPEntry.data += @{ 'useEnhancedSessionMode' = $ParamList.UseEnhancedSessionMode }
             }
 
             #After login program
             if (![string]::IsNullOrEmpty($ParamList.AfterLoginProgram)) {
-                $RDPEntry.data += @{ "afterLoginExecuteProgram" = $true }
-                $RDPEntry.data += @{ "afterLoginProgram" = $ParamList.AfterLoginProgram }
+                $RDPEntry.data += @{ 'afterLoginExecuteProgram' = $true }
+                $RDPEntry.data += @{ 'afterLoginProgram' = $ParamList.AfterLoginProgram }
                 $RDPEntry.data += @{
-                    "afterLoginDelay" = switch ($ParamList.AfterLoginDelay) {
+                    'afterLoginDelay' = switch ($ParamList.AfterLoginDelay) {
                         { $_ -lt 0 } { 0 }
                         { $_ -lt 60000 } { 60000 }
                         Default { $ParamList.AfterLoginDelay }
@@ -250,14 +251,14 @@ function New-DSRDPEntry {
 
             #Alternate shell/RemoteApp program. Prioritizing RemoteApp, as it's preferred over alternative shell
             if (![string]::IsNullOrEmpty($ParamList.RemoteApplicationProgram)) {
-                $RDPEntry.data += @{ "remoteApp" = $true }
-                $RDPEntry.data += @{ "remoteApplicationProgram" = $ParamList.RemoteApplicationProgram }
-                $RDPEntry.data += @{ "remoteApplicationCmdLine" = $ParamList.RemoteApplicationCmdLine }
+                $RDPEntry.data += @{ 'remoteApp' = $true }
+                $RDPEntry.data += @{ 'remoteApplicationProgram' = $ParamList.RemoteApplicationProgram }
+                $RDPEntry.data += @{ 'remoteApplicationCmdLine' = $ParamList.RemoteApplicationCmdLine }
             }
             elseif (![string]::IsNullOrEmpty($ParamList.AlternateShell)) {
-                $RDPEntry.data += @{ "useAlternateShell" = $true }
-                $RDPEntry.data += @{ "alternateShell" = $ParamList.AlternateShell }
-                $RDPEntry.data += @{ "shellWorkingDirectory" = $ParamList.ShellWorkingDirectory }
+                $RDPEntry.data += @{ 'useAlternateShell' = $true }
+                $RDPEntry.data += @{ 'alternateShell' = $ParamList.AlternateShell }
+                $RDPEntry.data += @{ 'shellWorkingDirectory' = $ParamList.ShellWorkingDirectory }
             }
 
             #Converts data to JSON, then encrypt the whole thing
@@ -274,10 +275,10 @@ function New-DSRDPEntry {
     
     END {
         if ($res.isSuccess) {
-            Write-Verbose "[New-DSRPDEntry] Completed successfully!"
+            Write-Verbose '[New-DSRPDEntry] Completed successfully!'
         }
         else {
-            Write-Verbose "[New-DSRPDEntry] Ended with errors..."
+            Write-Verbose '[New-DSRPDEntry] Ended with errors...'
         }
     }
 }
