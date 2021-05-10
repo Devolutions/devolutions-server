@@ -35,7 +35,10 @@ Function Convert-LegacyResponse {
                 # some others return arrays of objects without ceremony
                 if ($responseContent -is [system.array]) {
                     $newdata = $responseContent
-                } elseif ($responseContentHash.ContainsKey('data')) {
+                } elseif ($responseContent -is [Boolean]) {
+                    $newdata = $responseContent
+                }
+                elseif ($responseContentHash.ContainsKey('data')) {
                     $newdata = $responseContent.data
                 } else {
                     throw "unexpected condition in Convert-LegacyResponse"

@@ -62,14 +62,15 @@
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
     NestedModules          = @()
     
-    FunctionsToExport      = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Protect-ResourceToHexString',
+    FunctionsToExport      = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Get-DSIsLogged', 'Protect-ResourceToHexString',
         'Get-DSSecureMessages',
         'Get-DSVaults', 'Get-DSVault', 'Get-DSVaultPermissions', 'New-DSVault', 'Update-DSVault', 'Remove-DSVault', 'Set-DSVaultUsers', 'Set-DSVaultRoles', 'Set-DSVaultApplications',
-        'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData', 'Get-DSEntriesTree', 'Get-DSFolder', 'Get-DSEntriesPermissions', 'New-DSEntry', 'Remove-DSEntry', 'Update-DSEntry',
+        'Get-DSEntriesTree', 'Get-DSFolder', 
+        'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData', 'Get-DSEntriesPermissions', 'New-DSEntry', 'Remove-DSEntry', 'Update-DSEntry',
+        'New-DSCredentialEntry', 'New-DSRDPEntry'
         'Get-DSPamProviders', 'New-DSPamProvider', 'Remove-DSPamProvider', 'Update-DSPamProvider', 
         'Get-DSPamFolders', 'Get-DSPamFolder', 'New-DSPamTeamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder', 
         'Get-DSPamAccounts', 'New-DSPamAccount', 'Remove-DSPamAccount', 
-        #'Get-DSPamCheckoutPolicies', 'New-DSPamCheckoutPolicy', 'Remove-DSPamCheckoutPolicy', 'Update-DSPamCheckoutPolicy',
         'New-DSRole', 'Get-DSRoles', 'Update-DSRole', 'Remove-DSRole',
         'New-DSUser', 'Update-DSUser', 'Remove-DSUser', 'Get-DSUsers'
     )

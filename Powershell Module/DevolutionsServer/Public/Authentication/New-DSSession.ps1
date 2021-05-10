@@ -12,7 +12,7 @@ Establishes a session with a Devolutions Server
 	[CmdletBinding()]
 	param(	
 		[ValidateNotNullOrEmpty()]
-		[PSCredential]$Credentials = $(throw "Credentials are null or empty. Please provide a valid PSCredential object and try again."),
+		[PSCredential]$Credential = $(throw "Credential is null or empty. Please provide a valid PSCredential object and try again."),
 		[ValidateNotNullOrEmpty()]
 		[string]$BaseURI = $(throw "BaseURI is null or empty. Please provide a valid URI and try again.")
 	)
@@ -36,10 +36,10 @@ Establishes a session with a Devolutions Server
 	}
 
 	PROCESS {
-		$safePassword = Protect-ResourceToHexString $Credentials.GetNetworkCredential().Password
+		$safePassword = Protect-ResourceToHexString $Credential.GetNetworkCredential().Password
 
 		$Body = @{
-			userName            = $Credentials.UserName
+			userName            = $Credential.UserName
 			RDMOLoginParameters = @{
 				SafePassword     = $safePassword
 				SafeSessionKey   = $Global:DSSafeSessionKey
