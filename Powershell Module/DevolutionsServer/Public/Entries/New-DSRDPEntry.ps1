@@ -157,6 +157,8 @@ function New-DSRDPEntry {
         )]
         #Sets if addons load in embedded or not
         [string]$LoadAddonsMode = [Devolutions.RemoteDesktopManager.DefaultBoolean]::Default,
+        [Devolutions.RemoteDesktopManager.RDPClientSpec]$ClientSpec = [Devolutions.RemoteDesktopManager.RDPClientSpec]::Default,
+        [int]$KeepAliveInternal = 1000,
        
         <# -- User interface tab -- #>
 
@@ -211,6 +213,11 @@ function New-DSRDPEntry {
                     loadAddOnsMode              = $ParamList.LoadAddonsMode
                     keyboardHook                = $ParamList.KeyboardHook
                     promptCredentials           = $ParamList.PromptCredentials
+                    clientSpec                  = switch ($ParamList.ClientSpec) {
+                        { $_ -lt 0 } { $ParamList.ClientSpec }
+                        { $_ -gt 1000 } { $ParamList.ClientSpec }
+                        Default { $ParamList.ClientSpec }
+                    }
                 }
             }
 
@@ -243,7 +250,7 @@ function New-DSRDPEntry {
                 $RDPEntry.data += @{
                     'afterLoginDelay' = switch ($ParamList.AfterLoginDelay) {
                         { $_ -lt 0 } { 0 }
-                        { $_ -lt 60000 } { 60000 }
+                        { $_ -gt 60000 } { 60000 }
                         Default { $ParamList.AfterLoginDelay }
                     }
                 }
