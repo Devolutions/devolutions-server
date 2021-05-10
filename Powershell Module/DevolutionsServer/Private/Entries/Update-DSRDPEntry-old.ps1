@@ -1,4 +1,4 @@
-function Update-DSRDPEntry {
+function Update-DSRDPEntry-old {
     [CmdletBinding()]
     PARAM (
         $ParamList

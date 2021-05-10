@@ -1,4 +1,4 @@
-function Update-DSEntry {
+function Update-DSEntry-old {
     [CmdletBinding()]
     PARAM (
         [ValidateNotNullOrEmpty()]
