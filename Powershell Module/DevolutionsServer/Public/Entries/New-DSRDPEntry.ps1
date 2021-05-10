@@ -11,7 +11,6 @@ function New-DSRDPEntry {
     PARAM (
         [ValidateNotNullOrEmpty()]
         [Devolutions.RemoteDesktopManager.ConnectionType]$ConnectionType,
-        [ValidateNotNullOrEmpty()]
         <# -- Base entry data -- #>
 
         #Entry's name
