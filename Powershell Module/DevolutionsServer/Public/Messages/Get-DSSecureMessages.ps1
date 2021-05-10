@@ -17,7 +17,7 @@ function Get-DSSecureMessages{
         BEGIN {
             Write-Verbose '[Get-DSSecureMessage] begin...'
     
-            $URI = "$Script:DSBaseURI/api/secure-messages"
+            $URI = "$Global:DSBaseURI/api/secure-messages"
 
     		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{
@@ -44,7 +44,7 @@ function Get-DSSecureMessages{
                 }
 
                 foreach ($item in $response.Body.data) {
-                    $decryptedinfo = Decrypt-String $Script:DSSessionKey $item.JsonData
+                    $decryptedinfo = Decrypt-String $Global:DSSessionKey $item.JsonData
                     $item.JsonData = $decryptedinfo
                 }
                 

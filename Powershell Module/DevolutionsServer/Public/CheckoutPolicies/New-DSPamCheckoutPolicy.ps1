@@ -24,7 +24,7 @@ function New-DSPamCheckoutPolicy {
     [CmdletBinding()]
     param(
         [ValidateNotNullOrEmpty()]
-        [string]$name,
+        [string]$name = $(throw "Name is null or empty. Please provide a name and try again."),
         [int]$checkoutApprovalMode,
         [int]$checkoutReasonMode,
         [int]$allowCheckoutOwnerAsApprover,
@@ -37,7 +37,7 @@ function New-DSPamCheckoutPolicy {
     BEGIN {
         Write-Verbose '[New-DSPamCheckoutPolicy] Begin...'
         
-        $URI = "$Script:DSBaseURI/api/pam/checkout-policies"
+        $URI = "$Global:DSBaseURI/api/pam/checkout-policies"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."

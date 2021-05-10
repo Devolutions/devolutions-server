@@ -20,6 +20,8 @@ function Invoke-DS {
         [Parameter(Mandatory)]
         [string]$URI,
 
+        [string]$ContentType = 'application/json',
+
         [string]$body,
 
         [switch]$LegacyResponse
@@ -28,18 +30,27 @@ function Invoke-DS {
     BEGIN {
         Write-Verbose '[Invoke-DS] begin...'
 
-        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
+        if (!(Get-Variable DSSessionToken -Scope Global -ErrorAction SilentlyContinue) -or ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))) {
             throw "Session does not seem authenticated, call New-DSSession."
         }
-        
+
         $PSBoundParameters.Add("WebSession", $Global:WebSession)
-        $PSBoundParameters.Add("ContentType", 'application/json')
+        if (!($PSBoundParameters.ContainsKey('ContentType'))) { $PSBoundParameters.Add("ContentType", $ContentType) }
         $PSBoundParameters.Remove('LegacyResponse') | out-null
     }
 
     PROCESS {
         try {
             $response = Invoke-WebRequest @PSBoundParameters -ErrorAction Stop
+
+            if ($LegacyResponse) {
+                $res = Convert-LegacyResponse $response
+            }
+            else {
+                $res = New-ServerResponse -response $response -method $method
+            }
+    
+            return $res
         }
         catch [System.UriFormatException] {
             throw "Not initialized, please use New-DSSession"
@@ -61,24 +72,14 @@ function Invoke-DS {
                 return [ServerResponse]::new($false, $exc.Response, $null, $exc, $exc.Message, $exc.Response.StatusCode) 
             }
         }
-        
-        if ($LegacyResponse) {
-            $res = Convert-LegacyResponse $response
-        }
-        else {
-            $res = New-ServerResponse -response $response -method $method
-        }
-
-        return $res
-
-    } #PROCESS
+    }
 
     END {
-        If ($res.isSuccess) {
+        If ($?) {
             Write-Verbose '[Invoke-DS] Completed Successfully.'
         }
         else {
             Write-Verbose '[Invoke-DS] Ended with errors...'
         }
-    } #END
+    }
 }

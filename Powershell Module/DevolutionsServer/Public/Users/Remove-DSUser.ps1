@@ -5,18 +5,18 @@ function Remove-DSUser {
     [CmdletBinding()]
     param(
         [ValidateNotNullOrEmpty()]
-        [guid]$candidUserId
+        [guid]$CandidUserId
     )
 
     BEGIN {
-        Write-Verbose '[Delete-DSUser] Begining...'
+        Write-Verbose '[Delete-DSUser] Beginning...'
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
         }
     }
     PROCESS {   
-        $URI = "$Script:DSBaseURI/api/security/userinfo/delete/$candidUserId"
+        $URI = "$Global:DSBaseURI/api/security/userinfo/delete/$candidUserId"
 
         $params = @{
             Uri    = $URI

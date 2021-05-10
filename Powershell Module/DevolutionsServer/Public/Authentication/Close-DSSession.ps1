@@ -1,5 +1,5 @@
-function Close-DSSession{
-<#
+function Close-DSSession {
+	<#
 .SYNOPSIS
 
 .DESCRIPTION
@@ -13,37 +13,38 @@ function Close-DSSession{
 
 	BEGIN { 
 		Write-Verbose '[Close-DSSession] begin...'
-		$URI = "$Script:DSBaseURI/api/logout"
+		$URI = "$env:DS_URL/api/logout"
 	}
 
 	PROCESS {
 
 		$params = @{
-			Uri = $URI
-			Method = 'GET'
+			Uri            = $URI
+			Method         = 'GET'
 			LegacyResponse = $true
 		}
 
 		try {
 			$response = Invoke-DS @params
+
+			#script scope
+			if (Get-Variable DSBaseUri -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSBaseURI -Scope Global -Force } catch { } }
+			if (Get-Variable DSKeyExp -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSKeyExp -Scope Global -Force } catch { } }
+			if (Get-Variable DSKeyMod -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSKeyMod -Scope Global -Force } catch { } }
+			if (Get-Variable DSSafeSessionKey -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSSafeSessionKey -Scope Global -Force } catch { } }
+			if (Get-Variable DSInstanceName -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSInstanceName -Scope Global -Force } catch { } }
+
+			#global scope
+			if (Get-Variable DSSessionKey -Scope Global -ErrorAction SilentlyContinue) {	try { Remove-Variable -Name DSSessionKey -Scope Global -Force } catch { } }
+			if (Get-Variable DSSessionToken -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSSessionToken -Scope Global -Force } catch { } }
+			if (Get-Variable WebSession -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name WebSession -Scope Global -Force } catch { } }
+			if (Get-Variable DSInstanceVersion -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSInstanceVersion -Scope Global -Force } catch { } }
+
+			return $response 
 		}
 		catch {
-			#if we have an exception doing the logoff, its better that clear the variables anyway...
+			Write-Error $_.Exception.Message
 		}
-
-		#script scope
-		if ($Script:DSBaseURI) { try { Remove-Variable -Name DSBaseURI -Scope Script -Force } catch { } }
-		if ($Script:DSKeyExp) { try { Remove-Variable -Name DSKeyExp -Scope Script -Force } catch { } }
-		if ($Script:DSKeyMod) { try { Remove-Variable -Name DSKeyMod -Scope Script -Force } catch { } }
-		if ($Script:DSSafeSessionKey) { try { Remove-Variable -Name DSSafeSessionKey -Scope Script -Force } catch { } }
-		if ($Script:DSInstanceName) { try { Remove-Variable -Name DSInstanceName -Scope Script -Force } catch { } }
-
-		#global scope
-		if ($Global:DSSessionToken) { try { Remove-Variable -Name DSSessionToken -Scope Global -Force } catch { } }
-		if ($Global:WebSession) { try { Remove-Variable -Name WebSession -Scope Global -Force } catch { } }
-		if ($Global:DSInstanceVersion) { try { Remove-Variable -Name DSInstanceVersion -Scope Global -Force } catch { } }
-
-		$response 
 	}
 
 	END {   

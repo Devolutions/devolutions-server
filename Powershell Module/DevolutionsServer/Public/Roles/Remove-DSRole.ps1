@@ -12,7 +12,7 @@ function Remove-DSRole {
     )
 
     BEGIN {
-        Write-Verbose '[Delete-DSRole] Begining...'
+        Write-Verbose '[Delete-DSRole] Beginning...'
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
@@ -20,7 +20,7 @@ function Remove-DSRole {
     }
 
     PROCESS {
-        $URI = "$Script:DSBaseURI/api/security/roleinfo/delete/$roleId"
+        $URI = "$Global:DSBaseURI/api/security/roleinfo/delete/$roleId"
 
         $params = @{
             Uri    = $URI

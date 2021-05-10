@@ -20,7 +20,7 @@ function Get-DSEntrySensitiveDataLegacy {
     BEGIN {
         Write-Verbose '[Get-DSEntrySensitiveDataLegacy] Begin...'
     
-        $URI = "$Script:DSBaseURI/api/Connections/partial/$EntryID/sensitive-data"
+        $URI = "$Global:DSBaseURI/api/Connections/partial/$EntryID/sensitive-data"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
@@ -30,8 +30,8 @@ function Get-DSEntrySensitiveDataLegacy {
     PROCESS {
         try {   
             $params = @{
-                Uri            = $URI
-                Method         = 'POST' #FIXME ???
+                Uri    = $URI
+                Method = 'POST' #FIXME ???
             }
 
             Write-Verbose "[Get-DSEntrySensitiveDataLegacy] About to call $Uri"
@@ -51,8 +51,8 @@ function Get-DSEntrySensitiveDataLegacy {
                 return $response
             }
 
-            $decryptedinfo = Decrypt-String $Script:DSSessionKey $response.Body.Data
-            $response.Body.data = $decryptedinfo
+            $decryptedinfo = Decrypt-String $Global:DSSessionKey $response.Body.Data
+            $response.Body.data = $decryptedinfo | ConvertFrom-Json
             
             return $response
         }

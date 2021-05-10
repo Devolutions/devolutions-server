@@ -25,7 +25,7 @@ function Remove-DSPamProvider {
     }
     
     PROCESS {
-        $URI = "$Script:DSBaseURI/api/pam/providers/$ProviderID"
+        $URI = "$Global:DSBaseURI/api/pam/providers/$ProviderID"
 
         try {
             $params = @{

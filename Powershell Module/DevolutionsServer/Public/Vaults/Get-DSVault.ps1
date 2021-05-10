@@ -27,7 +27,7 @@ function Get-DSVault{
         }
     
         PROCESS {
-            $URI = "$Script:DSBaseURI/api/security/vaults/$($VaultID)"
+            $URI = "$Global:DSBaseURI/api/security/vaults/$($VaultID)"
 
             try
             {   	

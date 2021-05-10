@@ -11,8 +11,8 @@ function Get-DSRoles {
     )
 
     BEGIN {
-        Write-Verbose '[Get-DSRoles] Begining...'
-        $URI = "$Script:DSBaseURI/api/v3/usergroups"
+        Write-Verbose '[Get-DSRoles] Beginning...'
+        $URI = "$Global:DSBaseURI/api/v3/usergroups"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."

@@ -36,11 +36,17 @@ function Get-DSEntrySensitiveData {
             return $response
         }
         catch {
-            $ErrorRecord = $_
+            $Exception = $_.Exception
+            Write-Error $Exception.Message
         }
     }
     
     END {
-        Write-Verbose '[Get-DSEntrySensitiveData] ...end'
+        If ($? -and $response.isSuccess) {
+            Write-Verbose '[Get-DSEntrySensitiveData] Completed Successfully.'
+        }
+        else {
+            Write-Verbose '[Get-DSEntrySensitiveData] Ended with errors...'
+        }
     }
 }

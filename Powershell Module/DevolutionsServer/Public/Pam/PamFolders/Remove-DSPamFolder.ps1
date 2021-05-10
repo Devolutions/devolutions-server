@@ -25,14 +25,9 @@ function Remove-DSPamFolder {
     }
     
     PROCESS {
-
-        if (![string]::IsNullOrWhiteSpace($folderID)) {
-            $URI = "$Script:DSBaseURI/api/pam/folders/$folderID"
-        } else {
-            throw "Folder ID is null or not set. Please check if you have a valid folder ID."
-        }
-
         try {
+            $URI = "$Global:DSBaseURI/api/pam/folders/$folderID"
+
             $params = @{
                 Uri    = $URI
                 Method = 'DELETE'
@@ -41,10 +36,6 @@ function Remove-DSPamFolder {
             Write-Verbose "[Remove-DSPamFolder] About to call with ${params.Uri}"
 
             $response = Invoke-DS @params
-
-            if ($response.isSuccess) { 
-                Write-Verbose "[Remove-DSPamFolders] Folder deletion was successful"
-            }
 
             return $response
         }
@@ -57,7 +48,7 @@ function Remove-DSPamFolder {
     }
     
     END {
-        If ($response.isSuccess) {
+        If ($? -and $response.isSuccess) {
             Write-Verbose '[Remove-DSPamFolders] Completed Successfully.'
         }
         else {
