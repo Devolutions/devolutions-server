@@ -3,31 +3,31 @@
 #
 @{
     # Script module or binary module file associated with this manifest.
-    RootModule             = 'DevolutionsServer.psm1'
+    RootModule           = 'DevolutionsServer.psm1'
     
     # Version number of this module.
-    ModuleVersion          = '2021.4.0'
+    ModuleVersion        = '2021.4.0'
 
     # Supported PSEditions
-    CompatiblePSEditions   = 'Core'
+    CompatiblePSEditions = 'Core'
 
     # ID used to uniquely identify this module
-    GUID                   = '1E867BE1-DB19-4260-B768-6A368276B470'
+    GUID                 = '1E867BE1-DB19-4260-B768-6A368276B470'
 
     # Author of this module
-    Author                 = 'Devolutions'
+    Author               = 'Devolutions'
 
     # Company or vendor of this module
-    CompanyName            = 'Devolutions'
+    CompanyName          = 'Devolutions'
 
     # Copyright statement for this module
-    Copyright              = '(c) 2021 Devolutions Inc. All rights reserved.'
+    Copyright            = '(c) 2021 Devolutions Inc. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description            = 'Devolutions Server PowerShell Module'
+    Description          = 'Devolutions Server PowerShell Module'
 
     # Minimum version of the PowerShell engine required by this module
-    PowerShellVersion      = '7.0'
+    PowerShellVersion    = '7.0'
     
     # Name of the PowerShell host required by this module
     # PowerShellHostName = ''
@@ -48,7 +48,7 @@
     # RequiredModules = @()
     
     # Assemblies that must be loaded prior to importing this module
-    RequiredAssemblies     = @('.\DvlsAPI.dll')
+    RequiredAssemblies   = @('.\DvlsAPI.dll')
     
     # Script files (.ps1) that are run in the caller's environment prior to importing this module.
     # ScriptsToProcess = @()
@@ -60,29 +60,31 @@
     # FormatsToProcess = @()
     
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-    NestedModules          = @()
+    NestedModules        = @()
     
-    FunctionsToExport      = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Get-DSIsLogged', 'Protect-ResourceToHexString',
+    FunctionsToExport    = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Get-DSIsLogged', 'Protect-ResourceToHexString',
         'Get-DSSecureMessages',
         'Get-DSVaults', 'Get-DSVault', 'Get-DSVaultPermissions', 'New-DSVault', 'Update-DSVault', 'Remove-DSVault', 'Set-DSVaultUsers', 'Set-DSVaultRoles', 'Set-DSVaultApplications',
         'Get-DSEntriesTree', 'Get-DSFolder', 
-        'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData', 'Get-DSEntriesPermissions', 'New-DSEntry', 'Remove-DSEntry', 'Update-DSEntry',
-        'New-DSCredentialEntry', 'New-DSRDPEntry'
+        'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData', 'Get-DSEntriesPermissions', 'Remove-DSEntry',
+        'New-DSCredentialEntry',
         'Get-DSPamProviders', 'New-DSPamProvider', 'Remove-DSPamProvider', 'Update-DSPamProvider', 
         'Get-DSPamFolders', 'Get-DSPamFolder', 'New-DSPamTeamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder', 
         'Get-DSPamAccounts', 'New-DSPamAccount', 'Remove-DSPamAccount', 
         'New-DSRole', 'Get-DSRoles', 'Update-DSRole', 'Remove-DSRole',
-        'New-DSUser', 'Update-DSUser', 'Remove-DSUser', 'Get-DSUsers'
+        'New-DSUser', 'Update-DSUser', 'Remove-DSUser', 'Get-DSUsers',
+
+        'New-DSEntryBase','Update-DSEntryBase','New-DSRDPEntry', 'Update-DSRDPEntry'
     )
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-    CmdletsToExport        = @()
+    CmdletsToExport      = @()
     
     # Variables to export from this module
-    VariablesToExport      = @()
+    VariablesToExport    = @()
     
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport        = @()
+    AliasesToExport      = @()
     
     # DSC resources to export from this module
     # DscResourcesToExport = @()
@@ -94,7 +96,7 @@
     # FileList = @()
     
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
-    PrivateData            = @{
+    PrivateData          = @{
 
         PSData = @{
 
