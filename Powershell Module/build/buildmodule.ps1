@@ -1,5 +1,5 @@
 $buildVersion = $env:BUILDVER
-$moduleName = 'DevolutionsServer'
+$moduleName = 'Devolutions.Server'
 
 $manifestPath = Join-Path -Path $env:SYSTEM_DEFAULTWORKINGDIRECTORY -ChildPath "$moduleName.psd1"
 

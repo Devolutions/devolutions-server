@@ -31,7 +31,7 @@ steps:
   env:
     BUILDVER: '$(buildVer)'
   inputs:
-    filePath: $(Build.SourcesDirectory)/DevolutionsServer/build/buildmodule.ps1
+    filePath: $(Build.SourcesDirectory)/Devolutions.Server/build/buildmodule.ps1
     errorActionPreference: 'silentlyContinue'
 
 - task: PowerShell@2
@@ -48,7 +48,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      Copy-Item -Path $(Build.Repository.LocalPath)\DevolutionsServer -Destination $(build.artifactstagingdirectory) -Recurse -force
+      Copy-Item -Path $(Build.Repository.LocalPath)\Devolutions.Server -Destination $(build.artifactstagingdirectory) -Recurse -force
       echo $(buildVer) > $(build.artifactstagingdirectory)\version.json
 
 - task: PublishBuildArtifacts@1
