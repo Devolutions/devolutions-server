@@ -17,6 +17,7 @@ function Close-DSSession {
 	}
 
 	PROCESS {
+		$GlobalVars = @('DSBaseUri', 'DSKeyExp', 'DSKeyMod', 'DSSafeSessionKey', 'DSInstanceName', 'DSSessionKey', 'DSSessionToken', 'WebSession', 'DSInstanceVersion')
 
 		$params = @{
 			Uri            = $URI
@@ -27,19 +28,17 @@ function Close-DSSession {
 		try {
 			$response = Invoke-DS @params
 
-			#script scope
-			if (Get-Variable DSBaseUri -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSBaseURI -Scope Global -Force } catch { } }
-			if (Get-Variable DSKeyExp -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSKeyExp -Scope Global -Force } catch { } }
-			if (Get-Variable DSKeyMod -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSKeyMod -Scope Global -Force } catch { } }
-			if (Get-Variable DSSafeSessionKey -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSSafeSessionKey -Scope Global -Force } catch { } }
-			if (Get-Variable DSInstanceName -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSInstanceName -Scope Global -Force } catch { } }
-
-			#global scope
-			if (Get-Variable DSSessionKey -Scope Global -ErrorAction SilentlyContinue) {	try { Remove-Variable -Name DSSessionKey -Scope Global -Force } catch { } }
-			if (Get-Variable DSSessionToken -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSSessionToken -Scope Global -Force } catch { } }
-			if (Get-Variable WebSession -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name WebSession -Scope Global -Force } catch { } }
-			if (Get-Variable DSInstanceVersion -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSInstanceVersion -Scope Global -Force } catch { } }
-
+			foreach ($var in $GlobalVars) {
+				if (Get-Variable $var -Scope Global -ErrorAction SilentlyContinue) {
+					try {
+						Remove-Variable -Name $var -Scope Global -Force
+					}
+					catch {
+						Write-Error "[Close-DSSession] Error while clearing $var from instance."
+					}
+				}
+			}
+			
 			return $response 
 		}
 		catch {
@@ -48,6 +47,6 @@ function Close-DSSession {
 	}
 
 	END {   
-		Write-Verbose '[Close-DSSession] ...end'
+		Write-Verbose '[Close-DSSession] ...End'
 	}
 }
