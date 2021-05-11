@@ -79,8 +79,18 @@ function New-DSSSHShellEntry {
         [string]$ProxyLocalHostConnections = '',
         [string]$ProxyExcludedHosts = '',
         [Devolutions.RemoteDesktopManager.TelnetTerminalDnsLookupType]$ProxyDNSLookupType = [Devolutions.RemoteDesktopManager.TelnetTerminalDnsLookupType]::Automatic,
-        [string]$ProxyTelnetCommand = ''
+        [string]$ProxyTelnetCommand = '',
     
+        [bool]$WarnIfAlreadyOpened = $false,
+        [bool]$OpenCommentPrompt = $false,
+        [bool]$OpenCommentIsRequired = $false,
+        [bool]$TicketNumberIsRequiredOnOpen = $false,
+        [bool]$CloseCommentPrompt = $false,
+        [bool]$CloseCommentIsRequired = $false,
+        [bool]$TicketNumberIsRequiredOnClose = $false,
+        [bool]$CredentialViewedPrompt = $false,
+        [bool]$CredentialViewedCommentIsRequired = $false,
+        [bool]$TicketNumberIsRequiredOnCredentialViewed = $false
     )
     
     BEGIN {
@@ -107,7 +117,7 @@ function New-DSSSHShellEntry {
                     username                               = $Username
                     privateKeyType                         = $PrivateKeyType
                     host                                   = $Hostname
-                    hostPort                                   = $HostPort
+                    hostPort                               = $HostPort
                     afterConnectMacroDelay                 = ( { 500 }, $AfterConnectMacroDelay )[!($AfterConnectMacroDelay -lt 500)]
                     afterConnectMacros                     = $AfterConnectMacros
                     afterConnectMacroEnterAfterCommand     = $afterConnectMacroEnterAfterCommand
@@ -135,6 +145,18 @@ function New-DSSSHShellEntry {
                     functionKeyMode                        = $FunctionKeyMode
                     proxyMode                              = $ProxyMode
                     proxyType                              = $ProxyType
+                }
+                event                 = @{
+                    WarnIfAlreadyOpened                      = $WarnIfAlreadyOpened
+                    OpenCommentPrompt                        = $OpenCommentPrompt
+                    OpenCommentIsRequired                    = $OpenCommentIsRequired
+                    TicketNumberIsRequiredOnOpen             = $TicketNumberIsRequiredOnOpen
+                    CloseCommentPrompt                       = $CloseCommentPrompt
+                    CloseCommentIsRequired                   = $CloseCommentIsRequired
+                    TicketNumberIsRequiredOnClose            = $TicketNumberIsRequiredOnClose
+                    CredentialViewedPrompt                   = $CredentialViewedPrompt
+                    CredentialViewedCommentIsRequired        = $CredentialViewedCommentIsRequired
+                    TicketNumberIsRequiredOnCredentialViewed = $TicketNumberIsRequiredOnCredentialViewed
                 }
             }
 
