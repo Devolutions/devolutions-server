@@ -18,7 +18,7 @@
 #
 ################################################################################
 #until we publish the module in the PSGallery we load it by path...
-$DSModulePath =  "..\DevolutionsServer"
+$DSModulePath =  "..\Devolutions.Server"
 $OutputPath = $PSScriptRoot
 
 $VaultsSummaryFilename = "VaultsSummary.csv"

@@ -1,12 +1,12 @@
 #
-# Module manifest for module 'DevolutionsServer'
+# Module manifest for module 'Devolutions.Server'
 #
 @{
     # Script module or binary module file associated with this manifest.
-    RootModule           = 'DevolutionsServer.psm1'
+    RootModule           = 'Devolutions.Server.psm1'
     
     # Version number of this module.
-    ModuleVersion        = '2021.4.0'
+    ModuleVersion        = '2021.5.0'
 
     # Supported PSEditions
     CompatiblePSEditions = 'Core'
@@ -73,7 +73,6 @@
         'Get-DSPamAccounts', 'New-DSPamAccount', 'Remove-DSPamAccount', 
         'New-DSRole', 'Get-DSRoles', 'Update-DSRole', 'Remove-DSRole',
         'New-DSUser', 'Update-DSUser', 'Remove-DSUser', 'Get-DSUsers',
-
         'New-DSEntryBase','Update-DSEntryBase','New-DSRDPEntry', 'Update-DSRDPEntry'
     )
     
@@ -104,10 +103,10 @@
             Tags       = 'Devolutions', 'Server', 'PAM', 'RemoteDesktop', 'RDM', 'DVLS'
 
             # A URL to the license for this module.
-            LicenseUri = 'https://github.com/Devolutions/devolutionsserver/blob/master/LICENSE'
+            LicenseUri = 'https://github.com/Devolutions/devolutions-server/blob/master/LICENSE'
 
             # A URL to the main website for this project.
-            ProjectUri = 'https://github.com/Devolutions/devolutionsserver'
+            ProjectUri = 'https://github.com/Devolutions/devolutions-server'
 
             # A URL to an icon representing this module.
             IconUri    = 'https://raw.githubusercontent.com/Devolutions/devolutions-server/main/logo.png'
