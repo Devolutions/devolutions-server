@@ -24,7 +24,7 @@ function Remove-DSPamAccount {
         }
     }
     PROCESS {
-        $URI = "$Global:DSBaseURI/api/pam/credentials/$pamAccountID" 
+        $URI = "$Script:DSBaseURI/api/pam/credentials/$pamAccountID" 
 
         $params = @{
             Uri    = $URI

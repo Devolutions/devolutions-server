@@ -24,7 +24,7 @@ function New-DSConnectionPartial {
         BEGIN {
             Write-Verbose '[New-DSConnection] begin...'
 
-            $URI = "$Global:DSBaseURI/api/connections/partial/save"
+            $URI = "$Script:DSBaseURI/api/connections/partial/save"
     
     		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{

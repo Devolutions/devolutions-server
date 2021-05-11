@@ -20,7 +20,7 @@ function Set-DSVaultsContext {
     BEGIN {
         Write-Verbose '[Set-DSVaultsContext] begin...'
     
-        $URI = "$Global:DSBaseURI/api/security/vaults/change"
+        $URI = "$Script:DSBaseURI/api/security/vaults/change"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."

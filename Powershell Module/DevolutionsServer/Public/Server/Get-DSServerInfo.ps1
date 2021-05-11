@@ -21,14 +21,14 @@ This endpoint does not require authentication.
 		Write-Verbose '[Get-DSServerInfo] Begin...'
 
 		#We can call the api repeatedly, even after we've established the session.  We must close the existing session only if we change the URI
-		if ((Get-Variable DSBaseURI -Scope Global -ErrorAction SilentlyContinue) -and ($Global:DSBaseURI -ne $BaseURI)) {
+		if ((Get-Variable DSBaseURI -Scope Script -ErrorAction SilentlyContinue) -and ($Script:DSBaseURI -ne $BaseURI)) {
 			if ($Global:DSSessionToken) {
 				throw "Session already established, Close it before switching servers."
 			}
 		}
 
 		#only time we use baseURI as provided, we will set variable only upon success
-		$URI = "$env:DS_URL/api/server-information"
+		$URI = "$BaseURI/api/server-information"
 	}
 
 	PROCESS {
@@ -53,7 +53,8 @@ This endpoint does not require authentication.
 
 				[System.Version]$instanceVersion = $jsonContent.data.version
 
-				Set-Variable -Name DSBaseURI -Value $BaseURI -Scope Global
+				Set-Variable -Name DSBaseURI -Value $BaseURI -Scope Script
+
 				Set-Variable -Name DSKeyExp -Value $publickey_exp -Scope Global
 				Set-Variable -Name DSKeyMod -Value $publickey_mod -Scope Global
 				Set-Variable -Name DSSessionKey -Value $session_Key -Scope Global

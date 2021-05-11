@@ -20,7 +20,7 @@ function Remove-DSRole {
     }
 
     PROCESS {
-        $URI = "$Global:DSBaseURI/api/security/roleinfo/delete/$roleId"
+        $URI = "$Script:DSBaseURI/api/security/roleinfo/delete/$roleId"
 
         $params = @{
             Uri    = $URI

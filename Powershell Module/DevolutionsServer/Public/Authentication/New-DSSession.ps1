@@ -32,7 +32,7 @@ Establishes a session with a Devolutions Server
 			}
 		}
 
-		$URI = "$Env:DS_URL/api/login/partial"
+		$URI = "$Script:DSBaseURI/api/login/partial"
 	}
 
 	PROCESS {

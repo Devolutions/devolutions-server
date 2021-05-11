@@ -58,7 +58,7 @@ function New-DSPassword {
         switch ($passwordMode) {
             "Default" { break; }
             "SpecifiedSettings" { 
-                $URI = "$env:DS_URL/api/readable-passwords"
+                $URI = "$Script:DSBaseURI/api/readable-passwords"
 
                 $PasswordConfiguration = @{
                     Mode                    = $PasswordMode
@@ -93,7 +93,7 @@ function New-DSPassword {
                 break
             }
             "HumanReadable" { 
-                $URI = "$env:DS_URL/api/readable-passwords"
+                $URI = "$Script:DSBaseURI/api/readable-passwords"
 
                 $PasswordConfiguration = @{
                     Mode      = $PasswordMode
@@ -105,7 +105,7 @@ function New-DSPassword {
                 break
             }
             "Pattern" { 
-                $URI = "$env:DS_URL/api/pattern-passwords"
+                $URI = "$Script:DSBaseURI/api/pattern-passwords"
 
                 $PasswordConfiguration = @{
                     Mode                     = $PasswordMode
@@ -116,7 +116,7 @@ function New-DSPassword {
                 break 
             }
             "Pronounceable" { 
-                $URI = "$env:DS_URL/api/pronounceable-passwords"
+                $URI = "$Script:DSBaseURI/api/pronounceable-passwords"
 
                 $PasswordConfiguration = @{
                     Mode                  = $PasswordMode
@@ -130,7 +130,7 @@ function New-DSPassword {
                 break
             }
             "Strong" { 
-                $URI = "$env:DS_URL/api/strong-passwords"
+                $URI = "$Script:DSBaseURI/api/strong-passwords"
 
                 $PasswordConfiguration = @{
                     Mode = $PasswordMode

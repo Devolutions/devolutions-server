@@ -47,10 +47,10 @@ function Set-DSVaultRoles {
     PROCESS {
         try {
             [object[]]$Roles = if ($Update) {
-                (Invoke-DS -URI "$env:DS_URL/api/security/repositories/$VaultID/roles" -Method "GET").Body.data
+                (Invoke-DS -URI "$Script:DSBaseURI/api/security/repositories/$VaultID/roles" -Method "GET").Body.data
             }
             else {
-                if (($res = Invoke-DS -URI "$env:DS_URL/api/security/roles/basic" -Method "GET").isSuccess) {
+                if (($res = Invoke-DS -URI "$Script:DSBaseURI/api/security/roles/basic" -Method "GET").isSuccess) {
                     if ($res.Body.data.Length -eq 0) { throw "No roles were found." }
                     $res.Body.data
                 } 
@@ -87,7 +87,7 @@ function Set-DSVaultRoles {
             }
 
             $RequestParams = @{
-                URI    = "$env:DS_URL/api/security/repositories/$VaultID/roles"
+                URI    = "$Script:DSBaseURI/api/security/repositories/$VaultID/roles"
                 Method = "PUT"
                 Body   = ConvertTo-Json $RolesListToSave
             }

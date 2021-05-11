@@ -8,7 +8,7 @@ function Set-DSUserPassword {
     BEGIN {
         Write-Verbose "[]"
 
-        $URI = "$env:DS_URL/api/resetpassword"
+        $URI = "$Script:DSBaseURI/api/resetpassword"
     }
 
     PROCESS {

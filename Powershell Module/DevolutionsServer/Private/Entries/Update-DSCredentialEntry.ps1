@@ -24,7 +24,7 @@ function Update-DSCredentialEntry {
             }
 
             $RequestParams = @{
-                Uri    = "http://localhost/dps/api/connections/partial/save"
+                Uri = "$Script:DSBaseURI/api/connections/partial/save"
                 Method = "PUT"
                 Body   = $EntryResolvedVariables | ConvertTo-Json
             }

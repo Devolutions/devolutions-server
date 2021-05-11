@@ -47,10 +47,10 @@ function Set-DSVaultApplications {
     PROCESS {
         try {
             [object[]]$Applications = if ($Update) {
-                (Invoke-DS -URI "$env:DS_URL/api/security/repositories/$VaultID/applications" -Method "GET").Body.data
+                (Invoke-DS -URI "$Script:DSBaseURI/api/security/repositories/$VaultID/applications" -Method "GET").Body.data
             }
             else {
-                if (($res = Invoke-DS -URI "$env:DS_URL/api/security/application/users/list" -Method "GET").isSuccess) { 
+                if (($res = Invoke-DS -URI "$Script:DSBaseURI/api/security/application/users/list" -Method "GET").isSuccess) { 
                     if ($res.Body.data.Length -eq 0) { throw "No applications were found." }
                     $res.Body.data
                 } 
@@ -87,7 +87,7 @@ function Set-DSVaultApplications {
             }
 
             $RequestParams = @{
-                URI    = "$env:DS_URL/api/security/repositories/$VaultID/applications"
+                URI    = "$Script:DSBaseURI/api/security/repositories/$VaultID/applications"
                 Method = "PUT"
                 Body   = ConvertTo-Json $ApplicationsListToSave
             }

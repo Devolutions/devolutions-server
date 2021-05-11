@@ -18,7 +18,7 @@ function Get-DSVaultsLegacy{
         BEGIN {
             Write-Verbose '[Get-DSVaultsLegacy] begin...'
     
-            $URI = "$Global:DSBaseURI/api/security/vaults"
+            $URI = "$Script:DSBaseURI/api/security/vaults"
 
     		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{

@@ -54,7 +54,7 @@ function Update-DSUser {
     BEGIN {
         Write-Verbose "[Update-DSUser] Beginning..."
 
-        $URI = "$env:DS_URL/api/security/user/save?csToXml=1"
+        $URI = "$Script:DSBaseURI/api/security/user/save?csToXml=1"
 
         $UserProfileParams = @('CompanyName', 'JobTitle', 'Department', 'GravatarEmail', 'Address', 'State', 'Country', 'Phone', 'Workphone', 'CellPhone', 'Fax', 'FirstName', 'LastName')
         $UserAccountParams = @('Password', 'UserMustChangePasswordAtNextLogin', 'Email')
