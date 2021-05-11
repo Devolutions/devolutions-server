@@ -162,12 +162,10 @@ function Update-DSRDPEntry {
         $PSBoundParameters.Remove('Verbose')
         
         $RootProperties = @('Group', 'Name', 'DisplayMode', 'DisplayMonitor', 'DisplayVirtualDesktop')
-        $ProgramTabProperties = @('AfterLoginProgram', 'AfterLoginDelay', 'RemoteApplicationProgram', 'RemoteApplicationCmdLine', 'AlternateShell', 'ShellWorkingDirectory')
     }
     
     PROCESS {
         try {
-            $VeryTempUselessVar = $PSBoundParameters
             if (($EntryCtx = Get-DSEntry $EntryID -IncludeAdvancedProperties).isSuccess) {
                 $RDPEntry = $EntryCtx.Body.data
 
