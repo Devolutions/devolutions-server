@@ -39,7 +39,7 @@ function New-DSVault {
     BEGIN {
         Write-Verbose "[New-DSVault] Beginning..."
 
-        $URI = "$env:DS_URL/api/security/repositories"
+        $URI = "$Script:DSBaseURI/api/security/repositories"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
@@ -52,8 +52,8 @@ function New-DSVault {
             $id = [guid]::NewGuid()
 
             #Getting users, applications and roles list
-            $Application = if (($res = Invoke-DS -URI "$env:DS_URL/api/security/application/users/list" -Method "GET").isSuccess) { $res.Body.data } else { $null }
-            $Roles = if (($res = Invoke-DS "$env:DS_URL/api/security/roles/basic" -Method "GET").isSuccess) { $res.Body.data } else { $null }
+            $Application = if (($res = Invoke-DS -URI "$Script:DSBaseURI/api/security/application/users/list" -Method "GET").isSuccess) { $res.Body.data } else { $null }
+            $Roles = if (($res = Invoke-DS "$Script:DSBaseURI/api/security/roles/basic" -Method "GET").isSuccess) { $res.Body.data } else { $null }
 
             #Setting new vault data
             $NewVault = @{

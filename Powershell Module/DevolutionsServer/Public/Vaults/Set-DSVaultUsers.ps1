@@ -47,10 +47,10 @@ function Set-DSVaultUsers {
     PROCESS {
         try {
             [object[]]$Users = if ($Update) {
-                (Invoke-DS -URI "$env:DS_URL/api/security/repositories/$VaultID/users" -Method "GET").Body.data
+                (Invoke-DS -URI "$Script:DSBaseURI/api/security/repositories/$VaultID/users" -Method "GET").Body.data
             }
             else {
-                if (($res = Invoke-DS -URI "$env:DS_URL/api/security/users/list" -Method "GET").isSuccess) { 
+                if (($res = Invoke-DS -URI "$Script:DSBaseURI/api/security/users/list" -Method "GET").isSuccess) { 
                     if ($res.Body.data.Length -eq 0) { throw "No users were found." }
                     $res.Body.data 
                 } 
@@ -87,7 +87,7 @@ function Set-DSVaultUsers {
             }
 
             $RequestParams = @{
-                URI    = "$env:DS_URL/api/security/repositories/$VaultID/users"
+                URI    = "$Script:DSBaseURI/api/security/repositories/$VaultID/users"
                 Method = "PUT"
                 Body   = ConvertTo-Json $UserListToSave
             }

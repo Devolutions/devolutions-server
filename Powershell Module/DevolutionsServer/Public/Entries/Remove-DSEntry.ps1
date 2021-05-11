@@ -21,7 +21,7 @@ function Remove-DSEntry {
     
     PROCESS {
         try {
-            $URI = "$Env:DS_URL/api/connections/partial/$CandidEntryID"
+            $URI = "$Script:DSBaseURI/api/connections/partial/$CandidEntryID"
 
             $Params = @{
                 URI    = $URI

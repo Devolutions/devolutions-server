@@ -99,7 +99,7 @@ function Update-DSRDPEntry-old {
             $EntryResolvedVariables.data = Protect-ResourceToHexString (ConvertTo-Json $EntryResolvedVariables.data)
 
             $RequestParams = @{
-                Uri    = "http://localhost/dps/api/connections/partial/save"
+                Uri    = "$Script:DSBaseURI/api/connections/partial/save"
                 Method = "PUT"
                 Body   = ConvertTo-Json ($EntryResolvedVariables)
             }

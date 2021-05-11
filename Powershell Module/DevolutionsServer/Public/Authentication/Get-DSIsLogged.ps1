@@ -13,7 +13,7 @@ function Get-DSIsLogged {
 
 	BEGIN { 
 		Write-Verbose '[Get-DSIsLogged] begin...'
-		$URI = "$env:DS_URL/api/is-logged"
+		$URI = "$Script:DSBaseURI/api/is-logged"
 	}
 
 	PROCESS {

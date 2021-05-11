@@ -35,7 +35,7 @@ function Get-DSVaultPermissions{
                 $permissions = @()
                 if ('All' , 'Applications' | Where-Object { $PrincipalTypes -contains $_ }) {
 
-                    $URI = "$Global:DSBaseURI/api/security/repositories/$($VaultID)/applications"
+                    $URI = "$Script:DSBaseURI/api/security/repositories/$($VaultID)/applications"
                     $params = @{
                         Uri = $URI
                         Method = 'GET'
@@ -50,7 +50,7 @@ function Get-DSVaultPermissions{
                 }
                if ('All' , 'Users' | Where-Object { $PrincipalTypes -contains $_ }) {
 
-                    $URI = "$Global:DSBaseURI/api/security/repositories/$($VaultID)/users"
+                    $URI = "$Script:DSBaseURI/api/security/repositories/$($VaultID)/users"
                     $params = @{
                         Uri = $URI
                         Method = 'GET'
@@ -65,7 +65,7 @@ function Get-DSVaultPermissions{
                 }
                 if ('All' , 'Roles' | Where-Object { $PrincipalTypes -contains $_ }) {
 
-                    $URI = "$Global:DSBaseURI/api/security/repositories/$($VaultID)/roles"
+                    $URI = "$Script:DSBaseURI/api/security/repositories/$($VaultID)/roles"
                     $params = @{
                         Uri = $URI
                         Method = 'GET'

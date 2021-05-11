@@ -62,7 +62,7 @@ function New-DSUser {
     BEGIN {
         Write-Verbose "[New-DSUser] Beginning..."
 
-        $URI = "$env:DS_URL/api/security/user/save?csToXml=1"
+        $URI = "$Script:DSBaseURI/api/security/user/save?csToXml=1"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."

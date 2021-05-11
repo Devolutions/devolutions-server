@@ -8,7 +8,7 @@ function Confirm-PrivateKey {
     BEGIN {
         Write-Verbose '[Confirm-PrivateKey] Beginning...'
         
-        $URI = "$Env:DS_URL/api/private-key/upload"
+        $URI = "$Script:DSBaseURI/api/private-key/upload"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."

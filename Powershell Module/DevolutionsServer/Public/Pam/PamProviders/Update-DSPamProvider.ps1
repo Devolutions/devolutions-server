@@ -29,7 +29,7 @@ function Update-DSPamProvider {
     }
     PROCESS {
         try {
-            $URI = "$Global:DSBaseURI/api/pam/Providers/$candidProviderID"
+            $URI = "$Script:DSBaseURI/api/pam/Providers/$candidProviderID"
 
             #Getting Provider infos
             $params = @{

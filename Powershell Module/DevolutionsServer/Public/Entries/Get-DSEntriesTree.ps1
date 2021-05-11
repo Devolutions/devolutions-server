@@ -28,7 +28,7 @@ function Get-DSEntriesTree{
     
         PROCESS {
 
-            $URI = "$Global:DSBaseURI/api/connections/partial/tree/$($VaultId)"
+            $URI = "$Script:DSBaseURI/api/connections/partial/tree/$($VaultId)"
 
             try
             {   

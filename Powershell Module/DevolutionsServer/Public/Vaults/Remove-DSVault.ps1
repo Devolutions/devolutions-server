@@ -23,7 +23,7 @@ function Remove-DSVault {
     PROCESS {
         try {
             $RequestParams = @{
-                URI    = "$env:DS_URL/api/security/repositories/$VaultID"
+                URI    = "$Script:DSBaseURI/api/security/repositories/$VaultID"
                 Method = "DELETE"
             }
 

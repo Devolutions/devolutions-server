@@ -18,7 +18,7 @@ function Get-DSPamFolders {
     BEGIN {
         Write-Verbose '[Get-DSPamFolders] begin...'
     
-        $URI = "$Global:DSBaseURI/api/pam/folders"
+        $URI = "$Script:DSBaseURI/api/pam/folders"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."

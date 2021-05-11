@@ -20,7 +20,7 @@ function Get-DSEntrySensitiveDataLegacy {
     BEGIN {
         Write-Verbose '[Get-DSEntrySensitiveDataLegacy] Begin...'
     
-        $URI = "$Global:DSBaseURI/api/Connections/partial/$EntryID/sensitive-data"
+        $URI = "$Script:DSBaseURI/api/Connections/partial/$EntryID/sensitive-data"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."

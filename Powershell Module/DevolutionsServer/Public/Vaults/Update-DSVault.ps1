@@ -105,7 +105,7 @@ function Update-DSVault {
             if ((0 -ne $AllowedApplicationList.Count) -and (!(Set-DSVaultApplications $VaultID $AllowedApplicationList -Update).isSuccess)) { Write-Warning "[New-DSVault] Applications could not be added to vault." }
 
             $RequestParams = @{
-                URI    = "$env:DS_URL/api/security/repositories"
+                URI    = "$Script:DSBaseURI/api/security/repositories"
                 Method = "PUT"
                 Body   = ConvertTo-Json $NewVault
             }

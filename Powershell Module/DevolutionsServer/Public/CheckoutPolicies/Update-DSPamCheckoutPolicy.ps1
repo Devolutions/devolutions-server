@@ -46,7 +46,7 @@ function Update-DSPamCheckoutPolicy {
     }
     PROCESS {
         try {
-            $URI = "$Global:DSBaseURI/api/pam/checkout-policies/$candidPolicyID"
+            $URI = "$Script:DSBaseURI/api/pam/checkout-policies/$candidPolicyID"
 
             #Getting policy infos
             $params = @{

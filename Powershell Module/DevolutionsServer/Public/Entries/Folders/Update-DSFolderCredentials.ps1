@@ -26,7 +26,7 @@ function Update-DSFolderCredentials {
     BEGIN {
         Write-Verbose "[Update-DSFolderEntry] Beginning..."
 
-        $URI = "$env:DS_URL/api/connections/partial/save"
+        $URI = "$Script:DSBaseURI/api/connections/partial/save"
 
         if (!(Get-Variable DSSessionToken -Scope Global -ErrorAction SilentlyContinue) -or ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))) {
             throw "Session does not seem authenticated, call New-DSSession."

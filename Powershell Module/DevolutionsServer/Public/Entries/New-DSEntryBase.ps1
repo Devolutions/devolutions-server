@@ -13,7 +13,7 @@ function New-DSEntryBase {
     BEGIN {
         Write-Verbose '[New-DSEntryBase] Beginning...'
 
-        $URI = "$env:DS_URL/api/connections/partial/save"
+        $URI = "$Script:DSBaseURI/api/connections/partial/save"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
