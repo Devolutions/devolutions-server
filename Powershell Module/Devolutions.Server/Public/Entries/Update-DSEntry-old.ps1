@@ -2,7 +2,7 @@ function Update-DSEntry-old {
     [CmdletBinding()]
     PARAM (
         [ValidateNotNullOrEmpty()]
-        [guid]$CandidEntryID = $(throw "Entry ID is null or empty. Please provide a valid entry ID and try again."),
+        [guid]$CandidEntryID = $(throw 'Entry ID is null or empty. Please provide a valid entry ID and try again.'),
 
         [switch]$ClearCredentials,
 
@@ -149,10 +149,10 @@ function Update-DSEntry-old {
         [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayVirtualDesktop
     )
     BEGIN {
-        Write-Verbose "[Update-DSEntry] Beginning..."
+        Write-Verbose '[Update-DSEntry] Beginning...'
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
-            throw "Session does not seem authenticated, call New-DSSession."
+            throw 'Session does not seem authenticated, call New-DSSession.'
         }
     }
 
@@ -183,10 +183,10 @@ function Update-DSEntry-old {
 
     END {
         if ($? -and $res.isSuccess) {
-            Write-Verbose "[Update-DSEntry] Completed successfully!"
+            Write-Verbose '[Update-DSEntry] Completed successfully!'
         }
         else {
-            Write-Verbose "[Update-DSEntry] Ended with errors..."
+            Write-Verbose '[Update-DSEntry] Ended with errors...'
         }
     }
 }

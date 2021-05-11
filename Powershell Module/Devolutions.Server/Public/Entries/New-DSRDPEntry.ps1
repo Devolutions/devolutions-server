@@ -9,10 +9,6 @@ function New-DSRDPEntry {
     #>
     [CmdletBinding()]
     PARAM (
-        [ValidateNotNullOrEmpty()]
-        [Devolutions.RemoteDesktopManager.ConnectionType]$ConnectionType,
-        <# -- Base entry data -- #>
-
         #Entry's name
         [ValidateNotNullOrEmpty()]
         [string]$Name,
@@ -149,7 +145,7 @@ function New-DSRDPEntry {
         [bool]$PersistentBitmapCaching = $true,
         #Enable bandwith autodetection
         [bool]$BandwidthAutoDetect = $true,
-        [ValidateSet(
+        [ValidateSet(           
             [Devolutions.RemoteDesktopManager.DefaultBoolean]::Default,
             [Devolutions.RemoteDesktopManager.DefaultBoolean]::True,
             [Devolutions.RemoteDesktopManager.DefaultBoolean]::False
@@ -180,91 +176,88 @@ function New-DSRDPEntry {
     }
     
     PROCESS {
-
-        $ParamList = Get-ParameterValues
-
         try {
             #Default RDP entry, valid for all RDP type
             $RDPEntry = @{
                 connectionType        = 1
-                group                 = $ParamList.Group
-                name                  = $ParamList.Name
-                displayMode           = $ParamList.DisplayMode
-                DisplayMonitor        = $ParamList.DisplayMonitor
-                displayVirtualDesktop = $ParamList.DisplayVirtualDesktop
+                group                 = $Group
+                name                  = $Name
+                displayMode           = $DisplayMode
+                DisplayMonitor        = $DisplayMonitor
+                displayVirtualDesktop = $DisplayVirtualDesktop
                 data                  = @{
-                    host                        = $ParamList.HostName 
-                    adminMode                   = $ParamList.AdminMode
-                    rdpType                     = $ParamList.RDPType
-                    username                    = $ParamList.Username
-                    soundHook                   = $ParamList.SoundHook
-                    audioQualityMode            = $ParamList.AudioQualityMode
-                    usesClipboard               = $ParamList.UsesClipboard
-                    usesDevices                 = $ParamList.UsesDevices
-                    usesHardDrives              = $ParamList.UsesHardDrives
-                    usesPrinters                = $ParamList.UsesPrinters
-                    usesSerialPorts             = $ParamList.UsesSerialPorts
-                    usesSmartDevices            = $ParamList.UsesSmartDevices     
-                    audioCaptureRedirectionMode = $ParamList.AudioCaptureRedirectionMode
-                    connectionType              = $ParamList.NetworkConnectionType
-                    videoPlaybackMode           = $ParamList.RedirectVideoPlayback
-                    animations                  = $ParamList.Animations
-                    loadAddOnsMode              = $ParamList.LoadAddonsMode
-                    keyboardHook                = $ParamList.KeyboardHook
-                    promptCredentials           = $ParamList.PromptCredentials
-                    clientSpec                  = switch ($ParamList.ClientSpec) {
-                        { $_ -lt 0 } { $ParamList.ClientSpec }
-                        { $_ -gt 1000 } { $ParamList.ClientSpec }
-                        Default { $ParamList.ClientSpec }
+                    host                        = $HostName 
+                    adminMode                   = $AdminMode
+                    rdpType                     = $RDPType
+                    username                    = $Username
+                    soundHook                   = $SoundHook
+                    audioQualityMode            = $AudioQualityMode
+                    usesClipboard               = $UsesClipboard
+                    usesDevices                 = $UsesDevices
+                    usesHardDrives              = $UsesHardDrives
+                    usesPrinters                = $UsesPrinters
+                    usesSerialPorts             = $UsesSerialPorts
+                    usesSmartDevices            = $UsesSmartDevices     
+                    audioCaptureRedirectionMode = $AudioCaptureRedirectionMode
+                    connectionType              = $NetworkConnectionType
+                    videoPlaybackMode           = $RedirectVideoPlayback
+                    animations                  = $Animations
+                    loadAddOnsMode              = $LoadAddonsMode
+                    keyboardHook                = $KeyboardHook
+                    promptCredentials           = $PromptCredentials
+                    clientSpec                  = switch ($ClientSpec) {
+                        { $_ -lt 0 } { $ClientSpec }
+                        { $_ -gt 1000 } { $ClientSpec }
+                        Default { $ClientSpec }
                     }
                 }
             }
 
             #Create passwordItem if password is present and not null
-            if (![string]::IsNullOrWhiteSpace($ParamList.Password)) {
+            if (![string]::IsNullOrWhiteSpace($Password)) {
                 $RDPEntry.data += @{ 
                     'passwordItem' = @{ 
                         hasSensitiveData = $false
-                        sensitiveData    = $ParamList.Password 
+                        sensitiveData    = $Password 
                     } 
                 }
             }
 
             #Possible fields for RDP type "Azure"
-            if ($ParamList.RDPType -eq [Devolutions.RemoteDesktopManager.RDPType]::Azure) {
-                $RDPEntry.data += @{ 'azureInstanceID' = $ParamList.AzureInstanceID }
-                $RDPEntry.data += @{ 'azureRoleName' = $ParamList.RoleName }
+            if ($RDPType -eq [Devolutions.RemoteDesktopManager.RDPType]::Azure) {
+                $RDPEntry.data += @{ 'azureInstanceID' = $AzureInstanceID }
+                $RDPEntry.data += @{ 'azureRoleName' = $RoleName }
             }
 
             #Possible fields for RDP type "HyperV"
-            if ($ParamList.RDPType -eq [Devolutions.RemoteDesktopManager.RDPType]::HyperV) {
-                $RDPEntry.data += @{ 'hyperVInstanceID' = $ParamList.HyperVInstance }
-                $RDPEntry.data += @{ 'useEnhancedSessionMode' = $ParamList.UseEnhancedSessionMode }
+            if ($RDPType -eq [Devolutions.RemoteDesktopManager.RDPType]::HyperV) {
+                $RDPEntry.data += @{ 'hyperVInstanceID' = $HyperVInstance }
+                $RDPEntry.data += @{ 'useEnhancedSessionMode' = $UseEnhancedSessionMode }
             }
 
             #After login program
-            if (![string]::IsNullOrEmpty($ParamList.AfterLoginProgram)) {
+            if (![string]::IsNullOrEmpty($AfterLoginProgram)) {
                 $RDPEntry.data += @{ 'afterLoginExecuteProgram' = $true }
-                $RDPEntry.data += @{ 'afterLoginProgram' = $ParamList.AfterLoginProgram }
+                $RDPEntry.data += @{ 'afterLoginProgram' = $AfterLoginProgram }
                 $RDPEntry.data += @{
-                    'afterLoginDelay' = switch ($ParamList.AfterLoginDelay) {
+                    'afterLoginDelay' = switch ($AfterLoginDelay) {
                         { $_ -lt 0 } { 0 }
                         { $_ -gt 60000 } { 60000 }
-                        Default { $ParamList.AfterLoginDelay }
+                        Default { $AfterLoginDelay }
                     }
                 }
             }
 
             #Alternate shell/RemoteApp program. Prioritizing RemoteApp, as it's preferred over alternative shell
-            if (![string]::IsNullOrEmpty($ParamList.RemoteApplicationProgram)) {
+            if (![string]::IsNullOrEmpty($RemoteApplicationProgram)) {
                 $RDPEntry.data += @{ 'remoteApp' = $true }
-                $RDPEntry.data += @{ 'remoteApplicationProgram' = $ParamList.RemoteApplicationProgram }
-                $RDPEntry.data += @{ 'remoteApplicationCmdLine' = $ParamList.RemoteApplicationCmdLine }
+                $RDPEntry.data += @{ 'remoteApplicationProgram' = $RemoteApplicationProgram }
+                $RDPEntry.data += @{ 'remoteApplicationCmdLine' = $RemoteApplicationCmdLine }
             }
-            elseif (![string]::IsNullOrEmpty($ParamList.AlternateShell)) {
+            elseif (![string]::IsNullOrEmpty($AlternateShell)) {
                 $RDPEntry.data += @{ 'useAlternateShell' = $true }
-                $RDPEntry.data += @{ 'alternateShell' = $ParamList.AlternateShell }
-                $RDPEntry.data += @{ 'shellWorkingDirectory' = $ParamList.ShellWorkingDirectory }
+                $RDPEntry.data += @{ 'alternateShell' = $AlternateShell }
+                $RDPEntry.data += @{ 'shellWorkingDirectory' = $ShellWorkingDirectory }
             }
 
             #Converts data to JSON, then encrypt the whole thing

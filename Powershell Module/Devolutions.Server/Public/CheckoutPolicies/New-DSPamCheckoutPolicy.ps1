@@ -24,7 +24,7 @@ function New-DSPamCheckoutPolicy {
     [CmdletBinding()]
     param(
         [ValidateNotNullOrEmpty()]
-        [string]$name = $(throw "Name is null or empty. Please provide a name and try again."),
+        [string]$name = $(throw 'Name is null or empty. Please provide a name and try again.'),
         [int]$checkoutApprovalMode,
         [int]$checkoutReasonMode,
         [int]$allowCheckoutOwnerAsApprover,
@@ -40,7 +40,7 @@ function New-DSPamCheckoutPolicy {
         $URI = "$Script:DSBaseURI/api/pam/checkout-policies"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
-            throw "Session does not seem authenticated, call New-DSSession."
+            throw 'Session does not seem authenticated, call New-DSSession.'
         }
     }
     
@@ -61,7 +61,7 @@ function New-DSPamCheckoutPolicy {
 
             #2. If name not found, proceed with creation
             if ($isNameUsed -eq $true) {
-                return [ServerResponse]::new($false, $null, $null, $null, "Checkout policy with same name already exists. Please try again with another name.", 409)
+                return [ServerResponse]::new($false, $null, $null, $null, 'Checkout policy with same name already exists. Please try again with another name.', 409)
             }
             else {
                 $newCheckoutPolicyData = @{
