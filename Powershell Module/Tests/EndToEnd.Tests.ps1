@@ -1,5 +1,5 @@
 BeforeAll {
-    $modulePath = Resolve-Path -Path "..\DevolutionsServer"
+    $modulePath = Resolve-Path -Path "..\Devolutions.Server"
     Import-Module -Name $modulePath -Verbose -Force
 
     
@@ -13,9 +13,11 @@ BeforeAll {
           
     [string]$credUser = $env:DS_USER
     [string]$credPassword = $env:DS_PASSWORD
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("UseDeclaredVarsMoreThanAssignments", '',  Justification='False positive in Pester tests')]
     [string]$dvlsURI = $env:DS_URL
 
     [securestring]$secPassword = ConvertTo-SecureString $credPassword -AsPlainText -Force
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("UseDeclaredVarsMoreThanAssignments", '',  Justification='False positive in Pester tests')]
     [pscredential]$creds = New-Object System.Management.Automation.PSCredential ($credUser, $secPassword)
 }
 
