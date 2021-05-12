@@ -27,7 +27,7 @@ Establishes a session with a Devolutions Server
 		#Get-ServerInfo must be called to get encryption keys...
 		if (!(Get-Variable DSSessionKey -Scope Global -ErrorAction SilentlyContinue) -or [string]::IsNullOrWhiteSpace($Global:DSSessionKey)) {
 			$info = Get-DSServerInfo -BaseURI $BaseURI
-			if ($false -eq $info.IsSuccess) {
+			if (!$info.IsSuccess) {
 				throw "Unable to get server information"
 			}
 		}
