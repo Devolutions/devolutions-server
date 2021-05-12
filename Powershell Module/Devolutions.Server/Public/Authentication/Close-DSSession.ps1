@@ -9,38 +9,44 @@ function Close-DSSession {
 .LINK
 #>
 	[CmdletBinding()]
-	param(	)
+	param(
+		[switch]$Force
+	)
 
 	BEGIN { 
 		Write-Verbose '[Close-DSSession] begin...'
 		$URI = "$Script:DSBaseURI/api/logout"
+		$GlobalVars = @('DSInstanceName', 'DSInstanceVersion', 'DSKeyExp', 'DSKeyMod', 'DSSafeSessionKey', 'DSSessionKey', 'DSSessionToken', 'WebSession') 
 	}
 
 	PROCESS {
-
-		$params = @{
-			Uri            = $URI
-			Method         = 'GET'
-			LegacyResponse = $true
-		}
-
 		try {
-			$response = Invoke-DS @params
+			if (!$Force) {
+				$params = @{
+					Uri            = $URI
+					Method         = 'GET'
+					LegacyResponse = $true
+				}
+
+				$response = Invoke-DS @params
+			}
 
 			#script scope
 			if (Get-Variable DSBaseUri -Scope Script -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSBaseURI -Scope Script -Force } catch { } }
 
 			#global scope
-			if (Get-Variable DSInstanceName -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSInstanceName -Scope Global -Force } catch { } }
-			if (Get-Variable DSInstanceVersion -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSInstanceVersion -Scope Global -Force } catch { } }
-			if (Get-Variable DSKeyExp -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSKeyExp -Scope Global -Force } catch { } }
-			if (Get-Variable DSKeyMod -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSKeyMod -Scope Global -Force } catch { } }
-			if (Get-Variable DSSafeSessionKey -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSSafeSessionKey -Scope Global -Force } catch { } }
-			if (Get-Variable DSSessionKey -Scope Global -ErrorAction SilentlyContinue) {	try { Remove-Variable -Name DSSessionKey -Scope Global -Force } catch { } }
-			if (Get-Variable DSSessionToken -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSSessionToken -Scope Global -Force } catch { } }
-			if (Get-Variable WebSession -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name WebSession -Scope Global -Force } catch { } }
+			foreach ($Var in $GlobalVars.GetEnumerator()) {
+				try {
+					Remove-Variable -Name $Var -Scope Global -Force -ErrorAction SilentlyContinue
+				}
+				catch {
+					Write-Warning "[Close-DSSession] Error while removing $Var..."
+				}
+			}
 
-			return $response 
+			if (!$Force) {
+				return $response 
+			}
 		}
 		catch {
 			Write-Error $_.Exception.Message
