@@ -12,23 +12,23 @@ Establishes a session with a Devolutions Server
 	[CmdletBinding()]
 	param(	
 		[ValidateNotNullOrEmpty()]
-		[PSCredential]$Credential = $(throw "Credential is null or empty. Please provide a valid PSCredential object and try again."),
+		[PSCredential]$Credential = $(throw 'Credential is null or empty. Please provide a valid PSCredential object and try again.'),
 		[ValidateNotNullOrEmpty()]
-		[string]$BaseURI = $(throw "BaseURI is null or empty. Please provide a valid URI and try again.")
+		[string]$BaseURI = $(throw 'BaseURI is null or empty. Please provide a valid URI and try again.')
 	)
 
 	BEGIN { 
 		Write-Verbose '[New-DSSession] begin...'
 
 		if (Get-Variable DSSessionKey -Scope Global -ErrorAction SilentlyContinue) {
-			throw "Session already established. Close it before switching servers."
+			throw 'Session already established. Close it before switching servers.'
 		}
 
 		#Get-ServerInfo must be called to get encryption keys...
 		if (!(Get-Variable DSSessionKey -Scope Global -ErrorAction SilentlyContinue) -or [string]::IsNullOrWhiteSpace($Global:DSSessionKey)) {
 			$info = Get-DSServerInfo -BaseURI $BaseURI
-			if (!$info.IsSuccess) {
-				throw "Unable to get server information"
+			if (!$info.isSuccess) {
+				throw 'Unable to get server information'
 			}
 		}
 
@@ -63,12 +63,14 @@ Establishes a session with a Devolutions Server
 				$HasResult = $false
 			}
 			else {
-				$HasResult = Get-Member -InputObject $jsonContent -Name "result"
+				$HasResult = Get-Member -InputObject $jsonContent -Name 'result'
 			}
 
 			if (($HasResult) -and ('0' -eq $jsonContent.result)) {
 				# some error occurred, we need to grab the message
-				return [ServerResponse]::new(($false), $response, $jsonContent, $null, $jsonContent.data.message, [System.Net.HttpStatusCode]::Unauthorized)
+				Write-Error $jsonContent.data.message -ErrorAction Stop
+				#$res = [ServerResponse]::new(($false), $response, $jsonContent, $null, $jsonContent.data.message, [System.Net.HttpStatusCode]::Unauthorized)
+				#return $res
 			}
 	
 			Write-Verbose "[New-DSSession] Got authentication token $($jsonContent.data.tokenId)"
@@ -79,16 +81,18 @@ Establishes a session with a Devolutions Server
 			}
 
 			Set-Variable -Name DSSessionToken -Value $jsonContent.data.tokenId -Scope Global
-			$Global:WebSession.Headers["tokenId"] = $jsonContent.data.tokenId
+			$Global:WebSession.Headers['tokenId'] = $jsonContent.data.tokenId
 
-			return [ServerResponse]::new(($response.StatusCode -eq 200), $response, $jsonContent, $null, "", $response.StatusCode)
+			$res = [ServerResponse]::new(($response.StatusCode -eq 200), $response, $jsonContent, $null, '', $response.StatusCode)
+			return $res
 		}
 
-		return [ServerResponse]::new(($false), $null, $null, $null, "", 500)	
+		$res = [ServerResponse]::new(($false), $null, $null, $null, '', 500)	
+		return $res
 	}
 
 	END { 
-		if ($?) {
+		if ($res.isSuccess) {
 			Write-Verbose '[New-DSSession ] Completed Successfully.'
 		}
 		else {
