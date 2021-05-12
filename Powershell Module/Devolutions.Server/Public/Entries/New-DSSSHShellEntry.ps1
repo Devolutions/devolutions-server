@@ -12,6 +12,8 @@ function New-DSSSHShellEntry {
         [ValidateNotNullOrEmpty()]
         [string]$Name = $(throw 'Name is null or empty. Please provide a name for this new entry and try again.'),
         [string]$Password = '',
+        [string]$Description = '',
+        [string]$Keywords = '',
         [ValidateSet(
             [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded,
             [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::External
@@ -109,6 +111,8 @@ function New-DSSSHShellEntry {
                 connectionType        = [Devolutions.RemoteDesktopManager.ConnectionType]::SSHShell
                 group                 = $Group
                 name                  = $Name
+                description           = $Description
+                keywords              = $Keywords
                 displayMode           = $DisplayMode
                 DisplayMonitor        = $DisplayMonitor
                 displayVirtualDesktop = $DisplayVirtualDesktop
@@ -182,7 +186,7 @@ function New-DSSSHShellEntry {
                         $SSHShell.data += @{ privateKeyData = $PrivateKeyCtx.Body.privateKeyData }
 
                         if ($PrivateKeyPassphrase) {
-                            $SSHShell += @{
+                            $SSHShell.data += @{
                                 privateKeyPassPhraseItem = @{
                                     hasSensitiveData = $true
                                     sensitiveData    = $PrivateKeyPassphrase
