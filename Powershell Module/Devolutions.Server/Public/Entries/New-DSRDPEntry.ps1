@@ -239,13 +239,6 @@ function New-DSRDPEntry {
                 }
             }
 
-            #Prompt the user for comment/ticket number on close
-            [bool]$CloseCommentPrompt = $False,
-            #A comment is required on close
-            [bool]$CloseCommentIsRequired = $False,
-            #A ticket number is required on close
-            [bool]$TicketNumberIsRequiredOnClose = $False,
-
             #Create passwordItem if password is present and not null
             if (![string]::IsNullOrWhiteSpace($Password)) {
                 $RDPEntry.data += @{ 
