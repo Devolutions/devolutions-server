@@ -36,12 +36,26 @@ function Update-DSRDPEntry {
         #Entry's expiration date (ISO-8601 format (yyyy-mm-ddThh:mm:ss.000Z)
         [string]$Expiration,
 
+        #Warns the user if RDP session is already opened
+        [bool]$WarnIfAlreadyOpened = $False,
         #A comment is required to view entry's credentials
-        [bool]$CredentialViewedCommentIsRequired,
+        [bool]$CredentialViewedCommentIsRequired = $False,
         #A ticket number is required to view entry's credentials
-        [bool]$TicketNumberIsRequiredOnCredentialViewed,
-        #Prompt the user for comment/ticket number
-        [bool]$CredentialViewedPrompt,
+        [bool]$TicketNumberIsRequiredOnCredentialViewed = $False,
+        #Prompt the user for comment/ticket number on credential viewed
+        [bool]$CredentialViewedPrompt = $False,
+        #Prompt the user for comment/ticket number on open
+        [bool]$OpenCommentPrompt = $False,
+        #A comment is required on open
+        [bool]$OpenCommentIsRequired = $False,
+        #A ticket number is required on open
+        [bool]$TicketNumberIsRequiredOnOpen = $False,
+        #Prompt the user for comment/ticket number on close
+        [bool]$CloseCommentPrompt = $False,
+        #A comment is required on close
+        [bool]$CloseCommentIsRequired = $False,
+        #A ticket number is required on close
+        [bool]$TicketNumberIsRequiredOnClose = $False,
 
         #Entry's checkout mode
         [Devolutions.RemoteDesktopManager.CheckOutMode]$CheckoutMode,
@@ -162,6 +176,8 @@ function Update-DSRDPEntry {
         $PSBoundParameters.Remove('Verbose')
         
         $RootProperties = @('Group', 'Name', 'DisplayMode', 'DisplayMonitor', 'DisplayVirtualDesktop')
+        $EventsProperties = @('WarnIfAlreadyOpened', 'CredentialViewedCommentIsRequired', 'TicketNumberIsRequiredOnCredentialViewed', 
+            'CredentialViewedPrompt', 'OpenCommentPrompt', 'OpenCommentIsRequired', 'TicketNumberIsRequiredOnOpen', 'CloseCommentPrompt', 'CloseCommentIsRequired', 'TicketNumberIsRequiredOnClose')
     }
     
     PROCESS {
@@ -185,6 +201,9 @@ function Update-DSRDPEntry {
                         $false { $RDPEntry | Add-Member -NotePropertyName $param.Key -NotePropertyValue $param.Value; break }
                         Default { Write-Warning "[Update-DSRDPEntry] Error with param: $($param.Key)"; break }
                     }
+                }
+                elseif ($param.Key -in $EventsProperties.GetEnumerator()) {
+                    $RDPEntry.events | Add-Member -NotePropertyName $param.Key -NotePropertyValue $param.Value -Force
                 }
                 #Parameter is in partialConnection.data
                 else {

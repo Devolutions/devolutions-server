@@ -38,13 +38,27 @@ function New-DSRDPEntry {
         [string]$Expiration,
 
         <# -- Events tab -- #>
-
+        
+        #Warns the user if RDP session is already opened
+        [bool]$WarnIfAlreadyOpened = $False,
         #A comment is required to view entry's credentials
         [bool]$CredentialViewedCommentIsRequired = $False,
         #A ticket number is required to view entry's credentials
         [bool]$TicketNumberIsRequiredOnCredentialViewed = $False,
-        #Prompt the user for comment/ticket number
+        #Prompt the user for comment/ticket number on credential viewed
         [bool]$CredentialViewedPrompt = $False,
+        #Prompt the user for comment/ticket number on open
+        [bool]$OpenCommentPrompt = $False,
+        #A comment is required on open
+        [bool]$OpenCommentIsRequired = $False,
+        #A ticket number is required on open
+        [bool]$TicketNumberIsRequiredOnOpen = $False,
+        #Prompt the user for comment/ticket number on close
+        [bool]$CloseCommentPrompt = $False,
+        #A comment is required on close
+        [bool]$CloseCommentIsRequired = $False,
+        #A ticket number is required on close
+        [bool]$TicketNumberIsRequiredOnClose = $False,
 
         <# -- Security tab -- #>
 
@@ -159,8 +173,8 @@ function New-DSRDPEntry {
 
         [ValidateSet(
             [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::External, 
-            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded, 
-            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Undocked
+            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded,
+            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Undocked     
         )]
         #Display mode used by RDP
         [string]$DisplayMode = [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded,
@@ -211,7 +225,25 @@ function New-DSRDPEntry {
                         Default { $ClientSpec }
                     }
                 }
+                events                = @{
+                    credentialViewedCommentIsRequired        = $CredentialViewedCommentIsRequired
+                    ticketNumberIsRequiredOnCredentialViewed = $TicketNumberIsRequiredOnCredentialViewed
+                    credentialViewedPrompt                   = $CredentialViewedPrompt
+                    openCommentPrompt                        = $OpenCommentPrompt
+                    openCommentIsRequired                    = $OpenCommentIsRequired
+                    ticketNumberIsRequiredOnOpen             = $TicketNumberIsRequiredOnOpen
+                    closeCommentPrompt                       = $CloseCommentPrompt
+                    closeCommentIsRequired                   = $CloseCommentIsRequired
+                    ticketNumberIsRequiredOnClose            = $TicketNumberIsRequiredOnClose
+                }
             }
+
+            #Prompt the user for comment/ticket number on close
+            [bool]$CloseCommentPrompt = $False,
+            #A comment is required on close
+            [bool]$CloseCommentIsRequired = $False,
+            #A ticket number is required on close
+            [bool]$TicketNumberIsRequiredOnClose = $False,
 
             #Create passwordItem if password is present and not null
             if (![string]::IsNullOrWhiteSpace($Password)) {
