@@ -88,7 +88,9 @@ function Update-DSSSHShellEntry {
         [bool]$TicketNumberIsRequiredOnClose,
         [bool]$CredentialViewedPrompt,
         [bool]$CredentialViewedCommentIsRequired,
-        [bool]$TicketNumberIsRequiredOnCredentialViewed
+        [bool]$TicketNumberIsRequiredOnCredentialViewed,
+
+        [Field[]]$NewFieldsList
     )
     
     BEGIN {
@@ -96,6 +98,7 @@ function Update-DSSSHShellEntry {
 
         $PSBoundParameters.Remove('EntryID')
         $PSBoundParameters.Remove('Verbose')
+        $PSBoundParameters.Remove('NewFieldsList')
 
         $RootProperties = @('Group', 'Name', 'DisplayMode', 'DisplayMonitor', 'DisplayVirtualDesktop', 'Description', 'Keywords')
         $EventsProperties = @('WarnIfAlreadyOpened', 'OpenCommentPrompt', 'OpenCommentIsRequired', 'TicketNumberIsRequiredOnOpen', 'CloseCommentPrompt', 'CloseCommentIsRequired', 'TicketNumberIsRequiredOnClose', 'CredentialViewedPrompt', 'CredentialViewedCommentIsRequired', 'TicketNumberIsRequiredOnCredentialViewed')
@@ -198,6 +201,21 @@ function Update-DSSSHShellEntry {
                         Default {
                             $SSHShellEntry.data | Add-Member -NotePropertyName $param.Key -NotePropertyValue $param.Value -Force
                         }
+                    }
+                }
+            }
+
+            foreach ($Param in $NewFieldsList.GetEnumerator()) {
+                switch ($Param.Depth) {
+                    'root' { $SSHShellEntry | Add-Member -NotePropertyName $param.Name -NotePropertyValue $param.Value -Force } 
+                }
+                default {
+                    if ($SSHShellEntry.($Param.Depth)) {
+                        $SSHShellEntry.($param.Depth) | Add-Member -NotePropertyName $param.Name -NotePropertyValue $param.Value -Force
+                    }
+                    else {
+                        $SSHShellEntry | c Add-Member -NotePropertyName $param.Depth -NotePropertyValue $null -Force
+                        $SSHShellEntry.($param.Depth) | Add-Member -NotePropertyName $param.Name -NotePropertyValue $param.Value -Force
                     }
                 }
             }
