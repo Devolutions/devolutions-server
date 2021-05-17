@@ -183,7 +183,7 @@ function New-DSRDPEntry {
         #Virtual desktop used by RPD
         [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayVirtualDesktop = [Devolutions.RemoteDesktopManager.DisplayVirtualDesktop]::Current,
 
-        [NewParam[]]$NewParamList
+        [Field[]]$NewFieldsList
     )
 
     BEGIN {
@@ -294,18 +294,18 @@ function New-DSRDPEntry {
             }
 
             #Check for new parameters
-            if ($NewParamList.Count -gt 0) {
-                foreach ($Param in $NewParamList.GetEnumerator()) {
-                    switch ($Param.Level) {
+            if ($NewFieldsList.Count -gt 0) {
+                foreach ($Param in $NewFieldsList.GetEnumerator()) {
+                    switch ($Param.Depth) {
                         'root' { $RDPEntry += @{$Param.Name = $Param.Value } }
                         default {
-                            if ($RDPEntry.($Param.Level)) {
-                                $RDPEntry.($Param.Level) += @{ $Param.Name = $param.value }
+                            if ($RDPEntry.($Param.Depth)) {
+                                $RDPEntry.($Param.Depth) += @{ $Param.Name = $param.value }
                             }
                             else {
                                 $RDPEntry += @{
-                                    $Param.Level = @{
-                                        $Param.Name = $Param.Value
+                                    $Param.Depth = @{
+                                         $Param.Name = $Param.Value
                                     }
                                 }
                             }
