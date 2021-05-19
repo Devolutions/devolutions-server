@@ -2,6 +2,8 @@ function Get-DSPasswordsReport {
     [CmdletBinding()]
     PARAM (
         [ValidateNotNullOrEmpty()]
+        [guid]$VaultID = [guid]::Empty,
+        [ValidateNotNullOrEmpty()]
         [string]$OutputPath = $(throw 'You must supply an output path (including file ending in .csv) in order to generate the report.')
     )
     
@@ -9,21 +11,25 @@ function Get-DSPasswordsReport {
         Write-Verbose '[Get-PasswordsReport] Beginning...'
         $IsSuccess = $true
         $ClearPasswords = @()
-        $URI = "$env:DS_URL/api/v3/reports/password-analyzer"
     }
     
     PROCESS {
-        $RequestParams = @{
-            URI    = $URI
-            Method = 'GET'
-        }
+        $EntriesWithPassword = @()
+        $CurrentPage = 1
+        $TotalPages = 1
 
         try {
+            do {
+                $res = Invoke-DS -URI "$env:DS_URL/api/v3/reports/password-analyzer?vaultId=$VaultID&pageNumber=$currentPage&pageSize=100" -method 'GET' -Verbose
+                $TotalPages = $res.Body.totalPage
+                $EntriesWithPassword += $res.Body.data
+                $CurrentPage++
+            } while ($CurrentPage -le $TotalPages)
+
             #If user can access password-analyzer
-            if (($res = Invoke-DS @RequestParams -Verbose).isSuccess) {
-                $EntriesWithPassword = $res.Body.data.GetEnumerator()
+            if ($EntriesWithPassword.Count -gt 0) {
                 #Loop each entry with a password
-                $EntriesWithPassword | ForEach-Object {
+                $EntriesWithPassword.GetEnumerator() | ForEach-Object {
                     #If fetching sensitivedata for entry was successful
                     if (($res = Get-DSEntrySensitiveData -EntryId $_.id).isSuccess) {
                         $SensitiveData = $res.Body.data
