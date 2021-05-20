@@ -1,103 +1,98 @@
 function New-DSSession {
-	<#
-.SYNOPSIS
-Establishes a session with a Devolutions Server
+    [CmdletBinding()]
+    PARAM (
+        [ValidateNotNull()]
+        [pscredential]$Credential = [pscredential]::Empty,
+        [ValidateNotNullOrEmpty()]
+        [string]$URL = $(throw "You must provide your DVLS instance's URL.")
+    )
+    
+    BEGIN {
+        Write-Verbose '[Login] Beginning...'
+    }
+    
+    PROCESS {
+        #1. Fetch server information
+        try {
+            $ServerResponse = Invoke-WebRequest -Uri "$URL/api/server-information" -Method 'GET' -SessionVariable Global:WebSession
 
-.DESCRIPTION
+            if ((Test-Json $ServerResponse.Content -ErrorAction SilentlyContinue) -and (@(Compare-Object (ConvertFrom-Json $ServerResponse.Content).PSObject.Properties.Name @('data', 'result')).Length -eq 0)) {
+                $ServerResponse = ConvertFrom-Json $ServerResponse.Content
 
-.EXAMPLE
+                if ($ServerResponse.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) {
+                    throw '[Login] Unhandled error while fetching server information. Please submit a ticket if problem persists.'
+                }
+            }
+            else {
+                throw "[Login] There was a problem reaching your DVLS instance. Either you provided a wrong URL or it's not pointing to a DVLS instance."
+            }
+        }
+        catch {
+            Write-Error $_.Exception.Message
+        }
 
-.LINK
-#>
-	[CmdletBinding()]
-	param(	
-		[ValidateNotNullOrEmpty()]
-		[PSCredential]$Credential = $(throw 'Credential is null or empty. Please provide a valid PSCredential object and try again.'),
-		[ValidateNotNullOrEmpty()]
-		[string]$BaseURI = $(throw 'BaseURI is null or empty. Please provide a valid URI and try again.')
-	)
+        #2. Setting server related variables
+        $SessionKey = New-CryptographicKey
+        $SafeSessionKey = Encrypt-RSA $ServerResponse.data.publicKey.modulus $ServerResponse.data.publicKey.exponent $SessionKey
+        
+        Set-Variable -Name DSSessionKey -Value $SessionKey -Scope Global
+        Set-Variable -Name DSSafeSessionKey -Value $SafeSessionKey -Scope Global
+        Set-Variable -Name DSInstanceVersion -Value $ServerResponse.data.version -Scope Global
+        Set-Variable -Name DSInstanceName -Value $ServerResponse.data.serverName -Scope Global
 
-	BEGIN { 
-		Write-Verbose '[New-DSSession] begin...'
+        #3. Fetching token information (Actually logging in to DVLS)
+        $SafePassword = Protect-ResourceToHexString $Credential.GetNetworkCredential().Password
+        $ModuleVersion = (Get-Module Devolutions.Server).Version.ToString()
 
-		if (Get-Variable DSSessionKey -Scope Global -ErrorAction SilentlyContinue) {
-			throw 'Session already established. Close it before switching servers.'
-		}
+        $RequestParams = @{
+            URI         = "$URL/api/login/partial"
+            Method      = 'POST'
+            ContentType = 'application/json'
+            WebSession  = $Global:WebSession
+            Body        = ConvertTo-Json @{
+                userName            = $Credential.UserName
+                RDMOLoginParameters = @{
+                    SafePassword     = $SafePassword
+                    SafeSessionKey   = $Global:DSSafeSessionKey
+                    Client           = 'Scripting'
+                    Version          = $ModuleVersion
+                    LocalMachineName = [System.Environment]::MachineName
+                    LocalUserName    = [System.Environment]::UserName
+                }
+            } -Depth 3
+        }
 
-		#Get-ServerInfo must be called to get encryption keys...
-		if (!(Get-Variable DSSessionKey -Scope Global -ErrorAction SilentlyContinue) -or [string]::IsNullOrWhiteSpace($Global:DSSessionKey)) {
-			$info = Get-DSServerInfo -BaseURI $BaseURI
-			if (!$info.isSuccess) {
-				throw 'Unable to get server information'
-			}
-		}
+        try {
+            $LoginResponse = Invoke-WebRequest @RequestParams
 
-		$URI = "$Script:DSBaseURI/api/login/partial"
-	}
+            if ((Test-Json $LoginResponse.Content -ErrorAction SilentlyContinue) -and (@(Compare-Object (ConvertFrom-Json $LoginResponse.Content).PSObject.Properties.Name @('data', 'result')).Length -eq 0)) {
+                $LoginContent = ConvertFrom-Json $LoginResponse.Content
 
-	PROCESS {
-		$safePassword = Protect-ResourceToHexString $Credential.GetNetworkCredential().Password
+                if ($LoginContent.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) {
+                    throw $LoginContent.data.message
+                }
+            }
+            else {
+                throw '[Login] Unhandled error while logging in. Please submit a ticket if problem persists.'
+            }
+        }
+        catch {
+            throw $_.Exception.Message
+        }
+        
+        Set-Variable -Name DSSessionToken -Value $LoginContent.data.tokenId -Scope Global
+        $Global:WebSession.Headers.Add('tokenId', $LoginContent.data.tokenId)
 
-		$Body = @{
-			userName            = $Credential.UserName
-			RDMOLoginParameters = @{
-				SafePassword     = $safePassword
-				SafeSessionKey   = $Global:DSSafeSessionKey
-				Client           = 'Scripting'
-				Version          = $MyInvocation.MyCommand.Module.Version.ToString()
-				LocalMachineName = [Environment]::MachineName
-				LocalUserName    = [Environment]::UserName
-			}
-		}
-
-		if (Test-Path Global:DSHdr) {
-			$Global:WebSession.Headers.Add($Global:DSHdr)
-		}
-		
-		#body is typed as a HashTable, I'd like to offer an override that pushes the conversion downstream
-		$response = Invoke-WebRequest -URI $URI -Method Post -ContentType 'application/json'  -Body ($Body | ConvertTo-Json) -WebSession $Global:WebSession
-		If ($null -ne $response) {
-			$jsonContent = $response.Content | ConvertFrom-JSon
-
-			if ($null -eq $jsonContent) {
-				$HasResult = $false
-			}
-			else {
-				$HasResult = Get-Member -InputObject $jsonContent -Name 'result'
-			}
-
-			if (($HasResult) -and ('0' -eq $jsonContent.result)) {
-				# some error occurred, we need to grab the message
-				Write-Error $jsonContent.data.message -ErrorAction Stop
-				#$res = [ServerResponse]::new(($false), $response, $jsonContent, $null, $jsonContent.data.message, [System.Net.HttpStatusCode]::Unauthorized)
-				#return $res
-			}
-	
-			Write-Verbose "[New-DSSession] Got authentication token $($jsonContent.data.tokenId)"
-			Write-Verbose "[New-DSSession] Connected to ""$($jsonContent.data.serverInfo.servername)"""
-
-			If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
-				Write-Debug "[Response.Data] $($jsonContent.data)"
-			}
-
-			Set-Variable -Name DSSessionToken -Value $jsonContent.data.tokenId -Scope Global
-			$Global:WebSession.Headers['tokenId'] = $jsonContent.data.tokenId
-
-			$res = [ServerResponse]::new(($response.StatusCode -eq 200), $response, $jsonContent, $null, '', $response.StatusCode)
-			return $res
-		}
-
-		$res = [ServerResponse]::new(($false), $null, $null, $null, '', 500)	
-		return $res
-	}
-
-	END { 
-		if ($res.isSuccess) {
-			Write-Verbose '[New-DSSession ] Completed Successfully.'
-		}
-		else {
-			Write-Verbose '[New-DSSession ] ended with errors...'
-		}
-	}
-
+        $NewResponse = New-ServerResponse -response $LoginResponse -method 'POST'
+        return $NewResponse
+    }
+    
+    END {
+        if ($NewResponse.isSuccess) {
+            Write-Verbose "[Login] Successfully logged in to $($ServerInfos.data.servername)"
+        }
+        else {
+            Write-Verbose '[Login] Could not log in. Please verify URL and credential.'
+        }
+    }
 }
