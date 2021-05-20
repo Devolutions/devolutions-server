@@ -82,7 +82,7 @@ function New-DSSession {
         }
         
         Set-Variable -Name DSSessionToken -Value $LoginContent.data.tokenId -Scope Global
-        $Global:WebSession.Headers.Add('tokenId', $LoginContent.data.tokenId)
+        #$Global:WebSession.Headers.Add('tokenId', $LoginContent.data.tokenId)
 
         $NewResponse = New-ServerResponse -response $LoginResponse -method 'POST'
         return $NewResponse
