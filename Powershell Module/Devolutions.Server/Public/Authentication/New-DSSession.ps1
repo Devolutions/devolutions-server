@@ -20,11 +20,11 @@ function New-DSSession {
                 $ServerResponse = ConvertFrom-Json $ServerResponse.Content
 
                 if ($ServerResponse.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) {
-                    throw '[Login] Unhandled error while fetching server information. Please submit a ticket if problem persists.'
+                    throw '[New-DSSession] Unhandled error while fetching server information. Please submit a ticket if problem persists.'
                 }
             }
             else {
-                throw "[Login] There was a problem reaching your DVLS instance. Either you provided a wrong URL or it's not pointing to a DVLS instance."
+                throw "[New-DSSession] There was a problem reaching your DVLS instance. Either you provided a wrong URL or it's not pointing to a DVLS instance."
             }
         }
         catch {
@@ -35,6 +35,7 @@ function New-DSSession {
         $SessionKey = New-CryptographicKey
         $SafeSessionKey = Encrypt-RSA $ServerResponse.data.publicKey.modulus $ServerResponse.data.publicKey.exponent $SessionKey
         
+        Set-Variable -Name DSBaseURI -Value $URL -Scope Script
         Set-Variable -Name DSSessionKey -Value $SessionKey -Scope Global
         Set-Variable -Name DSSafeSessionKey -Value $SafeSessionKey -Scope Global
         Set-Variable -Name DSInstanceVersion -Value $ServerResponse.data.version -Scope Global
@@ -73,7 +74,7 @@ function New-DSSession {
                 }
             }
             else {
-                throw '[Login] Unhandled error while logging in. Please submit a ticket if problem persists.'
+                throw '[New-DSSession] Unhandled error while logging in. Please submit a ticket if problem persists.'
             }
         }
         catch {
@@ -89,10 +90,10 @@ function New-DSSession {
     
     END {
         if ($NewResponse.isSuccess) {
-            Write-Verbose "[Login] Successfully logged in to $($ServerInfos.data.servername)"
+            Write-Verbose "[New-DSSession] Successfully logged in to $($ServerResponse.data.servername)"
         }
         else {
-            Write-Verbose '[Login] Could not log in. Please verify URL and credential.'
+            Write-Verbose '[New-DSSession] Could not log in. Please verify URL and credential.'
         }
     }
 }
