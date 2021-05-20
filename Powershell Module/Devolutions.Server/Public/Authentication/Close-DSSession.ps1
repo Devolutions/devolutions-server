@@ -6,7 +6,7 @@ function Close-DSSession {
     
     begin {
         Write-Verbose '[Close-DSSession] Beginning...'
-        $VarsToClear = @('DSInstanceName', 'DSInstanceVersion', 'DSSafeSessionKey', 'DSSessionKey', 'DSBaseURI')
+        $VarsToClear = @('DSInstanceName', 'DSInstanceVersion', 'DSSafeSessionKey', 'DSSessionKey', 'WebSession', 'DSBaseURI')
     }
     
     process {

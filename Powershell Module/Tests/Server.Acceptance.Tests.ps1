@@ -110,8 +110,7 @@ Describe NormalWorkflow {
     }
     
     AfterAll {
-        $res = Close-DSSession    
-        $res.IsSuccess | Should -Be $true
+        Close-DSSession    
     }
 
     Context 'SecureMessages' {
