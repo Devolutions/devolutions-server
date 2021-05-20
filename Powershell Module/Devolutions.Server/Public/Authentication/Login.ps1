@@ -1,12 +1,10 @@
 function Login {
     [CmdletBinding()]
     PARAM (
+        [ValidateNotNull()]
+        [pscredential]$Credential = [pscredential]::Empty,
         [ValidateNotNullOrEmpty()]
-        [string]$Username = $(throw 'empty username'),
-        [ValidateNotNullOrEmpty()]
-        [string]$Password = $(throw 'empty password'),
-        [ValidateNotNullOrEmpty()]
-        [string]$URL = $(throw 'empty URL')
+        [string]$URL = $(throw "You must provide your DVLS instance's URL.")
     )
     
     BEGIN {
@@ -14,11 +12,7 @@ function Login {
     }
     
     PROCESS {
-        #1. Create PSCredentials for authentication
-        [securestring]$SecurePassword = ConvertTo-SecureString -String $Password -AsPlainText -Force
-        [pscredential]$Credentials = [pscredential]::new($Username, $SecurePassword)
-
-        #2. Fetch server information
+        #1. Fetch server information
         try {
             $ServerResponse = Invoke-WebRequest -Uri "$URL/api/server-information" -Method 'GET' -SessionVariable Global:WebSession
 
@@ -37,7 +31,7 @@ function Login {
             Write-Error $_.Exception.Message
         }
 
-        #3. Setting server related variables
+        #2. Setting server related variables
         $SessionKey = New-CryptographicKey
         $SafeSessionKey = Encrypt-RSA $ServerResponse.data.publicKey.modulus $ServerResponse.data.publicKey.exponent $SessionKey
         
@@ -46,8 +40,8 @@ function Login {
         Set-Variable -Name DSInstanceVersion -Value $ServerResponse.data.version -Scope Global
         Set-Variable -Name DSInstanceName -Value $ServerResponse.data.serverName -Scope Global
 
-        #4. Actually logging in
-        $SafePassword = Protect-ResourceToHexString $Credentials.GetNetworkCredential().Password
+        #3. Fetching token information (Actually logging in to DVLS)
+        $SafePassword = Protect-ResourceToHexString $Credential.GetNetworkCredential().Password
         $ModuleVersion = (Get-Module Devolutions.Server).Version.ToString()
 
         $RequestParams = @{
@@ -56,7 +50,7 @@ function Login {
             ContentType = 'application/json'
             WebSession  = $Global:WebSession
             Body        = ConvertTo-Json @{
-                userName            = $Credentials.UserName
+                userName            = $Credential.UserName
                 RDMOLoginParameters = @{
                     SafePassword     = $SafePassword
                     SafeSessionKey   = $Global:DSSafeSessionKey
@@ -98,7 +92,7 @@ function Login {
             Write-Verbose "[Login] Successfully logged in to $($ServerInfos.data.servername)"
         }
         else {
-            Write-Verbose '[Login] Could not log in. Please verify URL and credentials.'
+            Write-Verbose '[Login] Could not log in. Please verify URL and credential.'
         }
     }
 }
