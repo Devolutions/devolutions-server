@@ -181,12 +181,13 @@ function New-DSRDPEntry {
         #Display monitor used by RDP
         [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayMonitor = [Devolutions.RemoteDesktopManager.DisplayMonitor]::Primary,
         #Virtual desktop used by RPD
-        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayVirtualDesktop = [Devolutions.RemoteDesktopManager.DisplayVirtualDesktop]::Current
+        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayVirtualDesktop = [Devolutions.RemoteDesktopManager.DisplayVirtualDesktop]::Current,
+
+        [Field[]]$NewFieldsList
     )
-    
+
     BEGIN {
         Write-Verbose '[New-DSRDPEntry] Beginning...'
-
     }
     
     PROCESS {
@@ -283,6 +284,27 @@ function New-DSRDPEntry {
                 $RDPEntry.data += @{ 'useAlternateShell' = $true }
                 $RDPEntry.data += @{ 'alternateShell' = $AlternateShell }
                 $RDPEntry.data += @{ 'shellWorkingDirectory' = $ShellWorkingDirectory }
+            }
+
+            #Check for new parameters
+            if ($NewFieldsList.Count -gt 0) {
+                foreach ($Param in $NewFieldsList.GetEnumerator()) {
+                    switch ($Param.Depth) {
+                        'root' { $RDPEntry += @{$Param.Name = $Param.Value } }
+                        default {
+                            if ($RDPEntry.($Param.Depth)) {
+                                $RDPEntry.($Param.Depth) += @{ $Param.Name = $param.value }
+                            }
+                            else {
+                                $RDPEntry += @{
+                                    $Param.Depth = @{
+                                         $Param.Name = $Param.Value
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             #Converts data to JSON, then encrypt the whole thing
