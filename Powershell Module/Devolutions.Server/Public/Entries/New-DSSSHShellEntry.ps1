@@ -92,7 +92,9 @@ function New-DSSSHShellEntry {
         [bool]$TicketNumberIsRequiredOnClose = $false,
         [bool]$CredentialViewedPrompt = $false,
         [bool]$CredentialViewedCommentIsRequired = $false,
-        [bool]$TicketNumberIsRequiredOnCredentialViewed = $false
+        [bool]$TicketNumberIsRequiredOnCredentialViewed = $false,
+
+        [Field[]]$NewFieldsList
     )
     
     BEGIN {
@@ -169,6 +171,27 @@ function New-DSSSHShellEntry {
                     passwordItem = @{
                         hasSensitiveData = $true
                         sensitiveData    = $Password
+                    }
+                }
+            }
+
+            #Check for new parameters
+            if ($NewFieldsList.Count -gt 0) {
+                foreach ($Param in $NewFieldsList.GetEnumerator()) {
+                    switch ($Param.Depth) {
+                        'root' { $SSHShell += @{$Param.Name = $Param.Value } }
+                        default {
+                            if ($SSHShell.($Param.Depth)) {
+                                $SSHShell.($Param.Depth) += @{ $Param.Name = $param.value }
+                            }
+                            else {
+                                $SSHShell += @{
+                                    $Param.Depth = @{
+                                        $Param.Name = $Param.Value
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }

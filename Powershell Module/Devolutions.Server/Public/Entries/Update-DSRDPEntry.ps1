@@ -166,7 +166,9 @@ function Update-DSRDPEntry {
         #Display monitor used by RDP
         [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayMonitor,
         #Virtual desktop used by RPD
-        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayVirtualDesktop
+        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayVirtualDesktop,
+
+        [Field[]]$NewFieldsList
     )
     
     BEGIN {
@@ -174,6 +176,7 @@ function Update-DSRDPEntry {
 
         $PSBoundParameters.Remove('EntryID')
         $PSBoundParameters.Remove('Verbose')
+        $PSBoundParameters.Remove('NewFieldList')
         
         $RootProperties = @('Group', 'Name', 'DisplayMode', 'DisplayMonitor', 'DisplayVirtualDesktop')
         $EventsProperties = @('WarnIfAlreadyOpened', 'CredentialViewedCommentIsRequired', 'TicketNumberIsRequiredOnCredentialViewed', 
@@ -300,6 +303,21 @@ function Update-DSRDPEntry {
                 }
             }
 
+            foreach ($Param in $NewFieldsList.GetEnumerator()) {
+                switch ($Param.Depth) {
+                    'root' { $RDPEntry | Add-Member -NotePropertyName $param.Name -NotePropertyValue $param.Value -Force } 
+                }
+                default {
+                    if ($RDPEntry.($Param.Depth)) {
+                        $RDPEntry.($param.Depth) | Add-Member -NotePropertyName $param.Name -NotePropertyValue $param.Value -Force
+                    }
+                    else {
+                        $RDPEntry |c Add-Member -NotePropertyName $param.Depth -NotePropertyValue $null -Force
+                        $RDPEntry.($param.Depth) | Add-Member -NotePropertyName $param.Name -NotePropertyValue $param.Value -Force
+                    }
+                }
+            }
+    
             $RDPEntry.data = Protect-ResourceToHexString (ConvertTo-Json $RDPEntry.data)
 
             $res = Update-DSEntryBase -jsonBody (ConvertTo-Json $RDPEntry)

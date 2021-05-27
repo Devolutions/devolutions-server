@@ -62,7 +62,7 @@
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
     NestedModules        = @()
     
-    FunctionsToExport    = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Get-DSIsLogged', 'Protect-ResourceToHexString',
+    FunctionsToExport    = @('Get-DSServerInfo','Login', 'New-DSSession', 'Close-DSSession', 'Get-DSIsLogged', 'Protect-ResourceToHexString',
         'Get-DSSecureMessages',
         'Get-DSVaults', 'Get-DSVault', 'Get-DSVaultPermissions', 'New-DSVault', 'Update-DSVault', 'Remove-DSVault', 'Set-DSVaultUsers', 'Set-DSVaultRoles', 'Set-DSVaultApplications',
         'Get-DSEntriesTree', 'Get-DSFolder', 
