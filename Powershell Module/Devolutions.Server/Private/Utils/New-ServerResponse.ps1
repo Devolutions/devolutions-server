@@ -25,7 +25,7 @@ to be found.
             $HasResult = $false
         }
         else {
-            $HasResult = Get-Member -InputObject $responseContentJson -Name "result"
+            $HasResult = Get-Member -InputObject $responseContentJson -Name 'result'
         }
 
         if ($HasResult) {
@@ -47,7 +47,7 @@ to be found.
         }
 
         switch ($method) {
-            "GET" {
+            'GET' {
                 #patch
                 if (($null -ne $responseContentJson) -and ($HasResult)) {
                     switch ($responseContentJson.result) {
@@ -63,7 +63,7 @@ to be found.
                         ( [SaveResult]::AccessDenied ) { 
                             return [ServerResponse]::new($false , $response, $responseContentJson, $null, "You lack the authorization to view this resource.", 401) 
                         }
-                        Default { return [ServerResponse]::new($false , $response, $null, $null, "[GET] Unhandled error. If you see this, please contact your system administrator for help.", 200) }
+                        Default { return [ServerResponse]::new($false , $response, $null, $null, '[GET] Unhandled error. If you see this, please contact your system administrator for help.', 200) }
                     }
                 }
                 else {
@@ -76,12 +76,11 @@ to be found.
                         }
                     }
                     else {
-                        return [ServerResponse]::new($false , $response, $response.Content, $null, "[GET] Unhandled error. If you see this, please contact your system administrator for help.", 200)
+                        return [ServerResponse]::new($false , $response, $response.Content, $null, '[GET] Unhandled error. If you see this, please contact your system administrator for help.', 200)
                     }
                 }                
             }
-            "POST" {
-                
+            'POST' {
                 if (($null -ne $responseContentJson) -and ($HasResult)) {
                     #Get-DSEntrySensitiveData uses POST although the correct verb would be GET.
                     #TODO Fix this after merge. Missing modifications in New-ServerResponse
@@ -95,8 +94,16 @@ to be found.
                         ([SaveResult]::InvalidData) {
                             return [ServerResponse]::new($false, $response, $responseContentJson, $null, "The data you submitted was invalid. Please refer to the CMDlet help section for guidance.", 200)
                         }
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::Error) {
+                            if ($responseContentJson.errorMessage) {
+                                return [ServerResponse]::new($false, $response, $responseContentJson, $null, $responseContentJson.errorMessage, 400)
+                            }
+                            else {
+                                return [ServerResponse]::new($false, $response, $responseContentJson, $null, '[POST] Unhandled error. If you see this, please contact your system administrator for help.', $response.StatusCode)
+                            }
+                        }
                         Default {
-                            return [ServerResponse]::new($false, $response, $responseContentJson, $null, "[POST] Unhandled error. If you see this, please contact your system administrator for help.", $response.StatusCode)
+                            return [ServerResponse]::new($false, $response, $responseContentJson, $null, '[POST] Unhandled error. If you see this, please contact your system administrator for help.', $response.StatusCode)
                         }
                     }
                 
@@ -106,11 +113,11 @@ to be found.
                         return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode)
                     }
                     else {
-                        return [ServerResponse]::new($false, $response, $responseContentJson, $null, "[POST] Unhandled error. If you see this, please contact your system administrator for help.", $response.StatusCode)
+                        return [ServerResponse]::new($false, $response, $responseContentJson, $null, '[POST] Unhandled error. If you see this, please contact your system administrator for help.', $response.StatusCode)
                     }
                 }
             }
-            "DELETE" {
+            'DELETE' {
                 if (($null -ne $responseContentJson) -and ($HasResult)) {
                     #delete users, for exemple, returns "response.content.result", so we'll make use of that to detect errors and send back appropriate error message.
                     if ($responseContentJson.result -eq [SaveResult]::Success) {
@@ -128,10 +135,10 @@ to be found.
                 }
                 else {
                     #Any unhandled response will end here.
-                    return [ServerResponse]::new($false, $null, $null, $null, "[DELETE] Unhandled error. If you see this, please contact your system administrator for help.", 500)
+                    return [ServerResponse]::new($false, $null, $null, $null, '[DELETE] Unhandled error. If you see this, please contact your system administrator for help.', 500)
                 }
             }
-            "PUT" {
+            'PUT' {
                 if (($null -ne $responseContentJson) -and ($HasResult)) {
                     switch ($responseContentJson.result) {
                         ([SaveResult]::Success) { return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode); break }
@@ -141,18 +148,18 @@ to be found.
                     }
                 }
                 else {
-                    if ($response.Content.Contains("duplicate")) {
-                        return [ServerResponse]::new($false, $response, $responseContentJson, $null, "A user group with this name already exists. Please choose another name for your user group.", 400)
+                    if ($response.Content.Contains('duplicate')) {
+                        return [ServerResponse]::new($false, $response, $responseContentJson, $null, 'A user group with this name already exists. Please choose another name for your user group.', 400)
                     }
                     else {
-                        return [ServerResponse]::new(($response.StatusCode -eq 200), $response, $responseContentJson, $null, "", $response.StatusCode)
+                        return [ServerResponse]::new(($response.StatusCode -eq 200), $response, $responseContentJson, $null, '', $response.StatusCode)
                     } 
                 }
 
                 
             }
             #Status 418: Should never get this response. If so, update switchcase so you don't.
-            Default { return [ServerResponse]::new($false, $response, $responseContentJson, $null, "Please contact your system administrator for help.", 418) }
+            Default { return [ServerResponse]::new($false, $response, $responseContentJson, $null, 'Please contact your system administrator for help.', 418) }
         }
     }
 }
