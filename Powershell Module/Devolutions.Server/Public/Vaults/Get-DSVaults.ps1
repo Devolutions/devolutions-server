@@ -51,7 +51,7 @@ function Get-DSVaults {
         }
         else {
             do {
-                $response = Get-DSVaultsModern @PSBoundParameters
+                if (!($response = Get-DSVaultsModern @PSBoundParameters).isSuccess) { return $response }
                 $response.Body.data | ForEach-Object {
                     $Vaults += $_
                 }
