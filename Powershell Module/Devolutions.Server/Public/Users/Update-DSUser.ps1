@@ -5,8 +5,8 @@ function Update-DSUser {
         [guid]$UserID,
 
         #General tab
-        [Devolutions.RemoteDesktopManager.UserType]$UserType = [Devolutions.RemoteDesktopManager.UserType]::User, #TODO Maybe not needed
-        [Devolutions.RemoteDesktopManager.UserLicenceTypeMode]$UserLicenseType = [Devolutions.RemoteDesktopManager.UserLicenceTypeMode]::Default,
+        [UserType]$UserType = [UserType]::User, #TODO Maybe not needed
+        [UserLicenceTypeMode]$UserLicenseType = [UserLicenceTypeMode]::Default,
 
         [ValidateNotNullOrEmpty()]
         [string]$Username,
@@ -47,8 +47,8 @@ function Update-DSUser {
         [bool]$CanImport = $true, #CustomSecurityEntity
         [bool]$CanExport = $true, #CustomSecurityEntity
 
-        [ValidateSet([Devolutions.RemoteDesktopManager.OfflineMode]::Disabled, [Devolutions.RemoteDesktopManager.OfflineMode]::ReadOnly, [Devolutions.RemoteDesktopManager.OfflineMode]::ReadWrite)]
-        [string]$OfflineMode = [Devolutions.RemoteDesktopManager.OfflineMode]::ReadWrite #CustomSecurityEntity
+        [ValidateSet([OfflineMode]::Disabled, [OfflineMode]::ReadOnly, [OfflineMode]::ReadWrite)]
+        [string]$OfflineMode = [OfflineMode]::ReadWrite #CustomSecurityEntity
     )
     
     BEGIN {
@@ -117,9 +117,9 @@ function Update-DSUser {
                         else {
                             if ($_.Key -eq "UserType") {
                                 switch ($_.Value) {
-                                    ([Devolutions.RemoteDesktopManager.UserType]::Admin) { $User.userSecurity | Add-Member -NotePropertyName "isAdministrator" -NotePropertyValue $true -Force; break }
-                                    ([Devolutions.RemoteDesktopManager.UserType]::User) { $User.userSecurity.isAdministrator = $false; break }
-                                    ([Devolutions.RemoteDesktopManager.UserType]::ReadOnly) { 
+                                    ([UserType]::Admin) { $User.userSecurity | Add-Member -NotePropertyName "isAdministrator" -NotePropertyValue $true -Force; break }
+                                    ([UserType]::User) { $User.userSecurity.isAdministrator = $false; break }
+                                    ([UserType]::ReadOnly) { 
                                         $User.userSecurity.canAdd = $false
                                         $User.userSecurity.canDelete = $false
                                         $User.userSecurity.canEdit = $false

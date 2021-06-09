@@ -15,21 +15,21 @@ function New-DSSSHShellEntry {
         [string]$Description = '',
         [string]$Keywords = '',
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded,
-            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::External
+            [ConnectionDisplayMode]::Embedded,
+            [ConnectionDisplayMode]::External
         )]
-        [string]$DisplayMode = [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded,
-        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayMonitor = [Devolutions.RemoteDesktopManager.DisplayMonitor]::Primary,
-        [Devolutions.RemoteDesktopManager.DisplayVirtualDesktop]$DisplayVirtualDesktop = [Devolutions.RemoteDesktopManager.DisplayVirtualDesktop]::Default,
+        [string]$DisplayMode = [ConnectionDisplayMode]::Embedded,
+        [DisplayMonitor]$DisplayMonitor = [DisplayMonitor]::Primary,
+        [DisplayVirtualDesktop]$DisplayVirtualDesktop = [DisplayVirtualDesktop]::Default,
     
         [bool]$AlwaysAskForPassword = $false,
         [string]$Username = '',
 
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.PrivateKeyType]::Data,
-            [Devolutions.RemoteDesktopManager.PrivateKeyType]::NoKey
+            [PrivateKeyType]::Data,
+            [PrivateKeyType]::NoKey
         )]
-        [string]$PrivateKeyType = [Devolutions.RemoteDesktopManager.PrivateKeyType]::NoKey,
+        [string]$PrivateKeyType = [PrivateKeyType]::NoKey,
         [string]$PrivateKeyPath = '',
         [string]$PrivateKeyPassphrase = '',
         [bool]$PromptForPassphrase = '',
@@ -43,44 +43,44 @@ function New-DSSSHShellEntry {
         [string]$BeforeDisconnectMacro = '',
         [bool]$beforeDisconnectMacroEnterAfterCommand = $true,
         [string]$OverrideTerminalName = '',
-        [Devolutions.RemoteDesktopManager.TerminalEncoding]$Encoding = [Devolutions.RemoteDesktopManager.TerminalEncoding]::Default,
-        [Devolutions.RemoteDesktopManager.TerminalAutoWrap]$AutoWrap = [Devolutions.RemoteDesktopManager.TerminalAutoWrap]::Default,
-        [Devolutions.RemoteDesktopManager.TerminalLocalEcho]$LocalEcho = [Devolutions.RemoteDesktopManager.TerminalLocalEcho]::Default,
-        [Devolutions.RemoteDesktopManager.TerminalKeypadMode]$InitialKeypadMode = [Devolutions.RemoteDesktopManager.TerminalKeypadMode]::Default,
-        [Devolutions.RemoteDesktopManager.DefaultBoolean]$DisableKeypadMode = [Devolutions.RemoteDesktopManager.DefaultBoolean]::Default,
-        [Devolutions.RemoteDesktopManager.TerminalCursorType]$CursorType = [Devolutions.RemoteDesktopManager.TerminalCursorType]::Default,
-        [Devolutions.RemoteDesktopManager.TerminalCursorBlink]$CursorBlink = [Devolutions.RemoteDesktopManager.TerminalCursorBlink]::Default,
+        [TerminalEncoding]$Encoding = [TerminalEncoding]::Default,
+        [TerminalAutoWrap]$AutoWrap = [TerminalAutoWrap]::Default,
+        [TerminalLocalEcho]$LocalEcho = [TerminalLocalEcho]::Default,
+        [TerminalKeypadMode]$InitialKeypadMode = [TerminalKeypadMode]::Default,
+        [DefaultBoolean]$DisableKeypadMode = [DefaultBoolean]::Default,
+        [TerminalCursorType]$CursorType = [TerminalCursorType]::Default,
+        [TerminalCursorBlink]$CursorBlink = [TerminalCursorBlink]::Default,
         [bool]$ForceNonDestructiveBackspace = $false,
         [bool]$ImplicitCRinLF = $false,
         [bool]$ImplicitLFinCR = $false,
         [int]$MaxScrollbackLines = 2000,
         [string]$DoubleClickDelimiters = '',
-        [Devolutions.RemoteDesktopManager.TerminalFontMode]$FontMode = [Devolutions.RemoteDesktopManager.TerminalFontMode]::Default,
-        [Devolutions.RemoteDesktopManager.TerminalBellMode]$BellMode = [Devolutions.RemoteDesktopManager.TerminalBellMode]::Default,
+        [TerminalFontMode]$FontMode = [TerminalFontMode]::Default,
+        [TerminalBellMode]$BellMode = [TerminalBellMode]::Default,
         [string]$RemoteCommand = '',
-        [Devolutions.RemoteDesktopManager.TerminalCursorKeyMode]$CursorKeyMode = [Devolutions.RemoteDesktopManager.TerminalCursorKeyMode]::Default,
-        [Devolutions.RemoteDesktopManager.TerminalBackspaceKeyMode]$BackspaceKeyMode = [Devolutions.RemoteDesktopManager.TerminalBackspaceKeyMode]::Default,
-        [Devolutions.RemoteDesktopManager.TerminalHomeEndKeyMode]$HomeEndKeyMode = [Devolutions.RemoteDesktopManager.TerminalHomeEndKeyMode]::Default,
-        [Devolutions.RemoteDesktopManager.TerminalFunctionKeysMode]$FunctionKeyMode = [Devolutions.RemoteDesktopManager.TerminalFunctionKeysMode]::Default,        
+        [TerminalCursorKeyMode]$CursorKeyMode = [TerminalCursorKeyMode]::Default,
+        [TerminalBackspaceKeyMode]$BackspaceKeyMode = [TerminalBackspaceKeyMode]::Default,
+        [TerminalHomeEndKeyMode]$HomeEndKeyMode = [TerminalHomeEndKeyMode]::Default,
+        [TerminalFunctionKeysMode]$FunctionKeyMode = [TerminalFunctionKeysMode]::Default,        
     
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.ProxyMode]::Custom,
-            [Devolutions.RemoteDesktopManager.ProxyMode]::None
+            [ProxyMode]::Custom,
+            [ProxyMode]::None
         )]
-        [string]$ProxyMode = [Devolutions.RemoteDesktopManager.ProxyMode]::None,
+        [string]$ProxyMode = [ProxyMode]::None,
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.ProxyTunnelType]::Socks5,
-            [Devolutions.RemoteDesktopManager.ProxyTunnelType]::Socks4,
-            [Devolutions.RemoteDesktopManager.ProxyTunnelType]::Http
+            [ProxyTunnelType]::Socks5,
+            [ProxyTunnelType]::Socks4,
+            [ProxyTunnelType]::Http
         )]
-        [string]$ProxyType = [Devolutions.RemoteDesktopManager.ProxyTunnelType]::Socks5,
+        [string]$ProxyType = [ProxyTunnelType]::Socks5,
         [string]$ProxyHost = '',
         [string]$ProxyHostPort = 0,
         [string]$ProxyUsername = '',
         [string]$ProxyPassword = '',
         [string]$ProxyLocalHostConnections = '',
         [string]$ProxyExcludedHosts = '',
-        [Devolutions.RemoteDesktopManager.TelnetTerminalDnsLookupType]$ProxyDNSLookupType = [Devolutions.RemoteDesktopManager.TelnetTerminalDnsLookupType]::Automatic,
+        [TelnetTerminalDnsLookupType]$ProxyDNSLookupType = [TelnetTerminalDnsLookupType]::Automatic,
         [string]$ProxyTelnetCommand = '',
     
         [bool]$WarnIfAlreadyOpened = $false,
@@ -110,7 +110,7 @@ function New-DSSSHShellEntry {
     PROCESS {
         try {
             $SSHShell = @{
-                connectionType        = [Devolutions.RemoteDesktopManager.ConnectionType]::SSHShell
+                connectionType        = [ConnectionType]::SSHShell
                 group                 = $Group
                 name                  = $Name
                 description           = $Description
@@ -202,7 +202,7 @@ function New-DSSSHShellEntry {
                     #Validate private key, if path was provided
                     if (![string]::IsNullOrEmpty($PrivateKeyPath)) { 
                         $PrivateKeyCtx = Confirm-PrivateKey $PrivateKeyPath
-                        if ($PrivateKeyCtx.Body.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) {
+                        if ($PrivateKeyCtx.Body.result -ne [SaveResult]::Success) {
                             throw [System.Management.Automation.ItemNotFoundException]::new('Private key could not be parsed. Please make sure you provide a valid .ppk file.') 
                         } 
                         

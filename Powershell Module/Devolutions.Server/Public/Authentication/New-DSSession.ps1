@@ -19,7 +19,7 @@ function New-DSSession {
             if ((Test-Json $ServerResponse.Content -ErrorAction SilentlyContinue) -and (@(Compare-Object (ConvertFrom-Json $ServerResponse.Content).PSObject.Properties.Name @('data', 'result')).Length -eq 0)) {
                 $ServerResponse = ConvertFrom-Json $ServerResponse.Content
 
-                if ($ServerResponse.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) {
+                if ($ServerResponse.result -ne [SaveResult]::Success) {
                     throw '[New-DSSession] Unhandled error while fetching server information. Please submit a ticket if problem persists.'
                 }
             }
@@ -69,7 +69,7 @@ function New-DSSession {
             if ((Test-Json $LoginResponse.Content -ErrorAction SilentlyContinue) -and (@(Compare-Object (ConvertFrom-Json $LoginResponse.Content).PSObject.Properties.Name @('data', 'result')).Length -eq 0)) {
                 $LoginContent = ConvertFrom-Json $LoginResponse.Content
 
-                if ($LoginContent.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) {
+                if ($LoginContent.result -ne [SaveResult]::Success) {
                     throw $LoginContent.data.message
                 }
             }
