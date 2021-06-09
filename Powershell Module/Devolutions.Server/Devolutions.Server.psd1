@@ -48,10 +48,10 @@
     # RequiredModules = @()
     
     # Assemblies that must be loaded prior to importing this module
-    RequiredAssemblies   = @('.\DvlsAPI.dll')
+    #RequiredAssemblies   = @('.\DvlsAPI.dll')
     
     # Script files (.ps1) that are run in the caller's environment prior to importing this module.
-    # ScriptsToProcess = @()
+    # ScriptsToProcess     = @()
     
     # Type files (.ps1xml) to be loaded when importing this module
     # TypesToProcess = @()
@@ -62,7 +62,7 @@
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
     NestedModules        = @()
     
-    FunctionsToExport    = @('Get-DSServerInfo','Login', 'New-DSSession', 'Close-DSSession', 'Get-DSIsLogged', 'Protect-ResourceToHexString',
+    FunctionsToExport    = @('Get-DSServerInfo', 'Login', 'New-DSSession', 'Close-DSSession', 'Get-DSIsLogged', 'Protect-ResourceToHexString',
         'Get-DSSecureMessages',
         'Get-DSVaults', 'Get-DSVault', 'Get-DSVaultPermissions', 'New-DSVault', 'Update-DSVault', 'Remove-DSVault', 'Set-DSVaultUsers', 'Set-DSVaultRoles', 'Set-DSVaultApplications',
         'Get-DSEntriesTree', 'Get-DSFolder', 
