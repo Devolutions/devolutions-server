@@ -36,10 +36,10 @@
     # PowerShellHostVersion = ''
     
     # Minimum version of Microsoft .NET Framework required by this module. This prerequisite is valid for the PowerShell Desktop edition only.
-    #DotNetFrameworkVersion = '5.0.0'
+    # DotNetFrameworkVersion = '5.0.0'
     
     # Minimum version of the common language runtime (CLR) required by this module. This prerequisite is valid for the PowerShell Desktop edition only.
-    #CLRVersion             = '4.0'
+    # CLRVersion             = '4.0'
     
     # Processor architecture (None, X86, Amd64) required by this module
     # ProcessorArchitecture = ''
@@ -48,10 +48,10 @@
     # RequiredModules = @()
     
     # Assemblies that must be loaded prior to importing this module
-    #RequiredAssemblies   = @('.\DvlsAPI.dll')
+    # RequiredAssemblies   = @()
     
     # Script files (.ps1) that are run in the caller's environment prior to importing this module.
-    # ScriptsToProcess     = @()
+    ScriptsToProcess     = @('.\Private\Types\Field.ps1', '.\Private\Types\ServerResponse.ps1')
     
     # Type files (.ps1xml) to be loaded when importing this module
     # TypesToProcess = @()
