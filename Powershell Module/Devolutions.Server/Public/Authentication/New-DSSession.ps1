@@ -4,7 +4,7 @@ function New-DSSession {
         [ValidateNotNull()]
         [pscredential]$Credential = [pscredential]::Empty,
         [ValidateNotNullOrEmpty()]
-        [string]$URL = $(throw "You must provide your DVLS instance's URL.")
+        [string]$BaseUri = $(throw "You must provide your DVLS instance's URI.")
     )
     
     BEGIN {
@@ -14,7 +14,7 @@ function New-DSSession {
     PROCESS {
         #1. Fetch server information
         try {
-            $ServerResponse = Invoke-WebRequest -Uri "$URL/api/server-information" -Method 'GET' -SessionVariable Global:WebSession
+            $ServerResponse = Invoke-WebRequest -Uri "$BaseURI/api/server-information" -Method 'GET' -SessionVariable Global:WebSession
 
             if ((Test-Json $ServerResponse.Content -ErrorAction SilentlyContinue) -and (@(Compare-Object (ConvertFrom-Json $ServerResponse.Content).PSObject.Properties.Name @('data', 'result')).Length -eq 0)) {
                 $ServerResponse = ConvertFrom-Json $ServerResponse.Content
@@ -35,7 +35,7 @@ function New-DSSession {
         $SessionKey = New-CryptographicKey
         $SafeSessionKey = Encrypt-RSA $ServerResponse.data.publicKey.modulus $ServerResponse.data.publicKey.exponent $SessionKey
         
-        Set-Variable -Name DSBaseURI -Value $URL -Scope Script
+        Set-Variable -Name DSBaseURI -Value $BaseUri -Scope Script
         Set-Variable -Name DSSessionKey -Value $SessionKey -Scope Global
         Set-Variable -Name DSSafeSessionKey -Value $SafeSessionKey -Scope Global
         Set-Variable -Name DSInstanceVersion -Value $ServerResponse.data.version -Scope Global
@@ -46,7 +46,7 @@ function New-DSSession {
         $ModuleVersion = (Get-Module Devolutions.Server).Version.ToString()
 
         $RequestParams = @{
-            URI         = "$URL/api/login/partial"
+            URI         = "$BaseUri/api/login/partial"
             Method      = 'POST'
             ContentType = 'application/json'
             WebSession  = $Global:WebSession
