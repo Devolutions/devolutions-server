@@ -58,9 +58,9 @@ function Update-DSRDPEntry {
         [bool]$TicketNumberIsRequiredOnClose = $False,
 
         #Entry's checkout mode
-        [Devolutions.RemoteDesktopManager.CheckOutMode]$CheckoutMode,
+        [CheckOutMode]$CheckoutMode,
         #Entry's offline mode
-        [Devolutions.RemoteDesktopManager.AllowOffline]$AllowOffline,
+        [AllowOffline]$AllowOffline,
 
         #RDP's host name (Address)
         [string]$HostName,
@@ -69,7 +69,7 @@ function Update-DSRDPEntry {
         #Port used by RDP
         [string]$Port,
         #RDP Type
-        [Devolutions.RemoteDesktopManager.RDPType]$RDPType,
+        [RDPType]$RDPType,
         #Azure Cloud Services role name
         [string]$RoleName,
         #Azure Cloud Service's instance ID
@@ -92,16 +92,16 @@ function Update-DSRDPEntry {
         #RDP access to smart devices
         [bool]$UsesSmartDevices,
         #Choose destination for sounds
-        [Devolutions.RemoteDesktopManager.SoundHook]$SoundHook,
+        [SoundHook]$SoundHook,
         #RDP Audio quality
-        [Devolutions.RemoteDesktopManager.RDPAudioQualityMode]$AudioQualityMode,
+        [RDPAudioQualityMode]$AudioQualityMode,
         #Record audio from RDP session
         [bool]$AudioCaptureRedirectionMode,
         #Sets the destination for Windows key combinations (ALT+TAB, for example)
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.KeyboardHook]::OnTheLocalComputer,
-            [Devolutions.RemoteDesktopManager.KeyboardHook]::InFullScreenMode,
-            [Devolutions.RemoteDesktopManager.KeyboardHook]::OnTheRemoteComputer
+            [KeyboardHook]::OnTheLocalComputer,
+            [KeyboardHook]::InFullScreenMode,
+            [KeyboardHook]::OnTheRemoteComputer
         )]
         [string]$KeyboardHook,
 
@@ -147,26 +147,26 @@ function Update-DSRDPEntry {
         #Enable bandwith autodetection
         [bool]$BandwidthAutoDetect,
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.DefaultBoolean]::Default,
-            [Devolutions.RemoteDesktopManager.DefaultBoolean]::True,
-            [Devolutions.RemoteDesktopManager.DefaultBoolean]::False
+            [DefaultBoolean]::Default,
+            [DefaultBoolean]::True,
+            [DefaultBoolean]::False
         )]
         #Sets if addons load in embedded or not
         [string]$LoadAddonsMode,
-        [Devolutions.RemoteDesktopManager.RDPClientSpec]$ClientSpec,
+        [RDPClientSpec]$ClientSpec,
         [int]$KeepAliveInternal,
        
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::External, 
-            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded, 
-            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Undocked
+            [ConnectionDisplayMode]::External, 
+            [ConnectionDisplayMode]::Embedded, 
+            [ConnectionDisplayMode]::Undocked
         )]
         #Display mode used by RDP
         [string]$DisplayMode,
         #Display monitor used by RDP
-        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayMonitor,
+        [DisplayMonitor]$DisplayMonitor,
         #Virtual desktop used by RPD
-        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayVirtualDesktop,
+        [DisplayMonitor]$DisplayVirtualDesktop,
 
         [Field[]]$NewFieldsList
     )
@@ -188,7 +188,7 @@ function Update-DSRDPEntry {
             if (($EntryCtx = Get-DSEntry $EntryID -IncludeAdvancedProperties).isSuccess) {
                 $RDPEntry = $EntryCtx.Body.data
 
-                if ($RDPEntry.connectionType -ne [Devolutions.RemoteDesktopManager.ConnectionType]::RDPConfigured) {
+                if ($RDPEntry.connectionType -ne [ConnectionType]::RDPConfigured) {
                     throw 'Provided entry is not of type RDPConfigured. Please use the appropriate CMDlet for this entry.'
                 }
             }

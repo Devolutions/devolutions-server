@@ -11,19 +11,19 @@ function Update-DSSSHShellEntry {
         [string]$Description,
         [string]$Keywords,
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded,
-            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::External
+            [ConnectionDisplayMode]::Embedded,
+            [ConnectionDisplayMode]::External
         )]
         [string]$DisplayMode,
-        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayMonitor,
-        [Devolutions.RemoteDesktopManager.DisplayVirtualDesktop]$DisplayVirtualDesktop,
+        [DisplayMonitor]$DisplayMonitor,
+        [DisplayVirtualDesktop]$DisplayVirtualDesktop,
     
         [bool]$AlwaysAskForPassword,
         [string]$Username,
 
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.PrivateKeyType]::Data,
-            [Devolutions.RemoteDesktopManager.PrivateKeyType]::NoKey
+            [PrivateKeyType]::Data,
+            [PrivateKeyType]::NoKey
         )]
         [string]$PrivateKeyType,
         [string]$PrivateKeyPath,
@@ -39,35 +39,35 @@ function Update-DSSSHShellEntry {
         [string]$BeforeDisconnectMacro,
         [bool]$beforeDisconnectMacroEnterAfterCommand,
         [string]$OverrideTerminalName,
-        [Devolutions.RemoteDesktopManager.TerminalEncoding]$Encoding,
-        [Devolutions.RemoteDesktopManager.TerminalAutoWrap]$AutoWrap,
-        [Devolutions.RemoteDesktopManager.TerminalLocalEcho]$LocalEcho,
-        [Devolutions.RemoteDesktopManager.TerminalKeypadMode]$InitialKeypadMode,
-        [Devolutions.RemoteDesktopManager.DefaultBoolean]$DisableKeypadMode,
-        [Devolutions.RemoteDesktopManager.TerminalCursorType]$CursorType,
-        [Devolutions.RemoteDesktopManager.TerminalCursorBlink]$CursorBlink,
+        [TerminalEncoding]$Encoding,
+        [TerminalAutoWrap]$AutoWrap,
+        [TerminalLocalEcho]$LocalEcho,
+        [TerminalKeypadMode]$InitialKeypadMode,
+        [DefaultBoolean]$DisableKeypadMode,
+        [TerminalCursorType]$CursorType,
+        [TerminalCursorBlink]$CursorBlink,
         [bool]$ForceNonDestructiveBackspace,
         [bool]$ImplicitCRinLF,
         [bool]$ImplicitLFinCR,
         [int]$MaxScrollbackLines,
         [string]$DoubleClickDelimiters,
-        [Devolutions.RemoteDesktopManager.TerminalFontMode]$FontMode,
-        [Devolutions.RemoteDesktopManager.TerminalBellMode]$BellMode,
+        [TerminalFontMode]$FontMode,
+        [TerminalBellMode]$BellMode,
         [string]$RemoteCommand,
-        [Devolutions.RemoteDesktopManager.TerminalCursorKeyMode]$CursorKeyMode,
-        [Devolutions.RemoteDesktopManager.TerminalBackspaceKeyMode]$BackspaceKeyMode,
-        [Devolutions.RemoteDesktopManager.TerminalHomeEndKeyMode]$HomeEndKeyMode,
-        [Devolutions.RemoteDesktopManager.TerminalFunctionKeysMode]$FunctionKeyMode,        
+        [TerminalCursorKeyMode]$CursorKeyMode,
+        [TerminalBackspaceKeyMode]$BackspaceKeyMode,
+        [TerminalHomeEndKeyMode]$HomeEndKeyMode,
+        [TerminalFunctionKeysMode]$FunctionKeyMode,        
     
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.ProxyMode]::Custom,
-            [Devolutions.RemoteDesktopManager.ProxyMode]::None
+            [ProxyMode]::Custom,
+            [ProxyMode]::None
         )]
         [string]$ProxyMode,
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.ProxyTunnelType]::Socks5,
-            [Devolutions.RemoteDesktopManager.ProxyTunnelType]::Socks4,
-            [Devolutions.RemoteDesktopManager.ProxyTunnelType]::Http
+            [ProxyTunnelType]::Socks5,
+            [ProxyTunnelType]::Socks4,
+            [ProxyTunnelType]::Http
         )]
         [string]$ProxyType,
         [string]$ProxyHost,
@@ -76,7 +76,7 @@ function Update-DSSSHShellEntry {
         [string]$ProxyPassword,
         [string]$ProxyLocalHostConnections,
         [string]$ProxyExcludedHosts,
-        [Devolutions.RemoteDesktopManager.TelnetTerminalDnsLookupType]$ProxyDNSLookupType,
+        [TelnetTerminalDnsLookupType]$ProxyDNSLookupType,
         [string]$ProxyTelnetCommand,
     
         [bool]$WarnIfAlreadyOpened,
@@ -109,7 +109,7 @@ function Update-DSSSHShellEntry {
             if (($EntryCtx = Get-DSEntry $EntryID -IncludeAdvancedProperties).isSuccess) {
                 $SSHShellEntry = $EntryCtx.Body.data
 
-                if ($SSHShellEntry.connectionType -ne [Devolutions.RemoteDesktopManager.ConnectionType]::SSHShell) {
+                if ($SSHShellEntry.connectionType -ne [ConnectionType]::SSHShell) {
                     throw 'Provided entry is not of type SSHShell. Please use the appropriate CMDlet for this entry.'
                 }
             }
@@ -157,19 +157,19 @@ function Update-DSSSHShellEntry {
                         'PrivateKeyPath' {
                             $PrivateKeyCtx = Confirm-PrivateKey $param.Value
 
-                            if ($PrivateKeyCtx.Body.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) {
+                            if ($PrivateKeyCtx.Body.result -ne [SaveResult]::Success) {
                                 Write-Warning "[Update-DSSSHShellEntry] Error while parsing private key from path $($param.Value). Reverting back to 'No private key'"
                                 $tmp = @{
                                     hasSensitiveData = $false
                                     sensitiveData    = ''
                                 }
                                 
-                                $SSHShellEntry.data | Add-Member -NotePropertyName 'privateKeyType' -NotePropertyValue ([Devolutions.RemoteDesktopManager.PrivateKeyType]::NoKey) -Force
+                                $SSHShellEntry.data | Add-Member -NotePropertyName 'privateKeyType' -NotePropertyValue ([PrivateKeyType]::NoKey) -Force
                                 $SSHShellEntry.data | Add-Member -NotePropertyName 'privateKeyData' -NotePropertyValue '' -Force
                                 $SSHShellEntry.data | Add-Member -NotePropertyName 'privateKeyPassPhraseItem' -NotePropertyValue $tmp -Force
                             }
                             else {
-                                $SSHShellEntry.data | Add-Member -NotePropertyName 'privateKeyType' -NotePropertyValue ([Devolutions.RemoteDesktopManager.PrivateKeyType]::Data) -Force
+                                $SSHShellEntry.data | Add-Member -NotePropertyName 'privateKeyType' -NotePropertyValue ([PrivateKeyType]::Data) -Force
                                 $SSHShellEntry.data | Add-Member -NotePropertyName 'privateKeyData' -NotePropertyValue $PrivateKeyCtx.Body.privateKeyData -Force
                             }
                         }
