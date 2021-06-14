@@ -1,28 +1,30 @@
 function Update-DSPamCheckoutPolicy {
     <#
-    .SYNOPSIS
-    Update a checkout policy.
-    .DESCRIPTION
-    Update a checkout policy using supplied parameters. Ommited parameters are ignored. If one or more parameter is
-    out of range, it is ignored and a message is sent to host.
-    .EXAMPLE
-    ---
-    $newPolicyInfos = @{
-        candidPolicyID = "ad375b93-9fb7-4f37-a8c7-e20bf382f68d"
-        name = "private accounts"
-        isDefault = $false
-    }
-    Update-DSPamCheckoutPolicy @newPolicyInfos 
-    -> Update is successful
-    ---
-    $newPolicyInfos = @{
-        candidPolicyID = "ad375b93-9fb7-4f37-a8c7-e20bf382f68d"
-        checkoutApprovalMode = 10
-        checkoutTime = -1
-    }
-    Update-DSPamCheckoutPolicy @newPolicyInfos 
-    -> Checkout time cannot be less or equal to 0. Change is ignored.
-    -> Checkout approval mode value should be between 0 and 2 (Inclusivly). Change is ignored.
+        .SYNOPSIS
+        Update a checkout policy.
+        .DESCRIPTION
+        Update a checkout policy using supplied parameters. Ommited parameters are ignored. If one or more parameter is
+        out of range, it is ignored and a message is sent to host.
+        .EXAMPLE
+        $newPolicyInfos = @{
+            candidPolicyID = "ad375b93-9fb7-4f37-a8c7-e20bf382f68d"
+            name = "private accounts"
+            isDefault = $false
+        }
+
+        > Update-DSPamCheckoutPolicy @newPolicyInfos 
+        
+        .EXAMPLE
+        $newPolicyInfos = @{
+            candidPolicyID = "ad375b93-9fb7-4f37-a8c7-e20bf382f68d"
+            checkoutApprovalMode = 10
+            checkoutTime = -1
+        }
+
+        > Update-DSPamCheckoutPolicy @newPolicyInfos 
+
+        -> Checkout time cannot be less or equal to 0. Change is ignored.
+        -> Checkout approval mode value should be between 0 and 2 (Inclusivly). Change is ignored.
     #>
     [CmdletBinding()]
     param (

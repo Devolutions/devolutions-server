@@ -6,20 +6,13 @@ function New-DSPamCheckoutPolicy {
     Creates a new PAM checkout policy using supplied parameters. If one or more parameters are ommited, they default to a certain value.
     Only mandatory value is "name".
     .EXAMPLE
-    ---
-    New-DSPamCheckoutPolicy -Name "public accounts"
-    ---
     $newPolicy = @{
         name = "public accounts"
         checkoutTime = 120
         isDefault = $true
     }
 
-    New-DSPamCheckoutPolicy @newPolicy
-    .NOTES
-    "isPlaceholder", "folderItems" and "useAsDefault" from original response are ommited since I'm not sure if they are used at all.
-
-    TODO: Maybe send a message of some sort for each param that's out of range/invalid. As of now, invalid params are ignored and out of range are reverted to default.
+    > New-DSPamCheckoutPolicy @newPolicy
     #>
     [CmdletBinding()]
     param(
