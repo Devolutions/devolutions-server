@@ -1,15 +1,13 @@
 function Close-DSSession-old {
 	<#
-.SYNOPSIS
-
-.DESCRIPTION
-
-.EXAMPLE
-
-.LINK
-#>
+		.SYNOPSIS
+		Terminate the connection with your Devolutions Server instance.
+		.DESCRIPTION
+		Terminate the connection with your Devolutions Server by clearing global variables required to keep it up and running.
+	#>
 	[CmdletBinding()]
 	param(
+		#Clear session variables without calling endpoint to render time-based token outdated.
 		[switch]$Force
 	)
 
@@ -25,14 +23,20 @@ function Close-DSSession-old {
 				$params = @{
 					Uri            = $URI
 					Method         = 'GET'
-					LegacyResponse = $true
 				}
 
 				$response = Invoke-DS @params
 			}
 
 			#script scope
-			if (Get-Variable DSBaseUri -Scope Script -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSBaseURI -Scope Script -Force } catch { } }
+			if (Get-Variable DSBaseUri -Scope Script -ErrorAction SilentlyContinue) { 
+				try {
+					Remove-Variable -Name DSBaseURI -Scope Script -Force 
+				}
+				catch {
+					Write-Warning "[Close-DSSession] Error while removing $Var..."
+				} 
+			}
 
 			#global scope
 			foreach ($Var in $GlobalVars.GetEnumerator()) {

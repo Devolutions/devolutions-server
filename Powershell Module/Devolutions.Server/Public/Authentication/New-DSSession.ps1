@@ -1,4 +1,25 @@
 function New-DSSession {
+    <#
+        .SYNOPSIS
+		Establishes a connection with your Devolutions Server instance.
+		.DESCRIPTION
+		Establishes a connection with your Devolutions Server by retrieving server informations and setting global variables that are required for accessing the API.
+		.EXAMPLE
+        $SecurePassword = ConvertTo-SecureString 'YourPassword' -AsPlainText -Force
+		$SessionData = @{
+			BaseURI = "Your/DVLS/Instance/URL"
+			Credentials = New-Object System.Management.Automation.PSCredential ($YourUsername, $SecurePassword)
+		}
+
+		> New-DSSession @SessionData
+
+		.EXAMPLE
+		$SecurePassword = ConvertTo-SecureString $YourPassword -AsPlainText -Force
+		$Credentials = New-Object System.Management.Automation.PSCredential ($YourUsername, $SecurePassword)
+		$BaseURI = "Your/DVLS/Instance/URL"
+
+		> New-DSSession -Credentials $Credentials -baseURI $URI
+    #>
     [CmdletBinding()]
     PARAM (
         [ValidateNotNull()]
