@@ -1,4 +1,10 @@
 function Close-DSSession {
+    <#
+		.SYNOPSIS
+		Terminate the connection with your Devolutions Server instance.
+		.DESCRIPTION
+		Terminate the connection with your Devolutions Server by clearing global variables required to keep it up and running.
+	#>
     [CmdletBinding()]
     param (
         
