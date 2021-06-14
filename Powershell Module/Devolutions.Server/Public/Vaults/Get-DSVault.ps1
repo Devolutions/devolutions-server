@@ -17,7 +17,7 @@ function Get-DSVault{
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSVault] begin...'
+            Write-Verbose '[Get-DSVault] Beginning...'
     
 
     		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))

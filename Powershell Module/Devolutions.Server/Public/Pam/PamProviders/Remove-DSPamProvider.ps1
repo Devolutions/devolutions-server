@@ -17,7 +17,7 @@ function Remove-DSPamProvider {
     )
         
     BEGIN {
-        Write-Verbose '[Remove-DSPamProvider] Begin...'
+        Write-Verbose '[Remove-DSPamProvider] Beginning...'
     
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."

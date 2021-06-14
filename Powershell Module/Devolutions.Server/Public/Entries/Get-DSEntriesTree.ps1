@@ -18,7 +18,7 @@ function Get-DSEntriesTree{
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSEntriesTree] begin...'
+            Write-Verbose '[Get-DSEntriesTree] Beginning...'
     
     		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{

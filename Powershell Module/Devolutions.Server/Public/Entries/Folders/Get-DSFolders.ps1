@@ -20,7 +20,7 @@ function Get-DSFolders{
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSFolders] begin...'
+            Write-Verbose '[Get-DSFolders] Beginning...'
             if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{
 				throw "Session does not seem authenticated, call New-DSSession."

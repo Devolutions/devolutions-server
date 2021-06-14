@@ -15,7 +15,7 @@ function Get-DSSecureMessages{
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSSecureMessage] begin...'
+            Write-Verbose '[Get-DSSecureMessage] Beginning...'
     
             $URI = "$Script:DSBaseURI/api/secure-messages"
 

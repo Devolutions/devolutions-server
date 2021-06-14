@@ -38,7 +38,7 @@ function Update-DSPamCheckoutPolicy {
         [bool]$isDefault
     )
     BEGIN {
-        Write-Verbose '[Update-DSPamFolder] Begin...'
+        Write-Verbose '[Update-DSPamFolder] Beginning...'
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."

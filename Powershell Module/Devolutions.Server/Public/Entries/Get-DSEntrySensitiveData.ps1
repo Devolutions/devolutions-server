@@ -16,7 +16,7 @@ function Get-DSEntrySensitiveData {
     )
  
     BEGIN {
-        Write-Verbose '[Get-DSEntrySensitiveData] begin...'
+        Write-Verbose '[Get-DSEntrySensitiveData] Beginning...'
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }

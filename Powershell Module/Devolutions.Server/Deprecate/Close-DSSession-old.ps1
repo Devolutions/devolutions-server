@@ -14,7 +14,7 @@ function Close-DSSession-old {
 	)
 
 	BEGIN { 
-		Write-Verbose '[Close-DSSession] begin...'
+		Write-Verbose '[Close-DSSession] Beginning...'
 		$URI = "$Script:DSBaseURI/api/logout"
 		$GlobalVars = @('DSInstanceName', 'DSInstanceVersion', 'DSKeyExp', 'DSKeyMod', 'DSSafeSessionKey', 'DSSessionKey', 'DSSessionToken', 'WebSession') 
 	}

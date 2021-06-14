@@ -35,7 +35,7 @@ function New-DSPamCheckoutPolicy {
     )
         
     BEGIN {
-        Write-Verbose '[New-DSPamCheckoutPolicy] Begin...'
+        Write-Verbose '[New-DSPamCheckoutPolicy] Beginning...'
         
         $URI = "$Script:DSBaseURI/api/pam/checkout-policies"
 

@@ -55,7 +55,7 @@ function Update-DSRole {
         [int]$offlineMode
     )
     BEGIN {
-        Write-Verbose '[Update-DSRole] Begin...'
+        Write-Verbose '[Update-DSRole] Beginning...'
         $URI = "$Script:DSBaseURI/api/security/role/save?csToXml=1"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {

@@ -18,7 +18,7 @@ function Get-DSEntriesPermissions{
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSEntriesPermissions] begin...'
+            Write-Verbose '[Get-DSEntriesPermissions] Beginning...'
         }
     
         PROCESS {
