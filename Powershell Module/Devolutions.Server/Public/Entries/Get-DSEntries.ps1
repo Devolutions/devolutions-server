@@ -1,14 +1,10 @@
 function Get-DSEntries {
     <#
-    .SYNOPSIS
-    
-    .DESCRIPTION
-    
-    .EXAMPLE
-    
-    .NOTES
-    
-    .LINK
+        .SYNOPSIS
+        Returns all entries of a given vault.
+        .EXAMPLE
+        > Get-DSEntries -VaultId "[guid]"
+
     #>
     [CmdletBinding()]
     param(			

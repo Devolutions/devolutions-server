@@ -1,14 +1,9 @@
 function Get-DSEntry {
     <#
-    .SYNOPSIS
-    
-    .DESCRIPTION
-    
-    .EXAMPLE
-    
-    .NOTES
-    
-    .LINK
+        .SYNOPSIS
+        Return a single entry by ID
+        .EXAMPLE
+        > Get-DSEntry -EntryId "[guid]"
     #>
         [CmdletBinding()]
         param(			
