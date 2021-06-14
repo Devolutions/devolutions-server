@@ -6,16 +6,10 @@ function Update-DSFolderCredentials {
         If the "ClearCredentials" switch parameter is present, it will delete both username AND password from folder. If not, it checks which
         field was provided and check with the current folder credentials to update accordingly with what credentials were supplied.
         .EXAMPLE
-        Folder "X":
-            ID: [guid]
-            Username: "Y"
-            Password: "Z"
+        > Update-DSEntry -CandidEntryId "[guid]"" -Username "YourNewUsername" -Password "YourNewPassword"
 
-        Update-DSEntry -CandidEntryId [guid] -Username "NewUsername" -Password "NewPa$sw0rd123!"
-        > Folder "X":
-            ID: [guid]
-            Username: "NewUsername"
-            Password: "NewPa$sw0rd123!"
+        .EXAMPLE
+        > Update-DSEntry -CandidEntryId "[guid]" -ClearCredentials
     #>
     [CmdletBinding()]
     PARAM (
