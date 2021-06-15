@@ -1,12 +1,25 @@
 function New-DSCredentialEntry {
     <#
     .SYNOPSIS
-
+    Creates a new entry of type 'Credentials - Username/Password' (Default)
     .DESCRIPTION
-
+    Creates a new entry of type 'Credentials - Username/Password' (Default) with the parameters supplied.
     .EXAMPLE
-
-    .NOTES
+    $NewCredEntry = @{
+        VaultId                                  = ([guid]::Empty)
+        EntryName                                = 'rootlocal '
+        Username                                 = 'root'
+        Password                                 = 'Pa$$w0rd!'
+        Folder                                   = 'Powershell rules'
+        credentialViewedCommentIsRequired        = $true
+        credentialViewedPrompt                   = $true
+        ticketNumberIsRequiredOnCredentialViewed = $true
+        checkOutMode                             = 'Default'
+        Description                              = 'This is a description'
+        Tags                                     = '1 2 3 4 5'
+    }
+                
+    > New-DSCredentialEntry @NewCredEntry
     #>
 
     [CmdletBinding()]

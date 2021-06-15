@@ -14,6 +14,7 @@ function Get-DSPamCheckoutPolicies {
     #>
     [CmdletBinding()]
     param(
+        #Policy ID (GUID)
         [guid]$policyID
     )
         

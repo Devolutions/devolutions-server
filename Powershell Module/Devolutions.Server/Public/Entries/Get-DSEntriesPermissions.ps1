@@ -1,14 +1,13 @@
 function Get-DSEntriesPermissions{
     <#
-    .SYNOPSIS
-    
-    .DESCRIPTION
-    
-    .EXAMPLE
-    
-    .NOTES
-    
-    .LINK
+        .SYNOPSIS
+        Gets the permissions for all entries in a vault
+        .DESCRIPTION
+        Recursivly gets all permissions for all entries in a given vault.
+        .EXAMPLE
+        Get-DSEntriesPermissions -vaultId $vaultID -vaultName $vaultName
+        .NOTES
+        Used to get permissions report (See 'Sample' folder), but we made it available for use.
     #>
         [CmdletBinding()]
         param(			

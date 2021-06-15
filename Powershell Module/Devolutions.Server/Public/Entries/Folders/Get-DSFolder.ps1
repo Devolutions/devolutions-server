@@ -5,15 +5,16 @@ function Get-DSFolder {
         .DESCRIPTION
         Returns a folder by ID, with possibility of including advanced folder properties
         .EXAMPLE
-        > Get-DSFolder -EntryId "Your [guid] here"
+        > Get-DSFolder -FolderId "Your [guid] here"
 
         .EXAMPLE
-        > Get-DSFolder -EntryId "Your [guid] here" -IncludeAdvancedProperties
+        > Get-DSFolder -FolderId "Your [guid] here" -IncludeAdvancedProperties
     #>
     [CmdletBinding()]
-    param(			
+    param(
         [ValidateNotNullOrEmpty()]
-        [Guid]$EntryId,
+        [Guid]$FolderId,
+        #Used to select if advanced properties should be included
         [switch]$IncludeAdvancedProperties
     )
         

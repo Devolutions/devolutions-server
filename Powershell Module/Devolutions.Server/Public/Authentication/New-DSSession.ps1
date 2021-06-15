@@ -22,8 +22,10 @@ function New-DSSession {
     #>
     [CmdletBinding()]
     PARAM (
+        #PSCredential with your Devolutions Server username and password
         [ValidateNotNull()]
         [pscredential]$Credential = [pscredential]::Empty,
+        #URL to your Devolutions Server instance
         [ValidateNotNullOrEmpty()]
         [string]$BaseUri = $(throw "You must provide your DVLS instance's URI.")
     )

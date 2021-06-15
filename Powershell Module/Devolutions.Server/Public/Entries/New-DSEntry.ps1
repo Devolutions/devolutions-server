@@ -3,7 +3,7 @@ function New-DSEntry {
         .SYNOPSIS
         Creates a new entry
         .DESCRIPTION
-        Creates a new entry in default vault's root if no other vault/folder are specified. For now, only entries of type "Credentials" (Default/PrivateKey) and "RDPConfigured" are supported, but more will join them as time goes and requests come in. To see supported fields for each entry type, please look at the examples.
+        Creates a new entry in default vault's root if no other vault/folder are specified.
         .EXAMPLE
         Custom (Username/Password)
 
@@ -118,6 +118,12 @@ function New-DSEntry {
         }
 
         > New-DSEntry @RDP
+        
+        .NOTES
+        Supported entries:
+        -[ConnectionType]::Credential
+        -[ConnectionType]::RDPConfigured
+        -[ConnectionType]::SSHShell
         #>
     [CmdletBinding()]
     PARAM (

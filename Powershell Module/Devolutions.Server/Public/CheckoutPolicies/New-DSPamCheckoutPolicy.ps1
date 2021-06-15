@@ -16,14 +16,22 @@ function New-DSPamCheckoutPolicy {
     #>
     [CmdletBinding()]
     param(
+        #Policy's new name
         [ValidateNotNullOrEmpty()]
         [string]$name = $(throw 'Name is null or empty. Please provide a name and try again.'),
+        #Used to select approval mode (None/Mandatory)
         [int]$checkoutApprovalMode,
+        #Used to select checkout reason mode (None/Mandatory/Optional)
         [int]$checkoutReasonMode,
+        #Used to select if owner can self-checkout
         [int]$allowCheckoutOwnerAsApprover,
+        #Used to select if administrators can approve checkout
         [int]$includeAdminsAsApprovers,
+        #Used to select if PAM managers can approve checkout
         [int]$includeManagersAsApprovers,
+        #Used to select default checkout time
         [int]$checkoutTime,
+        #Used to set default policy
         [bool]$isDefault
     )
         

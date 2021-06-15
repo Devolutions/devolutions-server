@@ -28,15 +28,24 @@ function Update-DSPamCheckoutPolicy {
     #>
     [CmdletBinding()]
     param (
+        #Policy ID
         [ValidateNotNullOrEmpty()]
         [guid]$candidPolicyID,
+        #Policy's new name
         [string]$name,
+        #Policy's new checkout approval mode (None/Mandatory)
         [int]$checkoutApprovalMode,
+        #Policy's new checkout reason mode (None/Mandatory/Optional)
         [int]$checkoutReasonMode,
+        #Policy owner can self-checkout
         [int]$allowCheckoutOwnerAsApprover,
+        #Administrators can approve checkout
         [int]$includeAdminsAsApprovers,
+        #PAM managers can approve checkout
         [int]$includeManagersAsApprovers,
+        #Default checkout time
         [int]$checkoutTime,
+        #Is default checkout policy for all entries
         [bool]$isDefault
     )
     BEGIN {

@@ -9,6 +9,7 @@ function Get-DSEntry {
         param(			
             [ValidateNotNullOrEmpty()]
             [GUID]$EntryId,
+            #Used to know if advanced properties should be included
             [switch]$IncludeAdvancedProperties
         )
         
