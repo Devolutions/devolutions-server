@@ -17,8 +17,8 @@ function New-DSFolder {
         [string[]]$Keywords,
         [string]$Group,
 
-        [Devolutions.RemoteDesktopManager.CheckOutMode]$CheckoutMode = [Devolutions.RemoteDesktopManager.CheckOutMode]::Default,
-        [Devolutions.RemoteDesktopManager.CheckOutCommentMode]$CheckoutCommentMode = [Devolutions.RemoteDesktopManager.CheckOutCommentMode]::Default
+        [CheckOutMode]$CheckoutMode = [CheckOutMode]::Default,
+        [CheckOutCommentMode]$CheckoutCommentMode = [CheckOutCommentMode]::Default
     )
     
     BEGIN {
