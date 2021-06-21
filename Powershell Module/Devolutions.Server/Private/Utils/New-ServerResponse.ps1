@@ -94,7 +94,7 @@ to be found.
                         ([SaveResult]::InvalidData) {
                             return [ServerResponse]::new($false, $response, $responseContentJson, $null, "The data you submitted was invalid. Please refer to the CMDlet help section for guidance.", 200)
                         }
-                        ([Devolutions.RemoteDesktopManager.SaveResult]::Error) {
+                        ([SaveResult]::Error) {
                             if ($responseContentJson.errorMessage) {
                                 return [ServerResponse]::new($false, $response, $responseContentJson, $null, $responseContentJson.errorMessage, 400)
                             }
