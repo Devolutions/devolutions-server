@@ -12,7 +12,9 @@ function New-DSDataSegment {
     )
 
     PROCESS {
-        $ParamList.Add("EscapedPassword", (EscapeForJSon $ParamList.Password))
+        if ($ParamList.Password) {
+            $ParamList.Add("EscapedPassword", (EscapeForJSon $ParamList.Password))
+        }
         
         $data = switch ($ParamList.ConnectionSubType) {
             ([CredentialResolverConnectionType]::Default) { New-UsernamePassword $ParamList; break; }
