@@ -24,7 +24,12 @@ function Close-DSSession {
 
         $VarsToClear.GetEnumerator() | ForEach-Object {
             try {
-                if ($_ -eq 'DSBaseURI') { Remove-Variable $_ -Scope Script -ErrorAction SilentlyContinue -Force } else { Remove-Variable $_ -Scope Global -ErrorAction SilentlyContinue -Force }
+                if ($_ -eq 'DSBaseURI') { 
+                    Remove-Variable $_ -Scope Script -ErrorAction SilentlyContinue -Force 
+                }
+                else { 
+                    Remove-Variable $_ -Scope Global -ErrorAction SilentlyContinue -Force 
+                }
             }
             catch {
                 Write-Warning "[Close-DSSession] Error while clearing $_..."
