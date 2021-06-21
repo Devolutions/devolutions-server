@@ -20,7 +20,7 @@ function Invoke-DS {
         [Parameter(Mandatory)]
         [string]$URI,
 
-        [string]$ContentType = 'application/json',
+        [string]$ContentType = 'application/json; charset=utf-8',
 
         [string]$body,
 
