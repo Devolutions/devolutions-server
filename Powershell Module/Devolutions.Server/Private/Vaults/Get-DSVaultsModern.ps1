@@ -23,7 +23,7 @@ function Get-DSVaultsModern{
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSVaultsModern] begin...'
+            Write-Verbose '[Get-DSVaultsModern] Beginning...'
     
             $URI = "$Script:DSBaseURI/api/v3/vaults"
 

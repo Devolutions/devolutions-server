@@ -17,7 +17,7 @@ function New-DSPamTeamFolder {
     )
         
     BEGIN {
-        Write-Verbose '[New-DSPamTeamFolder] Begin...'
+        Write-Verbose '[New-DSPamTeamFolder] Beginning...'
     
         $URI = "$Script:DSBaseURI/api/pam/folders"
 

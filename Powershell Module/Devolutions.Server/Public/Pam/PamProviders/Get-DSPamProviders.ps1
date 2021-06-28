@@ -15,7 +15,7 @@ function Get-DSPamProviders {
     )
         
     BEGIN {
-        Write-Verbose '[Get-DSPamProviders] begin...'
+        Write-Verbose '[Get-DSPamProviders] Beginning...'
     
         $URI = "$Script:DSBaseURI/api/pam/providers"
 

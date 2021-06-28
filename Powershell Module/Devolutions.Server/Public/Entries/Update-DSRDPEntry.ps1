@@ -1,11 +1,17 @@
 function Update-DSRDPEntry {
     <#
         .SYNOPSIS
-
+        Updates an RDP entry.
         .DESCRIPTION
-
+        Updates an RDP entry using supplied parameters.
         .EXAMPLE
+        $UpdatedRDPEntry = @{
+            Name = ...
+            Domain = ...
+            Password = ...
+        }
 
+        > Update-DSRDPEntry @UpdatedRDPEntry
     #>
     [CmdletBinding()]
     PARAM (

@@ -15,8 +15,8 @@ function Get-DSVault {
         [switch]$All
     )
         
-    BEGIN {
-        Write-Verbose '[Get-DSVault] begin...'
+        BEGIN {
+            Write-Verbose '[Get-DSVault] Beginning...'
     
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw 'Session does not seem authenticated, call New-DSSession.'

@@ -16,7 +16,7 @@ function Get-DSPamRootFolder {
     )
         
     BEGIN {
-        Write-Verbose '[New-DSPamRootFolder] begin...'
+        Write-Verbose '[New-DSPamRootFolder] Beginning...'
     }
     
     PROCESS {

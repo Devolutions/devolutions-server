@@ -1,21 +1,21 @@
 function Get-DSSecureMessages{
     <#
-    .SYNOPSIS
-    
-    .DESCRIPTION
-    
-    .EXAMPLE
-    
-    .NOTES
-    
-    .LINK
+        .SYNOPSIS
+        Fetch all secure messages
+        .DESCRIPTION
+        Fetch all secure messages for the currently authenticated user,
+        .EXAMPLE
+        > Get-DSSecureMessages
+
+        .NOTES
+        It fetch messages for the user you logged in with (New-DSSession). For other users, you need to re-authenticate and type the command again.
     #>
         [CmdletBinding()]
         param(			
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSSecureMessage] begin...'
+            Write-Verbose '[Get-DSSecureMessage] Beginning...'
     
             $URI = "$Script:DSBaseURI/api/secure-messages"
 

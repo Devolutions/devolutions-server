@@ -22,7 +22,7 @@ function New-DSConnectionPartial {
         )
         
         BEGIN {
-            Write-Verbose '[New-DSConnection] begin...'
+            Write-Verbose '[New-DSConnection] Beginning...'
 
             $URI = "$Script:DSBaseURI/api/connections/partial/save"
     

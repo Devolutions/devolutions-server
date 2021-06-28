@@ -1,4 +1,12 @@
 function Update-DSEntryBase {
+    <#
+        .SYNOPSIS
+        Updates an entry.
+        .DESCRIPTION
+        Updates a given entry (Modified entry should be in jsonBody).
+        .NOTES
+        Serves as a passthrough for people who might need one. This should not be called independently. Please see Update-DS*EntryType* instead.
+    #>
     [CmdletBinding()]
     PARAM (
         $jsonBody
