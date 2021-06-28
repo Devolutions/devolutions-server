@@ -38,20 +38,34 @@ function New-DSRDPEntry {
         [string]$Expiration,
 
         <# -- Events tab -- #>
-
+        
+        #Warns the user if RDP session is already opened
+        [bool]$WarnIfAlreadyOpened = $False,
         #A comment is required to view entry's credentials
         [bool]$CredentialViewedCommentIsRequired = $False,
         #A ticket number is required to view entry's credentials
         [bool]$TicketNumberIsRequiredOnCredentialViewed = $False,
-        #Prompt the user for comment/ticket number
+        #Prompt the user for comment/ticket number on credential viewed
         [bool]$CredentialViewedPrompt = $False,
+        #Prompt the user for comment/ticket number on open
+        [bool]$OpenCommentPrompt = $False,
+        #A comment is required on open
+        [bool]$OpenCommentIsRequired = $False,
+        #A ticket number is required on open
+        [bool]$TicketNumberIsRequiredOnOpen = $False,
+        #Prompt the user for comment/ticket number on close
+        [bool]$CloseCommentPrompt = $False,
+        #A comment is required on close
+        [bool]$CloseCommentIsRequired = $False,
+        #A ticket number is required on close
+        [bool]$TicketNumberIsRequiredOnClose = $False,
 
         <# -- Security tab -- #>
 
         #Entry's checkout mode
-        [Devolutions.RemoteDesktopManager.CheckOutMode]$CheckoutMode = [Devolutions.RemoteDesktopManager.CheckOutMode]::Default,
+        [CheckOutMode]$CheckoutMode = [CheckOutMode]::Default,
         #Entry's offline mode
-        [Devolutions.RemoteDesktopManager.AllowOffline]$AllowOffline = [Devolutions.RemoteDesktopManager.AllowOffline]::Default,
+        [AllowOffline]$AllowOffline = [AllowOffline]::Default,
 
         <# -- RDP entry specifics... -- #>
 
@@ -62,7 +76,7 @@ function New-DSRDPEntry {
         #Port used by RDP
         [string]$Port = '3389',
         #RDP Type
-        [Devolutions.RemoteDesktopManager.RDPType]$RDPType = [Devolutions.RemoteDesktopManager.RDPType]::Normal,
+        [RDPType]$RDPType = [RDPType]::Normal,
         #Azure Cloud Services role name
         [string]$RoleName = '',
         #Azure Cloud Service's instance ID
@@ -87,18 +101,18 @@ function New-DSRDPEntry {
         #RDP access to smart devices
         [bool]$UsesSmartDevices = $False,
         #Choose destination for sounds
-        [Devolutions.RemoteDesktopManager.SoundHook]$SoundHook = [Devolutions.RemoteDesktopManager.SoundHook]::BringToThisComputer,
+        [SoundHook]$SoundHook = [SoundHook]::BringToThisComputer,
         #RDP Audio quality
-        [Devolutions.RemoteDesktopManager.RDPAudioQualityMode]$AudioQualityMode = [Devolutions.RemoteDesktopManager.RDPAudioQualityMode]::Dynamic,
+        [RDPAudioQualityMode]$AudioQualityMode = [RDPAudioQualityMode]::Dynamic,
         #Record audio from RDP session
         [bool]$AudioCaptureRedirectionMode = $true,
         #Sets the destination for Windows key combinations (ALT+TAB, for example)
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.KeyboardHook]::OnTheLocalComputer,
-            [Devolutions.RemoteDesktopManager.KeyboardHook]::InFullScreenMode,
-            [Devolutions.RemoteDesktopManager.KeyboardHook]::OnTheRemoteComputer
+            [KeyboardHook]::OnTheLocalComputer,
+            [KeyboardHook]::InFullScreenMode,
+            [KeyboardHook]::OnTheRemoteComputer
         )]
-        [string]$KeyboardHook = [Devolutions.RemoteDesktopManager.KeyboardHook]::OnTheLocalComputer,
+        [string]$KeyboardHook = [KeyboardHook]::OnTheLocalComputer,
 
         <# -- General -> Programs tab -- #>
 
@@ -118,7 +132,7 @@ function New-DSRDPEntry {
         <# -- General -> Experience tab -- #>
 
         #Connection speed to use for RDP
-        [string]$NetworkConnectionType = [Devolutions.RemoteDesktopManager.RDPNetworkConnectionType]::Default,
+        [string]$NetworkConnectionType = [RDPNetworkConnectionType]::Default,
         #Enable desktop background
         [bool]$DesktopBackground = $true,
         #Enable font smoothing
@@ -146,33 +160,34 @@ function New-DSRDPEntry {
         #Enable bandwith autodetection
         [bool]$BandwidthAutoDetect = $true,
         [ValidateSet(           
-            [Devolutions.RemoteDesktopManager.DefaultBoolean]::Default,
-            [Devolutions.RemoteDesktopManager.DefaultBoolean]::True,
-            [Devolutions.RemoteDesktopManager.DefaultBoolean]::False
+            [DefaultBoolean]::Default,
+            [DefaultBoolean]::True,
+            [DefaultBoolean]::False
         )]
         #Sets if addons load in embedded or not
-        [string]$LoadAddonsMode = [Devolutions.RemoteDesktopManager.DefaultBoolean]::Default,
-        [Devolutions.RemoteDesktopManager.RDPClientSpec]$ClientSpec = [Devolutions.RemoteDesktopManager.RDPClientSpec]::Default,
+        [DefaultBoolean]$LoadAddonsMode = [DefaultBoolean]::Default,
+        [RDPClientSpec]$ClientSpec = [RDPClientSpec]::Default,
         [int]$KeepAliveInternal = 1000,
        
         <# -- User interface tab -- #>
 
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::External, 
-            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded, 
-            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Undocked
+            [ConnectionDisplayMode]::External, 
+            [ConnectionDisplayMode]::Embedded,
+            [ConnectionDisplayMode]::Undocked     
         )]
         #Display mode used by RDP
-        [string]$DisplayMode = [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded,
+        [string]$DisplayMode = [ConnectionDisplayMode]::Embedded,
         #Display monitor used by RDP
-        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayMonitor = [Devolutions.RemoteDesktopManager.DisplayMonitor]::Primary,
+        [DisplayMonitor]$DisplayMonitor = [DisplayMonitor]::Primary,
         #Virtual desktop used by RPD
-        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayVirtualDesktop = [Devolutions.RemoteDesktopManager.DisplayVirtualDesktop]::Current
+        [DisplayMonitor]$DisplayVirtualDesktop = [DisplayVirtualDesktop]::Current,
+
+        [Field[]]$NewFieldsList
     )
-    
+
     BEGIN {
         Write-Verbose '[New-DSRDPEntry] Beginning...'
-
     }
     
     PROCESS {
@@ -211,6 +226,17 @@ function New-DSRDPEntry {
                         Default { $ClientSpec }
                     }
                 }
+                events                = @{
+                    credentialViewedCommentIsRequired        = $CredentialViewedCommentIsRequired
+                    ticketNumberIsRequiredOnCredentialViewed = $TicketNumberIsRequiredOnCredentialViewed
+                    credentialViewedPrompt                   = $CredentialViewedPrompt
+                    openCommentPrompt                        = $OpenCommentPrompt
+                    openCommentIsRequired                    = $OpenCommentIsRequired
+                    ticketNumberIsRequiredOnOpen             = $TicketNumberIsRequiredOnOpen
+                    closeCommentPrompt                       = $CloseCommentPrompt
+                    closeCommentIsRequired                   = $CloseCommentIsRequired
+                    ticketNumberIsRequiredOnClose            = $TicketNumberIsRequiredOnClose
+                }
             }
 
             #Create passwordItem if password is present and not null
@@ -224,13 +250,13 @@ function New-DSRDPEntry {
             }
 
             #Possible fields for RDP type "Azure"
-            if ($RDPType -eq [Devolutions.RemoteDesktopManager.RDPType]::Azure) {
+            if ($RDPType -eq [RDPType]::Azure) {
                 $RDPEntry.data += @{ 'azureInstanceID' = $AzureInstanceID }
                 $RDPEntry.data += @{ 'azureRoleName' = $RoleName }
             }
 
             #Possible fields for RDP type "HyperV"
-            if ($RDPType -eq [Devolutions.RemoteDesktopManager.RDPType]::HyperV) {
+            if ($RDPType -eq [RDPType]::HyperV) {
                 $RDPEntry.data += @{ 'hyperVInstanceID' = $HyperVInstance }
                 $RDPEntry.data += @{ 'useEnhancedSessionMode' = $UseEnhancedSessionMode }
             }
@@ -258,6 +284,27 @@ function New-DSRDPEntry {
                 $RDPEntry.data += @{ 'useAlternateShell' = $true }
                 $RDPEntry.data += @{ 'alternateShell' = $AlternateShell }
                 $RDPEntry.data += @{ 'shellWorkingDirectory' = $ShellWorkingDirectory }
+            }
+
+            #Check for new parameters
+            if ($NewFieldsList.Count -gt 0) {
+                foreach ($Param in $NewFieldsList.GetEnumerator()) {
+                    switch ($Param.Depth) {
+                        'root' { $RDPEntry += @{$Param.Name = $Param.Value } }
+                        default {
+                            if ($RDPEntry.($Param.Depth)) {
+                                $RDPEntry.($Param.Depth) += @{ $Param.Name = $param.value }
+                            }
+                            else {
+                                $RDPEntry += @{
+                                    $Param.Depth = @{
+                                         $Param.Name = $Param.Value
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             #Converts data to JSON, then encrypt the whole thing

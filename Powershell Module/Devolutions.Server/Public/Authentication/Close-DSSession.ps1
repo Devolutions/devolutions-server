@@ -1,53 +1,44 @@
 function Close-DSSession {
-	<#
-.SYNOPSIS
+    [CmdletBinding()]
+    param (
+        
+    )
+    
+    begin {
+        Write-Verbose '[Close-DSSession] Beginning...'
+        $VarsToClear = @('DSInstanceName', 'DSInstanceVersion', 'DSSafeSessionKey', 'DSSessionKey', 'WebSession', 'DSBaseURI')
+    }
+    
+    process {
+        $RequestParams = @{
+            URI    = "$Script:DSBaseURI/api/logout"
+            Method = 'GET'
+        }
 
-.DESCRIPTION
+        try {
+            Invoke-WebRequest @RequestParams -WebSession $Global:WebSession
+        }
+        catch {
+            Write-Warning '[Close-DSSession] No session was previously established.'
+        }
 
-.EXAMPLE
+        $VarsToClear.GetEnumerator() | ForEach-Object {
+            try {
+                if ($_ -eq 'DSBaseURI') { 
+                    Remove-Variable $_ -Scope Script -ErrorAction SilentlyContinue -Force 
+                }
+                else { 
+                    Remove-Variable $_ -Scope Global -ErrorAction SilentlyContinue -Force 
+                }
+            }
+            catch {
+                Write-Warning "[Close-DSSession] Error while clearing $_..."
+            }
+        }
 
-.LINK
-#>
-	[CmdletBinding()]
-	param(	)
-
-	BEGIN { 
-		Write-Verbose '[Close-DSSession] begin...'
-		$URI = "$Script:DSBaseURI/api/logout"
-	}
-
-	PROCESS {
-
-		$params = @{
-			Uri            = $URI
-			Method         = 'GET'
-			LegacyResponse = $true
-		}
-
-		try {
-			$response = Invoke-DS @params
-
-			#script scope
-			if (Get-Variable DSBaseUri -Scope Script -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSBaseURI -Scope Script -Force } catch { } }
-
-			#global scope
-			if (Get-Variable DSInstanceName -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSInstanceName -Scope Global -Force } catch { } }
-			if (Get-Variable DSInstanceVersion -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSInstanceVersion -Scope Global -Force } catch { } }
-			if (Get-Variable DSKeyExp -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSKeyExp -Scope Global -Force } catch { } }
-			if (Get-Variable DSKeyMod -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSKeyMod -Scope Global -Force } catch { } }
-			if (Get-Variable DSSafeSessionKey -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSSafeSessionKey -Scope Global -Force } catch { } }
-			if (Get-Variable DSSessionKey -Scope Global -ErrorAction SilentlyContinue) {	try { Remove-Variable -Name DSSessionKey -Scope Global -Force } catch { } }
-			if (Get-Variable DSSessionToken -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name DSSessionToken -Scope Global -Force } catch { } }
-			if (Get-Variable WebSession -Scope Global -ErrorAction SilentlyContinue) { try { Remove-Variable -Name WebSession -Scope Global -Force } catch { } }
-
-			return $response 
-		}
-		catch {
-			Write-Error $_.Exception.Message
-		}
-	}
-
-	END {   
-		Write-Verbose '[Close-DSSession] ...end'
-	}
+    }
+    
+    end {
+        Write-Verbose '[Close-DSSession] Done.'
+    }
 }
