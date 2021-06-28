@@ -26,7 +26,7 @@ BeforeAll {
     [Diagnostics.CodeAnalysis.SuppressMessageAttribute('UseDeclaredVarsMoreThanAssignments', '', Justification = 'False positive in Pester tests')]
     [pscredential]$creds = New-Object System.Management.Automation.PSCredential ($credUser, $secPassword)
 
-    $sess = New-DSSession -Credential $creds -URL $dvlsURI 
+    $sess = New-DSSession -Credential $creds -BaseUri $dvlsURI   
     if ($null -eq $sess.Body.data.tokenId) {
         throw 'unable to authenticate'
     }
