@@ -1,11 +1,130 @@
 function New-DSEntry {
     <#
-    .SYNOPSIS
-    Creates a new entry
-    .DESCRIPTION
-    Creates a new entry in default vault's root if no other vault/folder are specified. For now, only entries of type "Credentials" (Default/PrivateKey) and "RDPConfigured" are supported, but more will join them as time goes and requests come in.
-    
-    #>
+        .SYNOPSIS
+        Creates a new entry
+        .DESCRIPTION
+        Creates a new entry in default vault's root if no other vault/folder are specified.
+        .EXAMPLE
+        Custom (Username/Password)
+
+        $User = @{
+            ConnectionType                           = [ConnectionType]::Credential
+            VaultId                                  = [guid]::Empty #Default to empty if not provided
+            EntryName                                = "EntryName"
+            Folder                                   = "Folder"
+            Username                                 = "Username"
+            Password                                 = "Password"
+            MnemonicPassword                         = "MnemonicPassword"
+            Domain                                   = "Domain"
+            PromptForPassword                        = $true
+            Description                              = "Description"
+            Tags                                     = "Tag1 Tag2 Tag3 Tag4" #Tags are seperated by spaces
+            Expiration                               = "2022-05-31T01:23:45.000z" #(ISO-8601 format (yyyy-mm-ddThh:mm:ss.000Z)
+            CheckoutMode                             = [CheckoutMode]::Default
+            AllowOffline                             = [AllowOffline]::Default
+            CredentialViewedCommentIsRequired        = $true
+            TicketNumberIsRequiredOnCredentialViewed = $true
+            CredentialViewedPrompt                   = $true
+        }
+
+        > New-DSEntry @User
+
+        .EXAMPLE
+        Private key
+
+        $PrivateKey = @{
+            ConnectionType                           = [ConnectionType]::Credential
+            VaultId                                  = [guid]::Empty #Default to empty if not provided
+            EntryName                                = "EntryName"
+            Folder                                   = "Folder"
+            Username                                 = "Username"
+            Password                                 = "Password"
+            PromptForPassword                        = $true
+            Description                              = "Description"
+            Tags                                     = "Tag1 Tag2 Tag3 Tag4" #Tags are seperated by spaces
+            Expiration                               = "2022-05-31T01:23:45.000z" #(ISO-8601 format (yyyy-mm-ddThh:mm:ss.000Z)
+            CheckoutMode                             = [CheckoutMode]::Default
+            AllowOffline                             = [AllowOffline]::Default
+            CredentialViewedCommentIsRequired        = $true
+            TicketNumberIsRequiredOnCredentialViewed = $true
+            CredentialViewedPrompt                   = $true
+            PrivateKeyType                           = $true
+            PrivateKeyPath                           = "PathToPPK"
+            PrivateKeyPassphrase                     = "Passphrase"
+            PromptForPassphrase                      = $true
+        }
+
+        > New-DSEntry @PrivateKey
+        .EXAMPLE
+        RDP
+
+        $RDP = @{
+            ConnectionType                           = [ConnectionType]::RDPConfigured
+            VaultId                                  = [guid]::Empty #Default to empty if not provided
+            EntryName                                = "EntryName"
+            Folder                                   = "Folder"
+            Username                                 = "Username"
+            Password                                 = "Password"
+            Description                              = "Description"
+            Tags                                     = "Tag1 Tag2 Tag3 Tag4" #Tags are seperated by spaces
+            Expiration                               = "2022-05-31T01:23:45.000z" #(ISO-8601 format (yyyy-mm-ddThh:mm:ss.000Z)
+            CheckoutMode                             = [CheckoutMode]::Default
+            AllowOffline                             = [AllowOffline]::Default
+            CredentialViewedCommentIsRequired        = $true
+            TicketNumberIsRequiredOnCredentialViewed = $true
+            CredentialViewedPrompt                   = $true
+            HostName                                 = "Host name"
+            AdminMode                                = $true
+            Port                                     = "1111"
+            RDPType                                  = [RDPType]::Normal
+            RoleName                                 = "ACS Role name"
+            AzureInstanceID                          = 1
+            HyperVInstance                           = "HyperVInstance"
+            UseEnhancedSessionMode                   = $true
+            UsesClipboard                            = $true
+            UsesDevices                              = $true
+            UsesHardDrives                           = $true
+            UsesPrinters                             = $true
+            UsesSerialPorts                          = $true
+            UsesSmartDevices                         = $true
+            SoundHook                                = [SoundHook]::Default
+            AudioQualityMode                         = [RDPAudioQualityMode]::Default
+            AudioCaptureRedirectionMode              = [RDPAudioCaptureRedirectionMode]::DoNotRecord
+            KeyboardHook                             = [KeyboardHook]::Default
+            AlternateShell                           = "PathToProgram"
+            ShellWorkingDirectory                    = "PathToWorkingDirectory"
+            AfterLoginProgram                        = "PathToProgram"
+            AfterLoginDelay                          = 1
+            RemoteApplicationProgram                 = "PathToProgram"
+            RemoteApplicationCmdLine                 = "Parameters"
+            NetworkConnectionType                    = [RDPNetworkConnectionType]::Default
+            DesktopBackground                        = $true
+            FontSmoothing                            = $true
+            DesktopComposition                       = $true
+            Animations                               = $true
+            VisualStyles                             = $true
+            NetworkAutoDetect                        = $true
+            AutoReconnection                         = $true
+            RedirectDirectX                          = $true
+            RedirectVideoPlayback                    = $true
+            ShowContentWhileDragging                 = $true
+            DataCompression                          = $true
+            PersistentBitmapCaching                  = $true
+            BandwidthAutoDetect                      = $true
+            LoadAddonsMode                           = [DefaultBoolean]::Default
+            DisplayMode                              = [ConnectionDisplayMode]::Default
+            DisplayMonitor                           = [DisplayMonitor]::Default
+            DisplayVirtualDesktop                    = [DisplayVirtualDesktop]::Default
+        }
+
+        > New-DSEntry @RDP
+        
+        .NOTES
+        Supported entries:
+        -[ConnectionType]::Credential
+        -[ConnectionType]::RDPConfigured
+        -[ConnectionType]::SSHShell
+        #>
     [CmdletBinding()]
     PARAM (
         [ValidateNotNullOrEmpty()]

@@ -1,14 +1,10 @@
 function Get-DSEntries {
     <#
-    .SYNOPSIS
-    
-    .DESCRIPTION
-    
-    .EXAMPLE
-    
-    .NOTES
-    
-    .LINK
+        .SYNOPSIS
+        Returns all entries of a given vault.
+        .EXAMPLE
+        > Get-DSEntries -VaultId "[guid]"
+
     #>
     [CmdletBinding()]
     param(			
@@ -17,7 +13,7 @@ function Get-DSEntries {
     )
         
     BEGIN {
-        Write-Verbose '[Get-DSEntries] begin...'
+        Write-Verbose '[Get-DSEntries] Beginning...'
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }

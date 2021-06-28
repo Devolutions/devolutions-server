@@ -18,7 +18,7 @@ This endpoint does not require authentication.
 	)
 	
 	BEGIN {
-		Write-Verbose '[Get-DSServerInfo] Begin...'
+		Write-Verbose '[Get-DSServerInfo] Beginning...'
 
 		#We can call the api repeatedly, even after we've established the session.  We must close the existing session only if we change the URI
 		if ((Get-Variable DSBaseURI -Scope Script -ErrorAction SilentlyContinue) -and ($Script:DSBaseURI -ne $BaseURI)) {

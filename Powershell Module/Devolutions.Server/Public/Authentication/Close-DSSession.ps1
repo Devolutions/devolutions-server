@@ -1,4 +1,10 @@
 function Close-DSSession {
+    <#
+		.SYNOPSIS
+		Terminate the connection with your Devolutions Server instance.
+		.DESCRIPTION
+		Terminate the connection with your Devolutions Server by clearing global variables required to keep it up and running.
+	#>
     [CmdletBinding()]
     param (
         
@@ -24,12 +30,7 @@ function Close-DSSession {
 
         $VarsToClear.GetEnumerator() | ForEach-Object {
             try {
-                if ($_ -eq 'DSBaseURI') { 
-                    Remove-Variable $_ -Scope Script -ErrorAction SilentlyContinue -Force 
-                }
-                else { 
-                    Remove-Variable $_ -Scope Global -ErrorAction SilentlyContinue -Force 
-                }
+                if ($_ -eq 'DSBaseURI') { Remove-Variable $_ -Scope Script -ErrorAction SilentlyContinue -Force } else { Remove-Variable $_ -Scope Global -ErrorAction SilentlyContinue -Force }
             }
             catch {
                 Write-Warning "[Close-DSSession] Error while clearing $_..."

@@ -1,9 +1,11 @@
 function New-DSEntryBase {
     <#
-    .SYNOPSIS
-    Creates a new entry WITH NO VALIDATION AT ALL
-    .DESCRIPTION
-    This is the functional equivalent of a PASSTHRU
+        .SYNOPSIS
+        Creates a new entry
+        .DESCRIPTION
+        Creates a new entry without validating anything. This is the functional equivalent of a passthrough.
+        .NOTES
+        Unless you know exactly what you are doing, you should probably use the CMDlets created by us to generate new entries.
     #>
     [CmdletBinding()]
     PARAM (

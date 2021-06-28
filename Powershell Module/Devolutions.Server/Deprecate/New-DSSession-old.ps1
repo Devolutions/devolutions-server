@@ -18,7 +18,7 @@ Establishes a session with a Devolutions Server
 	)
 
 	BEGIN { 
-		Write-Verbose '[New-DSSession] begin...'
+		Write-Verbose '[New-DSSession] Beginning...'
 
 		if (Get-Variable DSSessionKey -Scope Global -ErrorAction SilentlyContinue) {
 			throw 'Session already established. Close it before switching servers.'
