@@ -25,6 +25,8 @@ function Get-DSFolders {
     }
     
     PROCESS {
+        [array]$AllFolders = @()
+
         $Params = @{
             URI    = "$Script:DSBaseURI/api/connections/partial/tree/$($VaultId)"
             Method = 'GET'
@@ -32,10 +34,12 @@ function Get-DSFolders {
 
         try {
             if (($res = Invoke-DS @Params).isSuccess) {
-                $AllFolders = $res.Body.data.partialConnections
+                $Root = $res.Body.data
+                $AllFolders += $Root
+                $AllFolders += $Root.partialConnections | Where-Object { $_.connectionType -eq [ConnectionType]::Group }
 
                 if ($IncludeSubFolders) {
-                    $AllFolders | ForEach-Object {
+                    $Root.partialConnections | ForEach-Object {
                         $AllFolders += Get-DSFoldersRecurivse $_
                     }
                 }
