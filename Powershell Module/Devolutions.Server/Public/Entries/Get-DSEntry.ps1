@@ -23,7 +23,8 @@ function Get-DSEntry {
     PROCESS {
         switch ($PSCmdlet.ParameterSetName) {
             'GetAll' { 
-                $res = GetAll $VaultID
+                $Entries = GetAll $VaultID
+                $res = [ServerResponse]::new($true, $null, [PSCustomObject]@{ data = $Entries }, $null, $null, 200)
             }
 
             'GetByID' {
@@ -55,8 +56,6 @@ function GetAll {
             if (($null -ne $_) -and ($_.connectionType -ne [ConnectionType]::Group)) { $Entries += $_ }
         }
     }
-
-    $Entries | Sort-Object -Property connectionType
 
     return $Entries
 }
