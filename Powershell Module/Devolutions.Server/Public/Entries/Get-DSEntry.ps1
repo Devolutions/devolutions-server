@@ -3,10 +3,12 @@ function Get-DSEntry {
     PARAM (
         [guid]$VaultID = ([guid]::Empty),
 
-        [Parameter(ParameterSetName = 'GetByName')]
+        [Parameter(ParameterSetName = 'Filter')]
         [string]$EntryName,
-        [Parameter(ParameterSetName = 'GetByName')]
+        [Parameter(ParameterSetName = 'Filter')]
         [switch]$SearchAllVaults,
+        [Parameter(ParameterSetName = 'Filter')]
+        [SearchItemType]$FilterBy = [SearchItemType]::Name,
 
         [Parameter(ParameterSetName = 'GetPage')]
         [int]$PageSize = 25,
@@ -32,8 +34,8 @@ function Get-DSEntry {
                 $res = [ServerResponse]::new($true, $null, [PSCustomObject]@{ data = $Entries }, $null, $null, 200)
             }
 
-            'GetByName' {
-                $Entry = $SearchAllVaults ? (GetByName -EntryName $EntryName) : (GetByName $VaultID $EntryName)
+            'Filter' {
+                $Entry = $SearchAllVaults ? (GetByName -EntryName $EntryName -FilterBy $FilterBy) : (GetByName -VaultID $VaultID -EntryName $EntryName)
             }
 
             'GetPage' {
@@ -68,7 +70,8 @@ function GetAll {
 function GetByName {
     param (
         [guid]$VaultID,
-        [string]$EntryName
+        [string]$EntryName,
+        [SearchItemType]$FilterBy
     )
 
     if ($SearchAllVaults) {
@@ -83,7 +86,7 @@ function GetByName {
             searchParameters = @{
                 data                = @(
                     @{
-                        searchItemType = 12
+                        searchItemType = $FilterBy
                         value          = $EntryName
                     }
                 )
