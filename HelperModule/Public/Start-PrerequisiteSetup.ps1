@@ -1,4 +1,4 @@
-function Start-Start-PrerequisiteSetup {
+function Start-PrerequisiteSetup {
     New-EventSource
     Test-Packages
 }
