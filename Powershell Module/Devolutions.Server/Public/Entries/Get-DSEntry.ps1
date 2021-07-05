@@ -1,10 +1,47 @@
 function Get-DSEntry {
+    <#
+        .SYNOPSIS
+        Get entry(ies) from your Devolutions Server instance.
+        .DESCRIPTION
+        Using different parameter sets, returns either all entries (from one or all vaults), a specific entry by filter (Get-Help Get-DSEntry -Parameter FilterBy) or paginated results.
+        .EXAMPLE
+        > Get-DSEntry
+        [ServerResponse]@{
+            ...
+            Body = @{
+                data = @({Entry1}, {Entry2}, ...)
+                additionalData = ...
+                pageSize = [int]
+                pageNumber = [int]
+                totalPages = [int]
+            }
+        }
+
+        .EXAMPLE
+        > Get-DSEntry $All
+
+        [ServerResponse]@{
+            data = @({Entry1}, {Entry2}, ...)
+        }
+
+        .EXAMPLE
+        > Get-DSEntry -FilterValue 'Entry1' -SearchAllVaults -FilterBy Name
+
+        [ServerResponse]@{
+            ...
+            Body = @{
+                data = @({Entry1}, {Entry2}, ...)                
+                result = [SaveResult]
+            }
+        }
+    
+    #>
     [CmdletBinding(DefaultParameterSetName = 'GetPage')]
     PARAM (
         [guid]$VaultID = ([guid]::Empty),
 
         [Parameter(ParameterSetName = 'Filter')]
-        [string]$EntryName,
+        [string]$FilterValue,
         [Parameter(ParameterSetName = 'Filter')]
         [switch]$SearchAllVaults,
         [Parameter(ParameterSetName = 'Filter')]
@@ -36,7 +73,7 @@ function Get-DSEntry {
             }
 
             'Filter' {
-                $SearchAllVaults ? (GetByName -EntryName $EntryName -FilterBy $FilterBy) : (GetByName -VaultID $VaultID -EntryName $EntryName -FilterBy $FilterBy)
+                $SearchAllVaults ? (GetByFilter -FilterValue $FilterValue -FilterBy $FilterBy) : (GetByFilter -VaultID $VaultID -FilterValue $FilterValue -FilterBy $FilterBy)
             }
 
             'GetPage' {
@@ -68,10 +105,10 @@ function GetAll {
     return $Entries
 }
 
-function GetByName {
+function GetByFilter {
     param (
         [guid]$VaultID,
-        [string]$EntryName,
+        [string]$FilterValue,
         [SearchItemType]$FilterBy
     )
 
@@ -88,7 +125,7 @@ function GetByName {
                 data                = @(
                     @{
                         searchItemType = $FilterBy
-                        value          = $EntryName
+                        value          = $FilterValue
                     }
                 )
                 includePrivateVault = $true
@@ -102,7 +139,7 @@ function GetByName {
                 data                = @(
                     @{
                         searchItemType = $FilterBy
-                        value          = $EntryName
+                        value          = $FilterValue
                     }
                 )
                 includePrivateVault = $false
