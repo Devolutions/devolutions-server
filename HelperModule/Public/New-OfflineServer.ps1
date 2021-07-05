@@ -1,6 +1,6 @@
 function New-OfflineServer {
     param(
-        [parameter(Mandatory, HelpMessage = "Format for the Console Version being install. `nFormat: 2021.1.17.0")][ValidateLength(11)][ValidatePattern('[2][0][0-9][0-9][.][0-9][.][0-9][0-9][.][0]')][ValidateNotNullOrEmpty()][string]$ConsoleVersion
+        [parameter(Mandatory, HelpMessage = "Format for the Console Version being install. `nFormat: 2021.1.17.0")][ValidatePattern('[2][0][0-9][0-9][.][0-9][.][0-9][0-9][.][0]')][ValidateNotNullOrEmpty()][string]$ConsoleVersion
 
     )
     #TODO Install Offline Server, need to rework Test-Programs
@@ -20,7 +20,7 @@ function New-OfflineServer {
             Write-LogEvent 'Downloading Devolutions Server Instance zip' -Output
             Start-BitsTransfer -Source $zipFile -Destination $path\$zip
             Write-LogEvent 'Successfully downloaded Devolutions Server Instance zip' -Output
-        } catch [System.Exception] { Write-EventLog $_ -Errors }
+        } catch [System.Exception] { Write-LogEvent $_ -Errors }
     }
     if (!(Test-Path $PSScriptRoot\Start-Me.ps1)) {
         $psI = @'

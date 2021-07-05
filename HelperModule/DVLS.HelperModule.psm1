@@ -1,10 +1,6 @@
 #Requires -RunAsAdministrator
-using namespace System
-using namespace System.Diagnostics
 
-Set-StrictMode
-#Set-StrictMode -Version 1.0
-
+Set-StrictMode -Version 1.0
 
 $ModuleName = $(Get-Item $PSCommandPath).BaseName
 $Manifest = Import-PowerShellDataFile -Path $(Join-Path $PSScriptRoot "${ModuleName}.psd1")

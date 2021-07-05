@@ -1,4 +1,6 @@
-﻿function New-EventSource {
+﻿using Namespace System
+using Namespace System.Diagnostics
+function New-EventSource {
     if ([System.Diagnostics.EventLog]::SourceExists('Devolutions Server Install Script') -eq $False) {
         New-EventLog -LogName 'Application' -Source 'Devolutions Server Install Script'
     }
