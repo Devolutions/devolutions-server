@@ -7,6 +7,7 @@ function Install-DevolutionsServer {
         [parameter(HelpMessage = 'Used to install SQL Server Management Studio')][switch]$SSMS,
         [parameter(HelpMessage = 'Disables the use of HTTP(s) on your Devolutions Server.')][switch]$DisableHttps,
         [parameter(Mandatory, HelpMessage = 'Include full format from email.')][string]$serialKey = ''
+
     )
     try {
         New-EventSource
@@ -21,6 +22,7 @@ function Install-DevolutionsServer {
                 Write-LogEvent 'Starting installation for SQL Server'
                 Install-SQLServer
             } elseif (($SQLServer) -and !($SQLIntegrated) -and ($SSMS)) {
+
                 Write-LogEvent 'Starting installation for SQL Server using integrated security'
                 Install-SQLServer -SQLIntegrated
             }
@@ -43,4 +45,5 @@ function Install-DevolutionsServer {
             return
         }
     } catch [System.Exception] { Write-LogEvent $_ -Errors }
+
 }

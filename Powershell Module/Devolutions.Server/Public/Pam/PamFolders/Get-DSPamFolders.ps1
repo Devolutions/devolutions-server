@@ -16,7 +16,7 @@ function Get-DSPamFolders {
     )
         
     BEGIN {
-        Write-Verbose '[Get-DSPamFolders] begin...'
+        Write-Verbose '[Get-DSPamFolders] Beginning...'
     
         $URI = "$Script:DSBaseURI/api/pam/folders"
 

@@ -1,19 +1,138 @@
 function New-DSEntry {
     <#
-    .SYNOPSIS
-    Creates a new entry
-    .DESCRIPTION
-    Creates a new entry in default vault's root if no other vault/folder are specified. For now, only entries of type "Credentials" (Default/PrivateKey) and "RDPConfigured" are supported, but more will join them as time goes and requests come in.
-    
-    #>
+        .SYNOPSIS
+        Creates a new entry
+        .DESCRIPTION
+        Creates a new entry in default vault's root if no other vault/folder are specified.
+        .EXAMPLE
+        Custom (Username/Password)
+
+        $User = @{
+            ConnectionType                           = [ConnectionType]::Credential
+            VaultId                                  = [guid]::Empty #Default to empty if not provided
+            EntryName                                = "EntryName"
+            Folder                                   = "Folder"
+            Username                                 = "Username"
+            Password                                 = "Password"
+            MnemonicPassword                         = "MnemonicPassword"
+            Domain                                   = "Domain"
+            PromptForPassword                        = $true
+            Description                              = "Description"
+            Tags                                     = "Tag1 Tag2 Tag3 Tag4" #Tags are seperated by spaces
+            Expiration                               = "2022-05-31T01:23:45.000z" #(ISO-8601 format (yyyy-mm-ddThh:mm:ss.000Z)
+            CheckoutMode                             = [CheckoutMode]::Default
+            AllowOffline                             = [AllowOffline]::Default
+            CredentialViewedCommentIsRequired        = $true
+            TicketNumberIsRequiredOnCredentialViewed = $true
+            CredentialViewedPrompt                   = $true
+        }
+
+        > New-DSEntry @User
+
+        .EXAMPLE
+        Private key
+
+        $PrivateKey = @{
+            ConnectionType                           = [ConnectionType]::Credential
+            VaultId                                  = [guid]::Empty #Default to empty if not provided
+            EntryName                                = "EntryName"
+            Folder                                   = "Folder"
+            Username                                 = "Username"
+            Password                                 = "Password"
+            PromptForPassword                        = $true
+            Description                              = "Description"
+            Tags                                     = "Tag1 Tag2 Tag3 Tag4" #Tags are seperated by spaces
+            Expiration                               = "2022-05-31T01:23:45.000z" #(ISO-8601 format (yyyy-mm-ddThh:mm:ss.000Z)
+            CheckoutMode                             = [CheckoutMode]::Default
+            AllowOffline                             = [AllowOffline]::Default
+            CredentialViewedCommentIsRequired        = $true
+            TicketNumberIsRequiredOnCredentialViewed = $true
+            CredentialViewedPrompt                   = $true
+            PrivateKeyType                           = $true
+            PrivateKeyPath                           = "PathToPPK"
+            PrivateKeyPassphrase                     = "Passphrase"
+            PromptForPassphrase                      = $true
+        }
+
+        > New-DSEntry @PrivateKey
+        .EXAMPLE
+        RDP
+
+        $RDP = @{
+            ConnectionType                           = [ConnectionType]::RDPConfigured
+            VaultId                                  = [guid]::Empty #Default to empty if not provided
+            EntryName                                = "EntryName"
+            Folder                                   = "Folder"
+            Username                                 = "Username"
+            Password                                 = "Password"
+            Description                              = "Description"
+            Tags                                     = "Tag1 Tag2 Tag3 Tag4" #Tags are seperated by spaces
+            Expiration                               = "2022-05-31T01:23:45.000z" #(ISO-8601 format (yyyy-mm-ddThh:mm:ss.000Z)
+            CheckoutMode                             = [CheckoutMode]::Default
+            AllowOffline                             = [AllowOffline]::Default
+            CredentialViewedCommentIsRequired        = $true
+            TicketNumberIsRequiredOnCredentialViewed = $true
+            CredentialViewedPrompt                   = $true
+            HostName                                 = "Host name"
+            AdminMode                                = $true
+            Port                                     = "1111"
+            RDPType                                  = [RDPType]::Normal
+            RoleName                                 = "ACS Role name"
+            AzureInstanceID                          = 1
+            HyperVInstance                           = "HyperVInstance"
+            UseEnhancedSessionMode                   = $true
+            UsesClipboard                            = $true
+            UsesDevices                              = $true
+            UsesHardDrives                           = $true
+            UsesPrinters                             = $true
+            UsesSerialPorts                          = $true
+            UsesSmartDevices                         = $true
+            SoundHook                                = [SoundHook]::Default
+            AudioQualityMode                         = [RDPAudioQualityMode]::Default
+            AudioCaptureRedirectionMode              = [RDPAudioCaptureRedirectionMode]::DoNotRecord
+            KeyboardHook                             = [KeyboardHook]::Default
+            AlternateShell                           = "PathToProgram"
+            ShellWorkingDirectory                    = "PathToWorkingDirectory"
+            AfterLoginProgram                        = "PathToProgram"
+            AfterLoginDelay                          = 1
+            RemoteApplicationProgram                 = "PathToProgram"
+            RemoteApplicationCmdLine                 = "Parameters"
+            NetworkConnectionType                    = [RDPNetworkConnectionType]::Default
+            DesktopBackground                        = $true
+            FontSmoothing                            = $true
+            DesktopComposition                       = $true
+            Animations                               = $true
+            VisualStyles                             = $true
+            NetworkAutoDetect                        = $true
+            AutoReconnection                         = $true
+            RedirectDirectX                          = $true
+            RedirectVideoPlayback                    = $true
+            ShowContentWhileDragging                 = $true
+            DataCompression                          = $true
+            PersistentBitmapCaching                  = $true
+            BandwidthAutoDetect                      = $true
+            LoadAddonsMode                           = [DefaultBoolean]::Default
+            DisplayMode                              = [ConnectionDisplayMode]::Default
+            DisplayMonitor                           = [DisplayMonitor]::Default
+            DisplayVirtualDesktop                    = [DisplayVirtualDesktop]::Default
+        }
+
+        > New-DSEntry @RDP
+        
+        .NOTES
+        Supported entries:
+        -[ConnectionType]::Credential
+        -[ConnectionType]::RDPConfigured
+        -[ConnectionType]::SSHShell
+        #>
     [CmdletBinding()]
     PARAM (
         [ValidateNotNullOrEmpty()]
         #Connection type (Supported entries are Credentials or RDPConfigured. More to come...)
-        [Devolutions.RemoteDesktopManager.ConnectionType]$ConnectionType,
+        [ConnectionType]$ConnectionType,
         [ValidateNotNullOrEmpty()]
         #Connection sub-type. Used for connections of type Credentials. (Supported sub-type are Default or PrivateKey)
-        [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]$ConnectionSubType = [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default,
+        [CredentialResolverConnectionType]$ConnectionSubType = [CredentialResolverConnectionType]::Default,
     
         <# -- Base entry data -- #>
 
@@ -57,15 +176,15 @@ function New-DSEntry {
         <# -- Security tab -- #>
 
         #Entry's checkout mode
-        [Devolutions.RemoteDesktopManager.CheckOutMode]$CheckoutMode = [Devolutions.RemoteDesktopManager.CheckOutMode]::Default,
+        [CheckOutMode]$CheckoutMode = [CheckOutMode]::Default,
         #Entry's offline mode
-        [Devolutions.RemoteDesktopManager.AllowOffline]$AllowOffline = [Devolutions.RemoteDesktopManager.AllowOffline]::Default,
+        [AllowOffline]$AllowOffline = [AllowOffline]::Default,
 
         <# -- PrivateKey specifics... -- #>
         
         #Private key type
         [ValidateSet('NoKey', 'Data')]
-        [Devolutions.RemoteDesktopManager.PrivateKeyType]$PrivateKeyType = [Devolutions.RemoteDesktopManager.PrivateKeyType]::Data,
+        [PrivateKeyType]$PrivateKeyType = [PrivateKeyType]::Data,
         #Full private key path (*.ppk)
         [string]$PrivateKeyPath,
         #Private key passphrase
@@ -82,7 +201,7 @@ function New-DSEntry {
         #Port used by RDP
         [string]$Port = "3389",
         #RDP Type
-        [Devolutions.RemoteDesktopManager.RDPType]$RDPType = [Devolutions.RemoteDesktopManager.RDPType]::Normal,
+        [RDPType]$RDPType = [RDPType]::Normal,
         #Azure Cloud Services role name
         [string]$RoleName = "",
         #Azure Cloud Service's instance ID
@@ -107,18 +226,18 @@ function New-DSEntry {
         #RDP access to smart devices
         [bool]$UsesSmartDevices = $False,
         #Choose destination for sounds
-        [Devolutions.RemoteDesktopManager.SoundHook]$SoundHook = [Devolutions.RemoteDesktopManager.SoundHook]::BringToThisComputer,
+        [SoundHook]$SoundHook = [SoundHook]::BringToThisComputer,
         #RDP Audio quality
-        [Devolutions.RemoteDesktopManager.RDPAudioQualityMode]$AudioQualityMode = [Devolutions.RemoteDesktopManager.RDPAudioQualityMode]::Dynamic,
+        [RDPAudioQualityMode]$AudioQualityMode = [RDPAudioQualityMode]::Dynamic,
         #Record audio from RDP session
         [bool]$AudioCaptureRedirectionMode = $true,
         #Sets the destination for Windows key combinations (ALT+TAB, for example)
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.KeyboardHook]::OnTheLocalComputer,
-            [Devolutions.RemoteDesktopManager.KeyboardHook]::InFullScreenMode,
-            [Devolutions.RemoteDesktopManager.KeyboardHook]::OnTheRemoteComputer
+            [KeyboardHook]::OnTheLocalComputer,
+            [KeyboardHook]::InFullScreenMode,
+            [KeyboardHook]::OnTheRemoteComputer
         )]
-        [string]$KeyboardHook = [Devolutions.RemoteDesktopManager.KeyboardHook]::OnTheLocalComputer,
+        [string]$KeyboardHook = [KeyboardHook]::OnTheLocalComputer,
 
         <# -- General -> Programs tab -- #>
 
@@ -138,7 +257,7 @@ function New-DSEntry {
         <# -- General -> Experience tab -- #>
 
         #Connection speed to use for RDP
-        [string]$NetworkConnectionType = [Devolutions.RemoteDesktopManager.RDPNetworkConnectionType]::Default,
+        [string]$NetworkConnectionType = [RDPNetworkConnectionType]::Default,
         #Enable desktop background
         [bool]$DesktopBackground = $true,
         #Enable font smoothing
@@ -166,26 +285,26 @@ function New-DSEntry {
         #Enable bandwith autodetection
         [bool]$BandwidthAutoDetect = $true,
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.DefaultBoolean]::Default,
-            [Devolutions.RemoteDesktopManager.DefaultBoolean]::True,
-            [Devolutions.RemoteDesktopManager.DefaultBoolean]::False
+            [DefaultBoolean]::Default,
+            [DefaultBoolean]::True,
+            [DefaultBoolean]::False
         )]
         #Sets if addons load in embedded or not
-        [string]$LoadAddonsMode = [Devolutions.RemoteDesktopManager.DefaultBoolean],
+        [string]$LoadAddonsMode = [DefaultBoolean],
        
         <# -- User interface tab -- #>
 
         [ValidateSet(
-            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::External, 
-            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded, 
-            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Undocked
+            [ConnectionDisplayMode]::External, 
+            [ConnectionDisplayMode]::Embedded, 
+            [ConnectionDisplayMode]::Undocked
         )]
         #Display mode used by RDP
-        [string]$DisplayMode = [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded,
+        [string]$DisplayMode = [ConnectionDisplayMode]::Embedded,
         #Display monitor used by RDP
-        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayMonitor = [Devolutions.RemoteDesktopManager.DisplayMonitor]::Primary,
+        [DisplayMonitor]$DisplayMonitor = [DisplayMonitor]::Primary,
         #Virtual desktop used by RPD
-        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayVirtualDesktop = [Devolutions.RemoteDesktopManager.DisplayVirtualDesktop]::Current
+        [DisplayMonitor]$DisplayVirtualDesktop = [DisplayVirtualDesktop]::Current
     )
 
     BEGIN {
@@ -201,8 +320,8 @@ function New-DSEntry {
             $Parameters = Get-ParameterValues
             
             $res = switch ($ConnectionType) {
-                ([Devolutions.RemoteDesktopManager.ConnectionType]::Credential) { New-DSCredentialEntry -ParamList $Parameters; break }
-                ([Devolutions.RemoteDesktopManager.ConnectionType]::RDPConfigured) { New-DSRDPEntry -ParamList $Parameters; break }
+                ([ConnectionType]::Credential) { New-DSCredentialEntry -ParamList $Parameters; break }
+                ([ConnectionType]::RDPConfigured) { New-DSRDPEntry -ParamList $Parameters; break }
                 Default { throw "Entries of type $ConnectionType are not supported yet." }
             }
 

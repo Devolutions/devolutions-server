@@ -1,3 +1,4 @@
+
 ﻿using Namespace System
 using Namespace System.Diagnostics
 function New-EventSource {

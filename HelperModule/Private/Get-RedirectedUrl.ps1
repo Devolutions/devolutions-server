@@ -12,5 +12,4 @@
         $response.ResponseUri.AbsoluteUri
         $response.Close()
     } catch [System.Exception] { Write-LogEvent $_ -Errors }
-
 }

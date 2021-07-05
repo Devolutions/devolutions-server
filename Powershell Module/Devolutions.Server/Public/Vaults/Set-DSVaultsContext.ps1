@@ -18,7 +18,7 @@ function Set-DSVaultsContext {
     )
         
     BEGIN {
-        Write-Verbose '[Set-DSVaultsContext] begin...'
+        Write-Verbose '[Set-DSVaultsContext] Beginning...'
     
         $URI = "$Script:DSBaseURI/api/security/vaults/change"
 

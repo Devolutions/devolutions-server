@@ -18,8 +18,8 @@ function Update-DSCredentialEntry {
             $EntrySensitiveData = (Get-DSEntrySensitiveData $CandidEntryID).Body.data
 
             switch ($EntryResolvedVariables.connectionSubType) {
-                ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default) { Update-UsernamePassword $ParamList $EntryResolvedVariables $EntrySensitiveData }
-                ([Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::PrivateKey) { Update-PrivateKey $ParamList $EntryResolvedVariables $EntrySensitiveData }
+                ([CredentialResolverConnectionType]::Default) { Update-UsernamePassword $ParamList $EntryResolvedVariables $EntrySensitiveData }
+                ([CredentialResolverConnectionType]::PrivateKey) { Update-PrivateKey $ParamList $EntryResolvedVariables $EntrySensitiveData }
                 Default { throw "Credential $($EntryResolvedVariables.connectionSubType) not supported." }
             }
 
@@ -151,7 +151,7 @@ function Update-PrivateKey {
     if (![string]::IsNullOrEmpty($ParamList.PrivateKeyPath)) { 
         $PrivateKeyCtx = Confirm-PrivateKey $ParamList.PrivateKeyPath
 
-        if ($PrivateKeyCtx.Body.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) {
+        if ($PrivateKeyCtx.Body.result -ne [SaveResult]::Success) {
             throw [System.Management.Automation.ItemNotFoundException]::new("Private key could not be parsed. Please make sure you provide a valid .ppk file.") 
         }
 

@@ -1,8 +1,8 @@
 function New-DSPassword {
     [CmdletBinding()]
     PARAM (
-        [Devolutions.RemoteDesktopManager.PasswordGeneratorMode]$PasswordMode = [Devolutions.RemoteDesktopManager.PasswordGeneratorMode]::SpecifiedSettings,
-        [Devolutions.RemoteDesktopManager.PronounceableCaseMode]$PronounceableCaseMode = [Devolutions.RemoteDesktopManager.PronounceableCaseMode]::MixedCase,
+        [PasswordGeneratorMode]$PasswordMode = [PasswordGeneratorMode]::SpecifiedSettings,
+        [PronounceableCaseMode]$PronounceableCaseMode = [PronounceableCaseMode]::MixedCase,
         [bool]$MorePronounceable = $false,
 
         [int]$Numerics = 1,

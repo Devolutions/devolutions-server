@@ -6,6 +6,7 @@ function Install-SSMS {
         $Installer = 'SSMSinstaller.exe'
         Write-LogEvent 'Downloading SQL Server Management Studio...'
         try { Start-BitsTransfer $SQLStudio -Destination "$path\$Installer" } catch [System.Exception] { Write-LogEvent $_ -Errors }
+
         Write-LogEvent 'Installing SQL Server Management Studio...'
         Set-Location $path
         try {
@@ -16,6 +17,7 @@ function Install-SSMS {
             Write-LogEvent "Removing $path\$Installer from $Env:ComputerName"
             Remove-Item "$path\$Installer" 
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
+
     } else {
         Write-LogEvent 'SQL Server Management Studio is already installed.'
     }

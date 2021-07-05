@@ -39,7 +39,7 @@ function Confirm-PrivateKey {
         $res = Invoke-DS @RequestParams
 
         #FIXME Maybe this isn't right and we should decrypt data instead, but the decrypt cmdlet is supposed to be legacy. Check with Maurice
-        if ($res.Body.result -eq [Devolutions.RemoteDesktopManager.SaveResult]::Success) {
+        if ($res.Body.result -eq [SaveResult]::Success) {
             $res.Body | Add-Member -NotePropertyName 'privateKeyData' -NotePropertyValue $FileContent
         }
 

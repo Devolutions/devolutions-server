@@ -9,6 +9,7 @@ function Remove-DSPamCheckoutPolicy {
     #>
     [CmdletBinding()]
     param(
+        #Policy ID
         [ValidateNotNullOrEmpty()]
         [guid]$candidPolicyID
     )

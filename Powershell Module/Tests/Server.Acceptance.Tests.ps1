@@ -6,86 +6,86 @@
     we will create seed data using this module.
 #>
 BeforeAll {
-    $modulePath = Resolve-Path -Path "..\Devolutions.Server"
+    $modulePath = Resolve-Path -Path '..\Devolutions.Server'
     Import-Module -Name $modulePath  -Force
     
     if (-Not(Test-Path env:DS_USER) -or -Not(Test-Path env:DS_PASSWORD)) {
-        throw "please initialize the credentials in the environment variables"  
+        throw 'please initialize the credentials in the environment variables'  
     }
 
     if ([string]::IsNullOrEmpty($env:DS_URL)) {
-        throw "Please initialize DS_URL environement variable."
+        throw 'Please initialize DS_URL environement variable.'
     }
           
     [string]$credUser = $env:DS_USER
     [string]$credPassword = $env:DS_PASSWORD
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("UseDeclaredVarsMoreThanAssignments", '',  Justification='False positive in Pester tests')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('UseDeclaredVarsMoreThanAssignments', '', Justification = 'False positive in Pester tests')]
     [string]$dvlsURI = $env:DS_URL
 
     [securestring]$secPassword = ConvertTo-SecureString $credPassword -AsPlainText -Force
-    [Diagnostics.CodeAnalysis.SuppressMessageAttribute("UseDeclaredVarsMoreThanAssignments", '',  Justification='False positive in Pester tests')]
+    [Diagnostics.CodeAnalysis.SuppressMessageAttribute('UseDeclaredVarsMoreThanAssignments', '', Justification = 'False positive in Pester tests')]
     [pscredential]$creds = New-Object System.Management.Automation.PSCredential ($credUser, $secPassword)
 
-    $sess = New-DSSession -Credential $creds -BaseURI $dvlsURI 
+    $sess = New-DSSession -Credential $creds -BaseUri $dvlsURI   
     if ($null -eq $sess.Body.data.tokenId) {
-        throw "unable to authenticate"
+        throw 'unable to authenticate'
     }
 }
 
 Describe NormalWorkflow {
     #TODO:MC:reinstate this
-#    Context "Server Information" {
-#        It "Should get server information" {
-#            $res = Get-DSServerInfo -BaseURI $dvlsURI 
-#            $res.Body.data.version | Should -Not -BeNullOrEmpty
-#        }
-#    }
+    #    Context "Server Information" {
+    #        It "Should get server information" {
+    #            $res = Get-DSServerInfo -BaseURI $dvlsURI 
+    #            $res.Body.data.version | Should -Not -BeNullOrEmpty
+    #        }
+    #    }
 
-    Context "Vault Endpoints" {
-        It "Should get at least the Default Vault" {
+    Context 'Vault Endpoints' {
+        It 'Should get at least the Default Vault' {
             $res = Get-DSVaults -PageNumber 1 -PageSize 100 
             $res.IsSuccess | Should -Be $true
         }
-        It "Should sort" {
+        It 'Should sort' {
             $res = Get-DSVaults -Sortfield 'Name' 
             $res.IsSuccess | Should -Be $true
         }
-        It "Should sort" {
+        It 'Should sort' {
             $res = Get-DSVaults -Sortfield 'Name' -Descending 
             $res.IsSuccess | Should -Be $true
         }
-        It "Should respond with error" {
+        It 'Should respond with error' {
             $res = Get-DSVaults -PageNumber 100 -PageSize 1 
             $res.StandardizedStatusCode | Should -Be '416'
         }
 
-        It "Should get at least the Default Vault" {
+        It 'Should get at least the Default Vault' {
             $res = Get-DSVault -VaultID ([guid]::Empty)
             $res.IsSuccess | Should -Be $true
         }
 
-        It "Should get the default Vault permissions - Applications" {
+        It 'Should get the default Vault permissions - Applications' {
             $principals = [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'Applications')
             Write-Debug $principals.Length
         }
-        It "Should get the default Vault permissions - Users" {
-            $principals =  [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'Users')
+        It 'Should get the default Vault permissions - Users' {
+            $principals = [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'Users')
             Write-Debug $principals.Length
         }
-        It "Should get the default Vault permissions - Roles" {
-            $principals =  [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'Roles') 
+        It 'Should get the default Vault permissions - Roles' {
+            $principals = [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'Roles') 
             Write-Debug $principals.Length
         }
-        It "Should get the default Vault permissions - All" {
-            $principals =  [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'All') 
+        It 'Should get the default Vault permissions - All' {
+            $principals = [array](Get-DSVaultPermissions -VaultID ([guid]::Empty) -PrincipalTypes 'All') 
             Write-Debug $principals.Length
         }
         
     } #context Vault endpoints
 
-    Context "Entries" {
+    Context 'Entries' {
 
-        It "Should access entry details" {
+        It 'Should access entry details' {
             if ($null -ne $entries) {
                 for ($i = 0; $i -lt $entries.Count; $i++) {
                     $entryId = $entries[$i].id
@@ -94,7 +94,7 @@ Describe NormalWorkflow {
 
                     $getSD = $innerRes1.Body.Data.Data.passwordItem.hasSensitiveData
                     if (($null -ne $getSD) -and ($true -eq $getSD)) {
-                        $innerRes2 = Get-DSEntrySensitiveData $entryId  
+                        $innerRes2 = Get-DSEntrySensitiveData $entryId
                         $innerRes2.Body.Data | Should -Not -BeNullOrEmpty
                     }
                 }
@@ -110,24 +110,23 @@ Describe NormalWorkflow {
     }
     
     AfterAll {
-        $res = Close-DSSession    
-        $res.IsSuccess | Should -Be $true
+        Close-DSSession    
     }
 
-    Context "SecureMessages" {
-        It "Should list messages" {
+    Context 'SecureMessages' {
+        It 'Should list messages' {
             $res = Get-DSSecureMessages 
             $res.IsSuccess | Should -Be $true }
     }
 
-    Context "PAM" {
-        It "should list pam providers" {
+    Context 'PAM' {
+        It 'should list pam providers' {
             $res = Get-DSPamProviders 
             $res.IsSuccess | Should -Be $true
             #$res.Body -is [system.array] | Should -Be $true
         }
 
-        It "should list pam folders" {
+        It 'should list pam folders' {
             $res = Get-DSPamFolders 
             $res.IsSuccess | Should -Be $true
             $res.Body.Data -is [system.array] | Should -Be $true

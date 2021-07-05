@@ -17,5 +17,6 @@ function Install-DVLSInstance {
             Write-LogEvent "Removing $JSON from $env:COMPUTERNAME" 
             Remove-Item $JSON 
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
+
     }
 }

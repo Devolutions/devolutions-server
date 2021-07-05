@@ -1,13 +1,12 @@
 function Get-DSEntrySensitiveData {
     <#
-    .SYNOPSIS
-    
-    .DESCRIPTION
-    
-    .EXAMPLE
-    
-    .NOTES
-    Only works for DVLS 2020.3.17 and later.
+        .SYNOPSIS
+        Returns sensitive data for specified entry.
+        .EXAMPLE
+        > Get-DSEntrySensitiveData -EntryId "[guid]"
+
+        .NOTES
+        Supported DVLS versions: >2020.3.17
     #>
     [CmdletBinding()]
     param(			
@@ -16,16 +15,16 @@ function Get-DSEntrySensitiveData {
     )
  
     BEGIN {
-        Write-Verbose '[Get-DSEntrySensitiveData] begin...'
+        Write-Verbose '[Get-DSEntrySensitiveData] Beginning...'
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
-            throw "Session does not seem authenticated, call New-DSSession."
+            throw 'Session does not seem authenticated, call New-DSSession.'
         }
     }
     
     PROCESS {
         try {        
-#            if (($LegacyRequested) -or (Confirm-DSServerVersionAtLeast -CandidVersion "2020.3.17")) {
-            if (Confirm-DSServerVersionAtLeast -CandidVersion "2020.3.17") {
+            #if (($LegacyRequested) -or (Confirm-DSServerVersionAtLeast -CandidVersion "2020.3.17")) {
+            if (Confirm-DSServerVersionAtLeast -CandidVersion '2020.3.17') {
                 [ServerResponse]$response = Get-DSEntrySensitiveDataLegacy @PSBoundParameters
             }
             else {
