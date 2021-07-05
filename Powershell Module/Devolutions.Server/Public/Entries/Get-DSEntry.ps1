@@ -36,7 +36,7 @@ function Get-DSEntry {
             }
 
             'Filter' {
-                $Entry = $SearchAllVaults ? (GetByName -EntryName $EntryName -FilterBy $FilterBy) : (GetByName -VaultID $VaultID -EntryName $EntryName)
+                $res = $SearchAllVaults ? (GetByName -EntryName $EntryName -FilterBy $FilterBy) : (GetByName -VaultID $VaultID -EntryName $EntryName -FilterBy $FilterBy)
             }
 
             'GetPage' {
@@ -94,56 +94,33 @@ function GetByName {
                 includePrivateVault = $true
             }
         } | ConvertTo-Json -Depth 3
-
-        $RequestParams = @{
-            URI    = "$Script:DSBaseURI/api/connections/partial/multivault"
-            Method = 'POST'
-            Body   = $Body
-        }
-
-        $res = Invoke-DS @RequestParams
-        $res
     }
     else {
-        
+        $Body = @{
+            repositoryIds    = @($VaultID)
+            searchParameters = @{
+                data                = @(
+                    @{
+                        searchItemType = $FilterBy
+                        value          = $EntryName
+                    }
+                )
+                includePrivateVault = $false
+            }
+        } | ConvertTo-Json -Depth 3
     }
+
+    $RequestParams = @{
+        URI    = "$Script:DSBaseURI/api/connections/partial/multivault"
+        Method = 'POST'
+        Body   = $Body
+    }
+
+    return Invoke-DS @RequestParams
 }
 
-<#
-function Get-DSEntry {
-    
-        .SYNOPSIS
-        Return a single entry by ID
-        .EXAMPLE
-        > Get-DSEntry -EntryId "[guid]"
-    
-        [CmdletBinding()]
-        param(			
-            [ValidateNotNullOrEmpty()]
-            [GUID]$EntryId,
-            #Used to know if advanced properties should be included
-            [switch]$IncludeAdvancedProperties
-        )
-        
-    BEGIN {
-        Write-Verbose '[Get-DSEntry] Beginning...'
-        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
-            throw "Session does not seem authenticated, call New-DSSession."
-        }
-    }
-    
-    PROCESS {
-        [ServerResponse]$response = Get-DSEntryLegacy @PSBoundParameters
-        return $response
-    }
-    
-    END {
-        If ($response.isSuccess) {
-            Write-Verbose '[Get-DSEntry] Completed Successfully.'
-        }
-        else {
-            Write-Verbose '[Get-DSEntry] ended with errors...'
-        }
-    }
+function GetPage {
+    Param(
+
+    )
 }
-#>
