@@ -11,10 +11,6 @@
         $response = $request.GetResponse()
         $response.ResponseUri.AbsoluteUri
         $response.Close()
-    }
-
-    catch {
-        "ERROR: $_"
-    }
+    } catch [System.Exception] { Write-EventLog $_ -Errors }
 
 }

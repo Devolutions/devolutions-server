@@ -21,8 +21,8 @@
     if (!(Test-Path $PSScriptRoot\Install-Script.ps1)) {
         $psI = @'
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs }
-import-module $PSScriptRoot\PreReqsbuild.psm1
-Start-DVLSSetup
+import-module "$PSScriptRoot\DVLS.HelperModule.psd1"
+Start-PrerequisiteSetup
 '@
         $psI | Out-File $PSScriptRoot\Install-Script.ps1
     }
