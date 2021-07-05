@@ -2,12 +2,17 @@ function Get-DSEntry {
     [CmdletBinding(DefaultParameterSetName = 'GetAll')]
     PARAM (
         [guid]$VaultID = ([guid]::Empty),
-        [Parameter(ParameterSetName = 'GetByID')]
-        [guid]$EntryID,      
+
+        [Parameter(ParameterSetName = 'GetByName')]
+        [string]$EntryName,
+        [Parameter(ParameterSetName = 'GetByName')]
+        [switch]$SearchAllVaults,
+
         [Parameter(ParameterSetName = 'GetPage')]
         [int]$PageSize = 25,
         [Parameter(ParameterSetName = 'GetPage')]
         [int]$PageNumber = 1,
+
         [Parameter(ParameterSetName = 'GetAll')]
         [switch]$All
     )
@@ -27,8 +32,8 @@ function Get-DSEntry {
                 $res = [ServerResponse]::new($true, $null, [PSCustomObject]@{ data = $Entries }, $null, $null, 200)
             }
 
-            'GetByID' {
-
+            'GetByName' {
+                $Entry = $SearchAllVaults ? (GetByName -EntryName $EntryName) : (GetByName $VaultID $EntryName)
             }
 
             'GetPage' {
@@ -60,7 +65,45 @@ function GetAll {
     return $Entries
 }
 
+function GetByName {
+    param (
+        [guid]$VaultID,
+        [string]$EntryName
+    )
 
+    if ($SearchAllVaults) {
+        $VaultIDs = ($res = Get-DSVault -All).isSuccess ? ($res.Body.data | Select-Object -ExpandProperty id) : $null
+
+        if (!$VaultIDs) {
+            throw 'error no vaults found'
+        }
+
+        $Body = @{
+            repositoryIds    = $VaultIDs
+            searchParameters = @{
+                data                = @(
+                    @{
+                        searchItemType = 12
+                        value          = $EntryName
+                    }
+                )
+                includePrivateVault = $true
+            }
+        } | ConvertTo-Json -Depth 3
+
+        $RequestParams = @{
+            URI    = "$Script:DSBaseURI/api/connections/partial/multivault"
+            Method = 'POST'
+            Body   = $Body
+        }
+
+        $res = Invoke-DS @RequestParams
+        $res
+    }
+    else {
+        
+    }
+}
 
 <#
 function Get-DSEntry {
