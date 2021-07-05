@@ -18,7 +18,7 @@ function Get-DSEntriesLegacy{
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSEntriesLegacy] Beginning...'
+            Write-Verbose '[Get-DSEntriesLegacy] begin...'
     
             $URI = "$Script:DSBaseURI/api/Connections/list/all"
 

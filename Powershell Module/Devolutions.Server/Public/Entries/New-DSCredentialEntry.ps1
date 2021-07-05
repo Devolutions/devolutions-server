@@ -1,32 +1,19 @@
 function New-DSCredentialEntry {
     <#
     .SYNOPSIS
-    Creates a new entry of type 'Credentials - Username/Password' (Default)
+
     .DESCRIPTION
-    Creates a new entry of type 'Credentials - Username/Password' (Default) with the parameters supplied.
+
     .EXAMPLE
-    $NewCredEntry = @{
-        VaultId                                  = ([guid]::Empty)
-        EntryName                                = 'rootlocal '
-        Username                                 = 'root'
-        Password                                 = 'Pa$$w0rd!'
-        Folder                                   = 'Powershell rules'
-        credentialViewedCommentIsRequired        = $true
-        credentialViewedPrompt                   = $true
-        ticketNumberIsRequiredOnCredentialViewed = $true
-        checkOutMode                             = 'Default'
-        Description                              = 'This is a description'
-        Tags                                     = '1 2 3 4 5'
-    }
-                
-    > New-DSCredentialEntry @NewCredEntry
+
+    .NOTES
     #>
 
     [CmdletBinding()]
         PARAM (
             [ValidateNotNullOrEmpty()]
             #Connection sub-type. Used for connections of type Credentials. (Supported sub-type are Default or PrivateKey)
-            [CredentialResolverConnectionType]$ConnectionSubType = [CredentialResolverConnectionType]::Default,
+            [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]$ConnectionSubType = [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default,
         
             #Entry's name
             [ValidateNotNullOrEmpty()]
@@ -68,15 +55,15 @@ function New-DSCredentialEntry {
             <# -- Security tab -- #>
     
             #Entry's checkout mode
-            [CheckOutMode]$CheckoutMode = [CheckOutMode]::Default,
+            [Devolutions.RemoteDesktopManager.CheckOutMode]$CheckoutMode = [Devolutions.RemoteDesktopManager.CheckOutMode]::Default,
             #Entry's offline mode
-            [AllowOffline]$AllowOffline = [AllowOffline]::Default,
+            [Devolutions.RemoteDesktopManager.AllowOffline]$AllowOffline = [Devolutions.RemoteDesktopManager.AllowOffline]::Default,
     
             <# -- PrivateKey specifics... -- #>
             
             #Private key type
             [ValidateSet('NoKey', 'Data')]
-            [PrivateKeyType]$PrivateKeyType = [PrivateKeyType]::Data,
+            [Devolutions.RemoteDesktopManager.PrivateKeyType]$PrivateKeyType = [Devolutions.RemoteDesktopManager.PrivateKeyType]::Data,
             #Full private key path (*.ppk)
             [string]$PrivateKeyPath,
             #Private key passphrase
@@ -89,8 +76,8 @@ function New-DSCredentialEntry {
         Write-Verbose '[New-DSCredentialEntry] Beginning...'
 
         $SupportedSubType = @(
-            [CredentialResolverConnectionType]::Default,
-            [CredentialResolverConnectionType]::PrivateKey
+            [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::Default,
+            [Devolutions.RemoteDesktopManager.CredentialResolverConnectionType]::PrivateKey
         )
     }
 
@@ -102,14 +89,14 @@ function New-DSCredentialEntry {
             }
 
             #Validate if vault exists
-            if ((Set-DSVaultsContext $ParamList.VaultID).Body.result -ne [SaveResult]::Success) { 
+            if ((Set-DSVaultsContext $ParamList.VaultID).Body.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) { 
                 throw [System.Management.Automation.ItemNotFoundException]::new("Vault could not be found. Please make sure you provide a valid vault ID.") 
             } 
 
             #Validate private key, if path was provided
             if (![string]::IsNullOrEmpty($ParamList.PrivateKeyPath)) { 
                 $PrivateKeyCtx = Confirm-PrivateKey $ParamList.PrivateKeyPath
-                if ($PrivateKeyCtx.Body.result -ne [SaveResult]::Success) {
+                if ($PrivateKeyCtx.Body.result -ne [Devolutions.RemoteDesktopManager.SaveResult]::Success) {
                     throw [System.Management.Automation.ItemNotFoundException]::new("Private key could not be parsed. Please make sure you provide a valid .ppk file.") 
                 }
                 $ParamList.Add("PrivateKeyCtx", $PrivateKeyCtx)

@@ -11,7 +11,7 @@ function Get-DSUserSecuritySegment {
         try {
             $securityData = @{
                 Assigned                = $null
-                AuthenticationType      = [ServerUserType]::($ParamList.AuthenticationType).value__
+                AuthenticationType      = [Devolutions.RemoteDesktopManager.ServerUserType]::($ParamList.AuthenticationType).value__
                 CanAdd                  = $true
                 CanDelete               = $true
                 CanEdit                 = $true
@@ -25,17 +25,17 @@ function Get-DSUserSecuritySegment {
                     CanViewGlobalLogs   = $ParamList.CanViewGlobalLogs
                     CanImport           = $ParamList.CanImport
                     CanExport           = $ParamList.CanExport
-                    OfflineMode         = [OfflineMode]::($ParamList.OfflineMode)
+                    OfflineMode         = [Devolutions.RemoteDesktopManager.OfflineMode]::($ParamList.OfflineMode)
 
                 }
-                DeleteSQLLogin          = [DefaultBoolean]::Default
+                DeleteSQLLogin          = [Devolutions.RemoteDesktopManager.DefaultBoolean]::Default
                 HasAccessCli            = $ParamList.HasAccessCLI
                 HasAccessLauncher       = $ParamList.HasAccessLauncher
                 HasAccessRDM            = $ParamList.HasAccessRDM
                 HasAccessWeb            = $ParamList.HasAccessWeb
                 HasAccessWebLogin       = $ParamList.HasAccessWebLogin
                 #ID
-                IsAdministrator         = if ($ParamList.UserType -eq [UserType]::Admin) { $true } else { $false }
+                IsAdministrator         = if ($ParamList.UserType -eq [Devolutions.RemoteDesktopManager.UserType]::Admin) { $true } else { $false }
                 IsEnabled               = $ParamList.Enabled
                 IsLockedOut             = $false
                 IsServerUserTypeAssumed = $false
@@ -49,11 +49,11 @@ function Get-DSUserSecuritySegment {
                 #RepositoryNames         = "Default"
                 RoleNames               = ""
                 SecurityKey             = ""
-                ServerUserType          = [ServerUserType]::($ParamList.AuthenticationType)
-                ServerUserTypeString    = [ServerUserType]::($ParamList.AuthenticationType).ToString()
+                ServerUserType          = [Devolutions.RemoteDesktopManager.ServerUserType]::($ParamList.AuthenticationType)
+                ServerUserTypeString    = [Devolutions.RemoteDesktopManager.ServerUserType]::($ParamList.AuthenticationType).ToString()
                 UPN                     = ""
-                UserLicenseType         = [UserLicenceTypeMode]::($ParamList.UserLicenseType)
-                UserType                = 0 #[UserType]::($ParamList.UserType)
+                UserLicenseType         = [Devolutions.RemoteDesktopManager.UserLicenceTypeMode]::($ParamList.UserLicenseType)
+                UserType                = 0 #[Devolutions.RemoteDesktopManager.UserType]::($ParamList.UserType)
                 UserTypeString          = ""
             }
 

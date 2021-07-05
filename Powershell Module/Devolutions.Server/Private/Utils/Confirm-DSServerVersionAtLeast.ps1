@@ -12,5 +12,5 @@ function Confirm-DSServerVersionAtLeast {
         [System.Version]$CandidVersion
     )
 
-    return ($Global:DSInstanceVersion -as [System.Version]).CompareTo($CandidVersion) -ge 0
+    return $Global:DSInstanceVersion.CompareTo($CandidVersion) -ge 0
 }

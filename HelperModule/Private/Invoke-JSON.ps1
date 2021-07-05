@@ -3,6 +3,7 @@ function Invoke-JSON {
         [parameter(HelpMessage = 'Disables the use of HTTP(s) on your Devolutions Server')][switch]$DisableHttps,
         [parameter()][string]$serialKey = ''
         #[parameter(HelpMessage = 'Enabled if you are planning on using Integrated Security on your Devolutions Server')][switch]$IntegratedSecurity
+
     )
     #TODO Next step prompt for Domain Identity
     #TODO Next step Integrated on or off
@@ -64,5 +65,4 @@ function Invoke-JSON {
         Write-LogEvent "Please verify $path\response.json file before continuing, make sure all your info is correct." -Output
         Read-Host -Prompt 'Hit enter to continue...'
     } catch [System.Exception] { Write-LogEvent $_ -Errors }
-
 }

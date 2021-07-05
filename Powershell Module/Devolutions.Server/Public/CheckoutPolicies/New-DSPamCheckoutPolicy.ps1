@@ -6,37 +6,36 @@ function New-DSPamCheckoutPolicy {
     Creates a new PAM checkout policy using supplied parameters. If one or more parameters are ommited, they default to a certain value.
     Only mandatory value is "name".
     .EXAMPLE
+    ---
+    New-DSPamCheckoutPolicy -Name "public accounts"
+    ---
     $newPolicy = @{
         name = "public accounts"
         checkoutTime = 120
         isDefault = $true
     }
 
-    > New-DSPamCheckoutPolicy @newPolicy
+    New-DSPamCheckoutPolicy @newPolicy
+    .NOTES
+    "isPlaceholder", "folderItems" and "useAsDefault" from original response are ommited since I'm not sure if they are used at all.
+
+    TODO: Maybe send a message of some sort for each param that's out of range/invalid. As of now, invalid params are ignored and out of range are reverted to default.
     #>
     [CmdletBinding()]
     param(
-        #Policy's new name
         [ValidateNotNullOrEmpty()]
         [string]$name = $(throw 'Name is null or empty. Please provide a name and try again.'),
-        #Used to select approval mode (None/Mandatory)
         [int]$checkoutApprovalMode,
-        #Used to select checkout reason mode (None/Mandatory/Optional)
         [int]$checkoutReasonMode,
-        #Used to select if owner can self-checkout
         [int]$allowCheckoutOwnerAsApprover,
-        #Used to select if administrators can approve checkout
         [int]$includeAdminsAsApprovers,
-        #Used to select if PAM managers can approve checkout
         [int]$includeManagersAsApprovers,
-        #Used to select default checkout time
         [int]$checkoutTime,
-        #Used to set default policy
         [bool]$isDefault
     )
         
     BEGIN {
-        Write-Verbose '[New-DSPamCheckoutPolicy] Beginning...'
+        Write-Verbose '[New-DSPamCheckoutPolicy] Begin...'
         
         $URI = "$Script:DSBaseURI/api/pam/checkout-policies"
 

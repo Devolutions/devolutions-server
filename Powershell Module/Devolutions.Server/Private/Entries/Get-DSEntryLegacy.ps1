@@ -19,7 +19,7 @@ function Get-DSEntryLegacy{
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSEntryLegacy] Beginning...'
+            Write-Verbose '[Get-DSEntryLegacy] begin...'
 
     		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{

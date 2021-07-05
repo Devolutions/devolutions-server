@@ -1,55 +1,44 @@
 function Update-DSPamCheckoutPolicy {
     <#
-        .SYNOPSIS
-        Update a checkout policy.
-        .DESCRIPTION
-        Update a checkout policy using supplied parameters. Ommited parameters are ignored. If one or more parameter is
-        out of range, it is ignored and a message is sent to host.
-        .EXAMPLE
-        $newPolicyInfos = @{
-            candidPolicyID = "ad375b93-9fb7-4f37-a8c7-e20bf382f68d"
-            name = "private accounts"
-            isDefault = $false
-        }
-
-        > Update-DSPamCheckoutPolicy @newPolicyInfos 
-        
-        .EXAMPLE
-        $newPolicyInfos = @{
-            candidPolicyID = "ad375b93-9fb7-4f37-a8c7-e20bf382f68d"
-            checkoutApprovalMode = 10
-            checkoutTime = -1
-        }
-
-        > Update-DSPamCheckoutPolicy @newPolicyInfos 
-
-        -> Checkout time cannot be less or equal to 0. Change is ignored.
-        -> Checkout approval mode value should be between 0 and 2 (Inclusivly). Change is ignored.
+    .SYNOPSIS
+    Update a checkout policy.
+    .DESCRIPTION
+    Update a checkout policy using supplied parameters. Ommited parameters are ignored. If one or more parameter is
+    out of range, it is ignored and a message is sent to host.
+    .EXAMPLE
+    ---
+    $newPolicyInfos = @{
+        candidPolicyID = "ad375b93-9fb7-4f37-a8c7-e20bf382f68d"
+        name = "private accounts"
+        isDefault = $false
+    }
+    Update-DSPamCheckoutPolicy @newPolicyInfos 
+    -> Update is successful
+    ---
+    $newPolicyInfos = @{
+        candidPolicyID = "ad375b93-9fb7-4f37-a8c7-e20bf382f68d"
+        checkoutApprovalMode = 10
+        checkoutTime = -1
+    }
+    Update-DSPamCheckoutPolicy @newPolicyInfos 
+    -> Checkout time cannot be less or equal to 0. Change is ignored.
+    -> Checkout approval mode value should be between 0 and 2 (Inclusivly). Change is ignored.
     #>
     [CmdletBinding()]
     param (
-        #Policy ID
         [ValidateNotNullOrEmpty()]
         [guid]$candidPolicyID,
-        #Policy's new name
         [string]$name,
-        #Policy's new checkout approval mode (None/Mandatory)
         [int]$checkoutApprovalMode,
-        #Policy's new checkout reason mode (None/Mandatory/Optional)
         [int]$checkoutReasonMode,
-        #Policy owner can self-checkout
         [int]$allowCheckoutOwnerAsApprover,
-        #Administrators can approve checkout
         [int]$includeAdminsAsApprovers,
-        #PAM managers can approve checkout
         [int]$includeManagersAsApprovers,
-        #Default checkout time
         [int]$checkoutTime,
-        #Is default checkout policy for all entries
         [bool]$isDefault
     )
     BEGIN {
-        Write-Verbose '[Update-DSPamFolder] Beginning...'
+        Write-Verbose '[Update-DSPamFolder] Begin...'
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."

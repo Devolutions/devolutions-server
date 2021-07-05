@@ -1,17 +1,11 @@
 function Update-DSRDPEntry {
     <#
         .SYNOPSIS
-        Updates an RDP entry.
-        .DESCRIPTION
-        Updates an RDP entry using supplied parameters.
-        .EXAMPLE
-        $UpdatedRDPEntry = @{
-            Name = ...
-            Domain = ...
-            Password = ...
-        }
 
-        > Update-DSRDPEntry @UpdatedRDPEntry
+        .DESCRIPTION
+
+        .EXAMPLE
+
     #>
     [CmdletBinding()]
     PARAM (
@@ -42,31 +36,17 @@ function Update-DSRDPEntry {
         #Entry's expiration date (ISO-8601 format (yyyy-mm-ddThh:mm:ss.000Z)
         [string]$Expiration,
 
-        #Warns the user if RDP session is already opened
-        [bool]$WarnIfAlreadyOpened = $False,
         #A comment is required to view entry's credentials
-        [bool]$CredentialViewedCommentIsRequired = $False,
+        [bool]$CredentialViewedCommentIsRequired,
         #A ticket number is required to view entry's credentials
-        [bool]$TicketNumberIsRequiredOnCredentialViewed = $False,
-        #Prompt the user for comment/ticket number on credential viewed
-        [bool]$CredentialViewedPrompt = $False,
-        #Prompt the user for comment/ticket number on open
-        [bool]$OpenCommentPrompt = $False,
-        #A comment is required on open
-        [bool]$OpenCommentIsRequired = $False,
-        #A ticket number is required on open
-        [bool]$TicketNumberIsRequiredOnOpen = $False,
-        #Prompt the user for comment/ticket number on close
-        [bool]$CloseCommentPrompt = $False,
-        #A comment is required on close
-        [bool]$CloseCommentIsRequired = $False,
-        #A ticket number is required on close
-        [bool]$TicketNumberIsRequiredOnClose = $False,
+        [bool]$TicketNumberIsRequiredOnCredentialViewed,
+        #Prompt the user for comment/ticket number
+        [bool]$CredentialViewedPrompt,
 
         #Entry's checkout mode
-        [CheckOutMode]$CheckoutMode,
+        [Devolutions.RemoteDesktopManager.CheckOutMode]$CheckoutMode,
         #Entry's offline mode
-        [AllowOffline]$AllowOffline,
+        [Devolutions.RemoteDesktopManager.AllowOffline]$AllowOffline,
 
         #RDP's host name (Address)
         [string]$HostName,
@@ -75,7 +55,7 @@ function Update-DSRDPEntry {
         #Port used by RDP
         [string]$Port,
         #RDP Type
-        [RDPType]$RDPType,
+        [Devolutions.RemoteDesktopManager.RDPType]$RDPType,
         #Azure Cloud Services role name
         [string]$RoleName,
         #Azure Cloud Service's instance ID
@@ -98,16 +78,16 @@ function Update-DSRDPEntry {
         #RDP access to smart devices
         [bool]$UsesSmartDevices,
         #Choose destination for sounds
-        [SoundHook]$SoundHook,
+        [Devolutions.RemoteDesktopManager.SoundHook]$SoundHook,
         #RDP Audio quality
-        [RDPAudioQualityMode]$AudioQualityMode,
+        [Devolutions.RemoteDesktopManager.RDPAudioQualityMode]$AudioQualityMode,
         #Record audio from RDP session
         [bool]$AudioCaptureRedirectionMode,
         #Sets the destination for Windows key combinations (ALT+TAB, for example)
         [ValidateSet(
-            [KeyboardHook]::OnTheLocalComputer,
-            [KeyboardHook]::InFullScreenMode,
-            [KeyboardHook]::OnTheRemoteComputer
+            [Devolutions.RemoteDesktopManager.KeyboardHook]::OnTheLocalComputer,
+            [Devolutions.RemoteDesktopManager.KeyboardHook]::InFullScreenMode,
+            [Devolutions.RemoteDesktopManager.KeyboardHook]::OnTheRemoteComputer
         )]
         [string]$KeyboardHook,
 
@@ -153,28 +133,26 @@ function Update-DSRDPEntry {
         #Enable bandwith autodetection
         [bool]$BandwidthAutoDetect,
         [ValidateSet(
-            [DefaultBoolean]::Default,
-            [DefaultBoolean]::True,
-            [DefaultBoolean]::False
+            [Devolutions.RemoteDesktopManager.DefaultBoolean]::Default,
+            [Devolutions.RemoteDesktopManager.DefaultBoolean]::True,
+            [Devolutions.RemoteDesktopManager.DefaultBoolean]::False
         )]
         #Sets if addons load in embedded or not
         [string]$LoadAddonsMode,
-        [RDPClientSpec]$ClientSpec,
+        [Devolutions.RemoteDesktopManager.RDPClientSpec]$ClientSpec,
         [int]$KeepAliveInternal,
        
         [ValidateSet(
-            [ConnectionDisplayMode]::External, 
-            [ConnectionDisplayMode]::Embedded, 
-            [ConnectionDisplayMode]::Undocked
+            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::External, 
+            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded, 
+            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Undocked
         )]
         #Display mode used by RDP
         [string]$DisplayMode,
         #Display monitor used by RDP
-        [DisplayMonitor]$DisplayMonitor,
+        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayMonitor,
         #Virtual desktop used by RPD
-        [DisplayMonitor]$DisplayVirtualDesktop,
-
-        [Field[]]$NewFieldsList
+        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayVirtualDesktop
     )
     
     BEGIN {
@@ -182,11 +160,8 @@ function Update-DSRDPEntry {
 
         $PSBoundParameters.Remove('EntryID')
         $PSBoundParameters.Remove('Verbose')
-        $PSBoundParameters.Remove('NewFieldList')
         
         $RootProperties = @('Group', 'Name', 'DisplayMode', 'DisplayMonitor', 'DisplayVirtualDesktop')
-        $EventsProperties = @('WarnIfAlreadyOpened', 'CredentialViewedCommentIsRequired', 'TicketNumberIsRequiredOnCredentialViewed', 
-            'CredentialViewedPrompt', 'OpenCommentPrompt', 'OpenCommentIsRequired', 'TicketNumberIsRequiredOnOpen', 'CloseCommentPrompt', 'CloseCommentIsRequired', 'TicketNumberIsRequiredOnClose')
     }
     
     PROCESS {
@@ -194,7 +169,7 @@ function Update-DSRDPEntry {
             if (($EntryCtx = Get-DSEntry $EntryID -IncludeAdvancedProperties).isSuccess) {
                 $RDPEntry = $EntryCtx.Body.data
 
-                if ($RDPEntry.connectionType -ne [ConnectionType]::RDPConfigured) {
+                if ($RDPEntry.connectionType -ne [Devolutions.RemoteDesktopManager.ConnectionType]::RDPConfigured) {
                     throw 'Provided entry is not of type RDPConfigured. Please use the appropriate CMDlet for this entry.'
                 }
             }
@@ -210,9 +185,6 @@ function Update-DSRDPEntry {
                         $false { $RDPEntry | Add-Member -NotePropertyName $param.Key -NotePropertyValue $param.Value; break }
                         Default { Write-Warning "[Update-DSRDPEntry] Error with param: $($param.Key)"; break }
                     }
-                }
-                elseif ($param.Key -in $EventsProperties.GetEnumerator()) {
-                    $RDPEntry.events | Add-Member -NotePropertyName $param.Key -NotePropertyValue $param.Value -Force
                 }
                 #Parameter is in partialConnection.data
                 else {
@@ -309,21 +281,6 @@ function Update-DSRDPEntry {
                 }
             }
 
-            foreach ($Param in $NewFieldsList.GetEnumerator()) {
-                switch ($Param.Depth) {
-                    'root' { $RDPEntry | Add-Member -NotePropertyName $param.Name -NotePropertyValue $param.Value -Force } 
-                }
-                default {
-                    if ($RDPEntry.($Param.Depth)) {
-                        $RDPEntry.($param.Depth) | Add-Member -NotePropertyName $param.Name -NotePropertyValue $param.Value -Force
-                    }
-                    else {
-                        $RDPEntry |c Add-Member -NotePropertyName $param.Depth -NotePropertyValue $null -Force
-                        $RDPEntry.($param.Depth) | Add-Member -NotePropertyName $param.Name -NotePropertyValue $param.Value -Force
-                    }
-                }
-            }
-    
             $RDPEntry.data = Protect-ResourceToHexString (ConvertTo-Json $RDPEntry.data)
 
             $res = Update-DSEntryBase -jsonBody (ConvertTo-Json $RDPEntry)

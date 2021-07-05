@@ -15,7 +15,7 @@ function New-CryptographicKey{
     )
     
     BEGIN{
-        Write-Verbose '[New-CryptographicKey] Beginning...'
+        Write-Verbose '[New-CryptographicKey] begin...'
     }
 
     PROCESS {

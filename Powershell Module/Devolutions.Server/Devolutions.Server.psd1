@@ -36,10 +36,10 @@
     # PowerShellHostVersion = ''
     
     # Minimum version of Microsoft .NET Framework required by this module. This prerequisite is valid for the PowerShell Desktop edition only.
-    # DotNetFrameworkVersion = '5.0.0'
+    #DotNetFrameworkVersion = '5.0.0'
     
     # Minimum version of the common language runtime (CLR) required by this module. This prerequisite is valid for the PowerShell Desktop edition only.
-    # CLRVersion             = '4.0'
+    #CLRVersion             = '4.0'
     
     # Processor architecture (None, X86, Amd64) required by this module
     # ProcessorArchitecture = ''
@@ -48,10 +48,10 @@
     # RequiredModules = @()
     
     # Assemblies that must be loaded prior to importing this module
-    # RequiredAssemblies   = @()
+    RequiredAssemblies   = @('.\DvlsAPI.dll')
     
     # Script files (.ps1) that are run in the caller's environment prior to importing this module.
-    ScriptsToProcess     = @('.\Private\Types\Field.ps1', '.\Private\Types\ServerResponse.ps1')
+    # ScriptsToProcess = @()
     
     # Type files (.ps1xml) to be loaded when importing this module
     # TypesToProcess = @()
@@ -65,7 +65,7 @@
     FunctionsToExport    = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Get-DSIsLogged', 'Protect-ResourceToHexString',
         'Get-DSSecureMessages',
         'Get-DSVaults', 'Get-DSVault', 'Get-DSVaultPermissions', 'New-DSVault', 'Update-DSVault', 'Remove-DSVault', 'Set-DSVaultUsers', 'Set-DSVaultRoles', 'Set-DSVaultApplications',
-        'Get-DSEntriesTree', 'Get-DSFolders', 'New-DSFolder',
+        'Get-DSEntriesTree', 'Get-DSFolder', 
         'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData', 'Get-DSEntriesPermissions', 'Remove-DSEntry',
         'New-DSCredentialEntry',
         'Get-DSPamProviders', 'New-DSPamProvider', 'Remove-DSPamProvider', 'Update-DSPamProvider', 
@@ -73,9 +73,7 @@
         'Get-DSPamAccounts', 'New-DSPamAccount', 'Remove-DSPamAccount', 
         'New-DSRole', 'Get-DSRoles', 'Update-DSRole', 'Remove-DSRole',
         'New-DSUser', 'Update-DSUser', 'Remove-DSUser', 'Get-DSUsers',
-        'New-DSEntryBase', 'Update-DSEntryBase', 'New-DSRDPEntry', 'Update-DSRDPEntry', 'New-DSSSHShellEntry', 'Update-DSSSHShellEntry',
-
-        'Get-DSPasswordsReport'
+        'New-DSEntryBase','Update-DSEntryBase','New-DSRDPEntry', 'Update-DSRDPEntry', 'New-DSSSHShellEntry'
     )
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.

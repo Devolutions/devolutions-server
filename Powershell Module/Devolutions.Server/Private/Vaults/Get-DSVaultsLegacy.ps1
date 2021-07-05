@@ -16,7 +16,7 @@ function Get-DSVaultsLegacy{
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSVaultsLegacy] Beginning...'
+            Write-Verbose '[Get-DSVaultsLegacy] begin...'
     
             $URI = "$Script:DSBaseURI/api/security/vaults"
 

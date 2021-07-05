@@ -21,7 +21,7 @@ function Update-DSPamProvider {
         [int]$checkoutTime
     )
     BEGIN {
-        Write-Verbose '[Update-DSPamProvider] Beginning...'
+        Write-Verbose '[Update-DSPamProvider] Begin...'
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."

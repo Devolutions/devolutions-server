@@ -17,7 +17,7 @@ function Remove-DSPamFolder {
     )
         
     BEGIN {
-        Write-Verbose '[Remove-DSPamFolder] Beginning...'
+        Write-Verbose '[Remove-DSPamFolder] Begin...'
     
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."

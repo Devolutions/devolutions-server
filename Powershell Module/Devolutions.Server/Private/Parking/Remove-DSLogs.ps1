@@ -27,7 +27,7 @@ function Remove-DSLogs {
         )
         
         BEGIN {
-            Write-Verbose '[Remove-DSLogs] Beginning...'
+            Write-Verbose '[Remove-DSLogs] begin...'
 
             $URI = "$Script:DSBaseURI/api/log/cleanup/run"
     

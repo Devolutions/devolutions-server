@@ -29,12 +29,12 @@ function Update-DSEntry-old {
         [bool]$TicketNumberIsRequiredOnCredentialViewed,
 
         #Security
-        [CheckOutMode]$CheckoutMode,
-        [AllowOffline]$AllowOffline,
+        [Devolutions.RemoteDesktopManager.CheckOutMode]$CheckoutMode,
+        [Devolutions.RemoteDesktopManager.AllowOffline]$AllowOffline,
 
         #PrivateKey Entry specifics...
         [ValidateSet('NoKey', 'Data')]
-        [PrivateKeyType]$PrivateKeyType,
+        [Devolutions.RemoteDesktopManager.PrivateKeyType]$PrivateKeyType,
         [string]$PrivateKeyPath,
         [string]$PrivateKeyPassphrase,
         [bool]$PromptForPassphrase,
@@ -48,7 +48,7 @@ function Update-DSEntry-old {
         #Port used by RDP
         [string]$Port,
         #RDP Type
-        [RDPType]$RDPType,
+        [Devolutions.RemoteDesktopManager.RDPType]$RDPType,
         #Azure Cloud Services role name
         [string]$RoleName,
         #Azure Cloud Service's instance ID
@@ -73,13 +73,13 @@ function Update-DSEntry-old {
         #RDP access to smart devices
         [bool]$UsesSmartDevices,
         #Choose destination for sounds
-        [SoundHook]$SoundHook,
+        [Devolutions.RemoteDesktopManager.SoundHook]$SoundHook,
         #RDP Audio quality
-        [RDPAudioQualityMode]$AudioQualityMode,
+        [Devolutions.RemoteDesktopManager.RDPAudioQualityMode]$AudioQualityMode,
         #Record audio from RDP session
         [bool]$AudioCaptureRedirectionMode,
         #Sets the destination for Windows key combinations (ALT+TAB, for example)
-        [KeyboardHook]$KeyboardHook,
+        [Devolutions.RemoteDesktopManager.KeyboardHook]$KeyboardHook,
 
         <# -- General -> Programs tab -- #>
 
@@ -127,9 +127,9 @@ function Update-DSEntry-old {
         #Enable bandwith autodetection
         [bool]$BandwidthAutoDetect,
         [ValidateSet(
-            [DefaultBoolean]::Default,
-            [DefaultBoolean]::True,
-            [DefaultBoolean]::False
+            [Devolutions.RemoteDesktopManager.DefaultBoolean]::Default,
+            [Devolutions.RemoteDesktopManager.DefaultBoolean]::True,
+            [Devolutions.RemoteDesktopManager.DefaultBoolean]::False
         )]
         #Sets if addons load in embedded or not
         [string]$LoadAddonsMode,
@@ -137,16 +137,16 @@ function Update-DSEntry-old {
         <# -- User interface tab -- #>
 
         [ValidateSet(
-            [ConnectionDisplayMode]::External, 
-            [ConnectionDisplayMode]::Embedded, 
-            [ConnectionDisplayMode]::Undocked
+            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::External, 
+            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Embedded, 
+            [Devolutions.RemoteDesktopManager.ConnectionDisplayMode]::Undocked
         )]
         #Display mode used by RDP
         [string]$DisplayMode,
         #Display monitor used by RDP
-        [DisplayMonitor]$DisplayMonitor,
+        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayMonitor,
         #Virtual desktop used by RPD
-        [DisplayMonitor]$DisplayVirtualDesktop
+        [Devolutions.RemoteDesktopManager.DisplayMonitor]$DisplayVirtualDesktop
     )
     BEGIN {
         Write-Verbose '[Update-DSEntry] Beginning...'
@@ -166,9 +166,9 @@ function Update-DSEntry-old {
             }
 
             $res = switch ($EntryCtx.Body.data.connectionType) {
-                ([ConnectionType]::Credential.value__) { Update-DSCredentialEntry $Parameters; break }
-                ([ConnectionType]::Group.value__) { Update-DSFolderCredentials $Parameters; break }
-                ([ConnectionType]::RDPConfigured.value__) { Update-DSRDPEntry $Parameters; break } 
+                ([Devolutions.RemoteDesktopManager.ConnectionType]::Credential.value__) { Update-DSCredentialEntry $Parameters; break }
+                ([Devolutions.RemoteDesktopManager.ConnectionType]::Group.value__) { Update-DSFolderCredentials $Parameters; break }
+                ([Devolutions.RemoteDesktopManager.ConnectionType]::RDPConfigured.value__) { Update-DSRDPEntry $Parameters; break } 
                 Default { throw "Entries of type $($EntryCtx.Body.data.connectionType) are not supported yet."; break }            
             }
 

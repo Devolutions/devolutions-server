@@ -23,7 +23,7 @@ function New-DSPamProvider {
     )
         
     BEGIN {
-        Write-Verbose '[New-DSPamProvider] Beginning...'
+        Write-Verbose '[New-DSPamProvider] Begin...'
     
         $URI = "$Script:DSBaseURI/api/pam/providers"
 

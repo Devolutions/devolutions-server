@@ -18,7 +18,7 @@ function Get-DSEntrySensitiveDataLegacy {
     )
       
     BEGIN {
-        Write-Verbose '[Get-DSEntrySensitiveDataLegacy] Beginning...'
+        Write-Verbose '[Get-DSEntrySensitiveDataLegacy] Begin...'
     
         $URI = "$Script:DSBaseURI/api/Connections/partial/$EntryID/sensitive-data"
 

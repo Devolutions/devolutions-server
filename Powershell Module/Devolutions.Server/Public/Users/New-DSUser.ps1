@@ -10,10 +10,10 @@ function New-DSUser {
     [CmdletBinding()]
     PARAM (
         #General tab
-        [ValidateSet([ServerUserType]::Builtin, [ServerUserType]::Domain)]
-        [string]$AuthenticationType = [ServerUserType]::Builtin,
-        [UserType]$UserType = [UserType]::User, #TODO Maybe not needed
-        [UserLicenceTypeMode]$UserLicenseType = [UserLicenceTypeMode]::Default,
+        [ValidateSet([Devolutions.RemoteDesktopManager.ServerUserType]::Builtin, [Devolutions.RemoteDesktopManager.ServerUserType]::Domain)]
+        [string]$AuthenticationType = [Devolutions.RemoteDesktopManager.ServerUserType]::Builtin,
+        [Devolutions.RemoteDesktopManager.UserType]$UserType = [Devolutions.RemoteDesktopManager.UserType]::User, #TODO Maybe not needed
+        [Devolutions.RemoteDesktopManager.UserLicenceTypeMode]$UserLicenseType = [Devolutions.RemoteDesktopManager.UserLicenceTypeMode]::Default,
 
         [ValidateNotNullOrEmpty()]
         [string]$Username = $(throw "Username is null or empty. Please provide a valid username and try again."),
@@ -55,8 +55,8 @@ function New-DSUser {
         [bool]$CanImport = $true, #CustomSecurityEntity
         [bool]$CanExport = $true, #CustomSecurityEntity
 
-        [ValidateSet([OfflineMode]::Disabled, [OfflineMode]::ReadOnly, [OfflineMode]::ReadWrite)]
-        [string]$OfflineMode = [OfflineMode]::ReadWrite #CustomSecurityEntity
+        [ValidateSet([Devolutions.RemoteDesktopManager.OfflineMode]::Disabled, [Devolutions.RemoteDesktopManager.OfflineMode]::ReadOnly, [Devolutions.RemoteDesktopManager.OfflineMode]::ReadWrite)]
+        [string]$OfflineMode = [Devolutions.RemoteDesktopManager.OfflineMode]::ReadWrite #CustomSecurityEntity
     )
     
     BEGIN {
@@ -70,7 +70,7 @@ function New-DSUser {
     }
     
     PROCESS {
-        if (($AuthenticationType -eq [ServerUserType]::Builtin) -and !(Get-Variable -Name Password)) {
+        if (($AuthenticationType -eq [Devolutions.RemoteDesktopManager.ServerUserType]::Builtin) -and !(Get-Variable -Name Password)) {
             throw "Password is required when creating new user of type custom. Please provide a valid password and try again."
         }
 

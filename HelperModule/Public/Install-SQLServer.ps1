@@ -14,13 +14,11 @@ function Install-SQLServer {
         }
         $path = "$PSScriptRoot\Programs"
         if (!(Test-Path $path)) { New-Item -Path $path -ItemType Directory }
-
         #SQL Express install
         Write-LogEvent 'Downloading SQL Server Express...'
         $Installer = 'SQL-SSEI-Expr.exe'
         $URL = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/ef88f312-606e-4a78-bff9-2177867f7a5b'
         try { Start-BitsTransfer $URL -Destination $path\$Installer } catch [System.Exception] { Write-LogEvent $_ -Errors }
-
         Write-LogEvent 'Installing SQL Server Express...'
         try {
             Start-Process -FilePath $Path\$Installer -Args '/ACTION=INSTALL /IACCEPTSQLSERVERLICENSETERMS /Q' -Verb RunAs -Wait 
@@ -30,7 +28,6 @@ function Install-SQLServer {
             Remove-Item $path\$Installer 
             Write-LogEvent "Removing $path\$Installer from $Env:ComputerName"
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
-
 
         #modules required for the DB creation and setting the login rights
         try {
@@ -43,7 +40,6 @@ function Install-SQLServer {
             Import-Module -Name 'SqlServer'
             Write-LogEvent 'Imported SQLServer module for PowerShell.'
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
-
         try {
             #set mixed mode for authentication
             $comp = $env:ComputerName
@@ -53,7 +49,6 @@ function Install-SQLServer {
             }
             $sql.Alter()
             try { Get-Service -Name 'MSSQL$SQLEXPRESS' | Restart-Service } catch [System.Exception] { Write-LogEvent $_ -Errors }
-
 
             #TODO Next Step: Add naming for more customizability
             # set instance and database name variables
@@ -77,7 +72,6 @@ function Install-SQLServer {
 
             # change owner
             if (!($SQLIntegrated)) {
-
                 $db.SetOwner('sa')
                 Write-LogEvent 'DB owner set to sa account.' -Output
             }
@@ -109,7 +103,7 @@ function Install-SQLServer {
                 Write-LogEvent "$SQLUser set as db_owner on $dbname in $SqlInstance" -Output
             }
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
-
+        
 
         if ($SSMS) { Install-SSMS }
     } else {

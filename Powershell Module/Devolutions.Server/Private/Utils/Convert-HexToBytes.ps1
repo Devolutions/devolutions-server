@@ -14,7 +14,7 @@ Function Convert-HexToBytes {
     )
 	
 	BEGIN{
-        Write-Verbose '[Convert-HexToBytes] Beginning...'
+        Write-Verbose '[Convert-HexToBytes] begin...'
 	}
 
 	PROCESS {

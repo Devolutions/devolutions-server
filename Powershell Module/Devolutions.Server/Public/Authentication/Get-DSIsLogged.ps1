@@ -12,7 +12,7 @@ function Get-DSIsLogged {
 	param(	)
 
 	BEGIN { 
-		Write-Verbose '[Get-DSIsLogged] Beginning...'
+		Write-Verbose '[Get-DSIsLogged] begin...'
 		$URI = "$Script:DSBaseURI/api/is-logged"
 	}
 

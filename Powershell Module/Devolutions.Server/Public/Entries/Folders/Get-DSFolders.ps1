@@ -1,55 +1,46 @@
-function Get-DSFolders {
+function Get-DSFolders{
     <#
     .SYNOPSIS
-    Gets all folders for a given vault.
+    
     .DESCRIPTION
-    Gets all folders for a given vaults and include all subfolders if 'IncludeSubFolders' flag is present.
+    
     .EXAMPLE
-    Return all folders in default vault
-    > Get-DSFolders -VaultId '00000000-0000-0000-0000-000000000000'
-    .EXAMPLE
-    Return all folders and subfolders in default vault
-    > Get-DSFolders -VaultId '00000000-0000-0000-0000-000000000000' -IncludeSubFolders
+    
+    .NOTES
+     By default, it returns only the root level folders, this is by design to prevent 
+     a huge compute charge for customers that have thousands of entries in their vaults
+    .LINK
     #>
-    [CmdletBinding()]
-    param(			
-        [guid]$VaultId,
-        [switch]$IncludeSubFolders
-    )
+        [CmdletBinding()]
+        param(			
+            [ValidateNotNullOrEmpty()]
+            [string]$VaultId,
+            #TODO:improve to allow for a folder to start from
+            [switch]$IncludeSubFolders
+        )
         
-    BEGIN {
-        Write-Verbose '[Get-DSFolders] begin...'
-        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
-            throw 'Session does not seem authenticated, call New-DSSession.'
+        BEGIN {
+            Write-Verbose '[Get-DSFolders] begin...'
+            if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
+			{
+				throw "Session does not seem authenticated, call New-DSSession."
+			}
         }
-    }
     
-    PROCESS {
-        $Params = @{
-            URI    = "$Script:DSBaseURI/api/connections/partial/tree/$($VaultId)"
-            Method = 'GET'
-        }
-
-        try {
-            if (($res = Invoke-DS @Params).isSuccess) {
-                $AllFolders = $res.Body.data.partialConnections
-
-                if ($IncludeSubFolders) {
-                    $AllFolders | ForEach-Object {
-                        $AllFolders += Get-DSFoldersRecurivse $_
-                    }
+        PROCESS {
+            $response = Get-DSEntriesTree @PSBoundParameters
+            if ($response.IsSuccess) {
+                if ($IncludeSubFolders.IsPresent) {
+                    throw "Assertion : NotImplementedException"
+                } else {
+                    $toplevelFolders = $response.Body.Data | where-object {$_.connectionType -eq 25}
+                    $response.Body.Data =[PSCustomObject]@($toplevelFolders)
                 }
-            } 
+            }
+            return $response
         }
-        catch {
-            Write-Error $_.Exception.Message
-        }
-
-        $res.Body.data = $AllFolders
-        return $res
-    }
     
-    END {
-        Write-Verbose '[Get-DSFolders] ...end'
+        END {
+              Write-Verbose '[Get-DSFolders] ...end'
+        }
     }
-}

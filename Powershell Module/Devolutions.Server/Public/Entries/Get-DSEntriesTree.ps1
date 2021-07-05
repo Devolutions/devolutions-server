@@ -1,13 +1,14 @@
 function Get-DSEntriesTree{
     <#
-        .SYNOPSIS
-        Gets entries's tree
-        .DESCRIPTION
-        Gets the full entries's tree for a given vault.
-        .EXAMPLE
-        Get-DSEntriesTree -VaultId $VaultId
-        .NOTES
-        Used to get permissions report (See 'Sample' folder), but we made it available for use.
+    .SYNOPSIS
+    
+    .DESCRIPTION
+    
+    .EXAMPLE
+    
+    .NOTES
+    
+    .LINK
     #>
         [CmdletBinding()]
         [OutputType([ServerResponse])]
@@ -17,7 +18,7 @@ function Get-DSEntriesTree{
         )
         
         BEGIN {
-            Write-Verbose '[Get-DSEntriesTree] Beginning...'
+            Write-Verbose '[Get-DSEntriesTree] begin...'
     
     		if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken))
 			{

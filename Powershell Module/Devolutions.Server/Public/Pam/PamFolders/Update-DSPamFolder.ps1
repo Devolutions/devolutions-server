@@ -33,7 +33,7 @@ function Update-DSPamFolder {
         [int]$checkoutTime
     )
     BEGIN {
-        Write-Verbose '[Update-DSPamFolder] Beginning...'
+        Write-Verbose '[Update-DSPamFolder] Begin...'
         $URI = "$Script:DSBaseURI/api/pam/folders/$candidFolderID"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {

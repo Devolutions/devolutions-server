@@ -25,45 +25,45 @@ to be found.
             $HasResult = $false
         }
         else {
-            $HasResult = Get-Member -InputObject $responseContentJson -Name 'result'
+            $HasResult = Get-Member -InputObject $responseContentJson -Name "result"
         }
 
         if ($HasResult) {
             switch ($responseContentJson.result) {
-                0 { $responseContentJson.result = [SaveResult]::Error; break; }
-                1 { $responseContentJson.result = [SaveResult]::Success; break; }
-                2 { $responseContentJson.result = [SaveResult]::AccessDenied; break; }
-                3 { $responseContentJson.result = [SaveResult]::InvalidData; break; }
-                4 { $responseContentJson.result = [SaveResult]::AlreadyExists; break; }
-                5 { $responseContentJson.result = [SaveResult]::MaximumReached; break; }
-                6 { $responseContentJson.result = [SaveResult]::NotFound; break; }
-                7 { $responseContentJson.result = [SaveResult]::LicenseExpired; break; }
-                8 { $responseContentJson.result = [SaveResult]::Unknown; break; }
-                9 { $responseContentJson.result = [SaveResult]::TwoFactorTypeNotConfigured; break; }
-                10 { $responseContentJson.result = [SaveResult]::WebApiRedirectToLogin; break; }
-                11 { $responseContentJson.result = [SaveResult]::DuplicateLoginEmail; break; }
+                0 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::Error; break; }
+                1 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::Success; break; }
+                2 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::AccessDenied; break; }
+                3 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::InvalidData; break; }
+                4 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::AlreadyExists; break; }
+                5 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::MaximumReached; break; }
+                6 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::NotFound; break; }
+                7 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::LicenseExpired; break; }
+                8 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::Unknown; break; }
+                9 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::TwoFactorTypeNotConfigured; break; }
+                10 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::WebApiRedirectToLogin; break; }
+                11 { $responseContentJson.result = [Devolutions.RemoteDesktopManager.SaveResult]::DuplicateLoginEmail; break; }
                 Default { throw "Assertion: Unhandled server result error." }
             }
         }
 
         switch ($method) {
-            'GET' {
+            "GET" {
                 #patch
                 if (($null -ne $responseContentJson) -and ($HasResult)) {
                     switch ($responseContentJson.result) {
-                        ( [SaveResult]::Error ) { 
+                        ( [Devolutions.RemoteDesktopManager.SaveResult]::Error ) { 
                             return [ServerResponse]::new($false , $response, $null, $null, "TODO: Unhandled error.", 500) 
                         }
-                        ( [SaveResult]::Success ) { 
+                        ( [Devolutions.RemoteDesktopManager.SaveResult]::Success ) { 
                             return [ServerResponse]::new($true , $response, $responseContentJson, $null, $null, 200) 
                         }
-                        ( [SaveResult]::NotFound ) { 
+                        ( [Devolutions.RemoteDesktopManager.SaveResult]::NotFound ) { 
                             return [ServerResponse]::new($false , $response, $null, $null, "Resource couldn't be found.", 404) 
                         }
-                        ( [SaveResult]::AccessDenied ) { 
+                        ( [Devolutions.RemoteDesktopManager.SaveResult]::AccessDenied ) { 
                             return [ServerResponse]::new($false , $response, $responseContentJson, $null, "You lack the authorization to view this resource.", 401) 
                         }
-                        Default { return [ServerResponse]::new($false , $response, $null, $null, '[GET] Unhandled error. If you see this, please contact your system administrator for help.', 200) }
+                        Default { return [ServerResponse]::new($false , $response, $null, $null, "[GET] Unhandled error. If you see this, please contact your system administrator for help.", 200) }
                     }
                 }
                 else {
@@ -76,34 +76,27 @@ to be found.
                         }
                     }
                     else {
-                        return [ServerResponse]::new($false , $response, $response.Content, $null, '[GET] Unhandled error. If you see this, please contact your system administrator for help.', 200)
+                        return [ServerResponse]::new($false , $response, $response.Content, $null, "[GET] Unhandled error. If you see this, please contact your system administrator for help.", 200)
                     }
                 }                
             }
-            'POST' {
+            "POST" {
+                
                 if (($null -ne $responseContentJson) -and ($HasResult)) {
                     #Get-DSEntrySensitiveData uses POST although the correct verb would be GET.
                     #TODO Fix this after merge. Missing modifications in New-ServerResponse
                     switch ($responseContentJson.result) {
-                        ([SaveResult]::Success) {
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::Success) {
                             return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode)
                         }
-                        ([SaveResult]::NotFound) {
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::NotFound) {
                             return [ServerResponse]::new($false, $response, $responseContentJson, $null, "Resource could not be found. Please make sure you are using an existing ID.", 404)
                         }
-                        ([SaveResult]::InvalidData) {
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::InvalidData) {
                             return [ServerResponse]::new($false, $response, $responseContentJson, $null, "The data you submitted was invalid. Please refer to the CMDlet help section for guidance.", 200)
                         }
-                        ([SaveResult]::Error) {
-                            if ($responseContentJson.errorMessage) {
-                                return [ServerResponse]::new($false, $response, $responseContentJson, $null, $responseContentJson.errorMessage, 400)
-                            }
-                            else {
-                                return [ServerResponse]::new($false, $response, $responseContentJson, $null, '[POST] Unhandled error. If you see this, please contact your system administrator for help.', $response.StatusCode)
-                            }
-                        }
                         Default {
-                            return [ServerResponse]::new($false, $response, $responseContentJson, $null, '[POST] Unhandled error. If you see this, please contact your system administrator for help.', $response.StatusCode)
+                            return [ServerResponse]::new($false, $response, $responseContentJson, $null, "[POST] Unhandled error. If you see this, please contact your system administrator for help.", $response.StatusCode)
                         }
                     }
                 
@@ -113,14 +106,14 @@ to be found.
                         return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode)
                     }
                     else {
-                        return [ServerResponse]::new($false, $response, $responseContentJson, $null, '[POST] Unhandled error. If you see this, please contact your system administrator for help.', $response.StatusCode)
+                        return [ServerResponse]::new($false, $response, $responseContentJson, $null, "[POST] Unhandled error. If you see this, please contact your system administrator for help.", $response.StatusCode)
                     }
                 }
             }
-            'DELETE' {
+            "DELETE" {
                 if (($null -ne $responseContentJson) -and ($HasResult)) {
                     #delete users, for exemple, returns "response.content.result", so we'll make use of that to detect errors and send back appropriate error message.
-                    if ($responseContentJson.result -eq [SaveResult]::Success) {
+                    if ($responseContentJson.result -eq [Devolutions.RemoteDesktopManager.SaveResult]::Success) {
                         return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, 200)
                     }
                     else {
@@ -135,31 +128,31 @@ to be found.
                 }
                 else {
                     #Any unhandled response will end here.
-                    return [ServerResponse]::new($false, $null, $null, $null, '[DELETE] Unhandled error. If you see this, please contact your system administrator for help.', 500)
+                    return [ServerResponse]::new($false, $null, $null, $null, "[DELETE] Unhandled error. If you see this, please contact your system administrator for help.", 500)
                 }
             }
-            'PUT' {
+            "PUT" {
                 if (($null -ne $responseContentJson) -and ($HasResult)) {
                     switch ($responseContentJson.result) {
-                        ([SaveResult]::Success) { return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode); break }
-                        ([SaveResult]::Error) { return [ServerResponse]::new($false, $response, $responseContentJson, $null, $responseContentJson.errorMessage, 400); break }
-                        ([SaveResult]::AlreadyExists) { return [ServerResponse]::new($false, $response, $responseContentJson, $null, "The resource you are trying to create seems to already exist. Please provide a unique name/username for the resource you're trying to create.", 409); break }
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::Success) { return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode); break }
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::Error) { return [ServerResponse]::new($false, $response, $responseContentJson, $null, $responseContentJson.errorMessage, 400); break }
+                        ([Devolutions.RemoteDesktopManager.SaveResult]::AlreadyExists) { return [ServerResponse]::new($false, $response, $responseContentJson, $null, "The resource you are trying to create seems to already exist. Please provide a unique name/username for the resource you're trying to create.", 409); break }
                         Default { return [ServerResponse]::new($false, $response, $responseContentJson, $null, "[PUT] Unhandled error. If you see this, please contact your system administrator for help.", 500); break }
                     }
                 }
                 else {
-                    if ($response.Content.Contains('duplicate')) {
-                        return [ServerResponse]::new($false, $response, $responseContentJson, $null, 'A user group with this name already exists. Please choose another name for your user group.', 400)
+                    if ($response.Content.Contains("duplicate")) {
+                        return [ServerResponse]::new($false, $response, $responseContentJson, $null, "A user group with this name already exists. Please choose another name for your user group.", 400)
                     }
                     else {
-                        return [ServerResponse]::new(($response.StatusCode -eq 200), $response, $responseContentJson, $null, '', $response.StatusCode)
+                        return [ServerResponse]::new(($response.StatusCode -eq 200), $response, $responseContentJson, $null, "", $response.StatusCode)
                     } 
                 }
 
                 
             }
             #Status 418: Should never get this response. If so, update switchcase so you don't.
-            Default { return [ServerResponse]::new($false, $response, $responseContentJson, $null, 'Please contact your system administrator for help.', 418) }
+            Default { return [ServerResponse]::new($false, $response, $responseContentJson, $null, "Please contact your system administrator for help.", 418) }
         }
     }
 }

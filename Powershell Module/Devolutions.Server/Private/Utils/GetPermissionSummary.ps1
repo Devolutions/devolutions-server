@@ -15,8 +15,8 @@ function GetPermissionSummary {
                 Vault        = $vaultName
                 Depth        = $Depth
                 Entry        = $entry.Name
-                OverrideType = [SecurityRoleOverride]::Default
-                Right        = [SecurityRoleRight]::View
+                OverrideType = [Devolutions.RemoteDesktopManager.SecurityRoleOverride]::Default
+                Right        = [Devolutions.RemoteDesktopManager.SecurityRoleRight]::View
                 Principals   = [string]::Join(', ', $sec.ViewRoles)
             }
 
@@ -31,8 +31,8 @@ function GetPermissionSummary {
                     Vault        = $vaultName
                     Depth        = $Depth
                     Entry        = $entry.Name
-                    OverrideType = [enum]::ToObject([SecurityRoleOverride], $perm.override)
-                    Right        = [enum]::ToObject([SecurityRoleRight], $perm.right)
+                    OverrideType = [enum]::ToObject([Devolutions.RemoteDesktopManager.SecurityRoleOverride], $perm.override)
+                    Right        = [enum]::ToObject([Devolutions.RemoteDesktopManager.SecurityRoleRight], $perm.right)
                     Principals   = [string]::Join(', ', $perm.roles)
                 }
             }

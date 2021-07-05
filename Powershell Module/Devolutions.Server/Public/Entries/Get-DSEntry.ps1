@@ -1,20 +1,24 @@
 function Get-DSEntry {
     <#
-        .SYNOPSIS
-        Return a single entry by ID
-        .EXAMPLE
-        > Get-DSEntry -EntryId "[guid]"
+    .SYNOPSIS
+    
+    .DESCRIPTION
+    
+    .EXAMPLE
+    
+    .NOTES
+    
+    .LINK
     #>
         [CmdletBinding()]
         param(			
             [ValidateNotNullOrEmpty()]
             [GUID]$EntryId,
-            #Used to know if advanced properties should be included
             [switch]$IncludeAdvancedProperties
         )
         
     BEGIN {
-        Write-Verbose '[Get-DSEntry] Beginning...'
+        Write-Verbose '[Get-DSEntry] begin...'
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session does not seem authenticated, call New-DSSession."
         }

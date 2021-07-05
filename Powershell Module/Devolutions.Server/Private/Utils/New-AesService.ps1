@@ -15,7 +15,7 @@ A secret key to use
 	)
 	
 	BEGIN{
-        Write-Verbose '[New-AESService] Beginning...'
+        Write-Verbose '[New-AESService] begin...'
 	}
 
 	PROCESS {

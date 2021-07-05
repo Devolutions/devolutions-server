@@ -1,9 +1,10 @@
 function Remove-DSEntry {
     <#
-        .SYNOPSIS
-        Deletes specified entry from database
-        .EXAMPLE
-        > Remove-DSEntry -CandidEntryID "[guid]"
+    .SYNOPSIS
+
+    .DESCRIPTION
+
+    .NOTES
     #>
     PARAM (
         [ValidateNotNullOrEmpty()]

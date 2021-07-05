@@ -20,7 +20,7 @@ Legacy - Do not use
 	)
 
 	BEGIN {
-        Write-Verbose '[Encrypt-RSA] Beginning...'
+        Write-Verbose '[Encrypt-RSA] begin...'
 	}
 	
     PROCESS{

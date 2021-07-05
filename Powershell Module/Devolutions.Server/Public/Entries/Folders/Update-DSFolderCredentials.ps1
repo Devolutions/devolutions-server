@@ -6,20 +6,21 @@ function Update-DSFolderCredentials {
         If the "ClearCredentials" switch parameter is present, it will delete both username AND password from folder. If not, it checks which
         field was provided and check with the current folder credentials to update accordingly with what credentials were supplied.
         .EXAMPLE
-        > Update-DSEntry -FolderId "[guid]"" -Username "YourNewUsername" -Password "YourNewPassword"
+        Folder "X":
+            ID: [guid]
+            Username: "Y"
+            Password: "Z"
 
-        .EXAMPLE
-        > Update-DSEntry -FolderId "[guid]" -ClearCredentials
+        Update-DSEntry -CandidEntryId [guid] -Username "NewUsername" -Password "NewPa$sw0rd123!"
+        > Folder "X":
+            ID: [guid]
+            Username: "NewUsername"
+            Password: "NewPa$sw0rd123!"
     #>
     [CmdletBinding()]
     PARAM (
-        [guid]$FolderId,
-        #Folder's new username
-        [string]$Username,
-        #Folder's new password
-        [string]$Password,
-        #Used to clear credentials on a given folder
-        [switch]$ClearCredentials = $false
+        [ValidateNotNullOrEmpty()]
+        [PSCustomObject]$ParamList
     )
     
     BEGIN {
@@ -34,7 +35,7 @@ function Update-DSFolderCredentials {
     
     PROCESS {
         try {
-            if (!$ClearCredentials -and (!$Username -and !$Password)) {
+            if (!$ParamList.ClearCredentials -and (!($ParamList.Username) -and !($ParamList.Password))) {
                 throw "No username nor password were provided. If you meant to clear the credentials, please use the ClearCredentials switch parameter."
             }
 
@@ -43,25 +44,25 @@ function Update-DSFolderCredentials {
 
             $NewData = @{}
 
-            if ($ClearCredentials) {
+            if ($ParamList.ClearCredentials) {
                 #If ClearCredentials flag is present, send empty username and passwordItem
                 $NewData["userName"] = ""
                 $NewData["passwordItem"] = @{"hasSensitiveData" = $true ; "sensitiveData" = "" } 
             }
             else {
                 #If param username was not provided (User didn't want to modify it)
-                $NewData["userName"] = if ($null -eq $Username) {
+                $NewData["userName"] = if ($null -eq $ParamList.Username) {
                     #Check if current username is empty and set accordingly
                     if ($null -eq $FolderCredentials.userName) { "" } else { $FolderCredentials.userName }
                 }
                 else {
                     #Check if param username match current username and set accordingly
-                    if ($Username -ne $FolderCredentials.userName) { $Username } else { $FolderCredentials.userName }
+                    if ($ParamList.Username -ne $FolderCredentials.userName) { $ParamList.Username } else { $FolderCredentials.userName }
                 }
 
                 #Check if param password match current password and set accordingly
-                $NewData["passwordItem"] = if ($Password -ne $FolderCredentials.password) {
-                    @{"hasSensitiveData" = $true; "sensitiveData" = $Password }
+                $NewData["passwordItem"] = if ($ParamList.Password -ne $FolderCredentials.password) {
+                    @{"hasSensitiveData" = $true; "sensitiveData" = $ParamList.Password }
                 }
                 else {
                     @{"hasSensitiveData" = $true; "sensitiveData" = $FolderCredentials.password }
