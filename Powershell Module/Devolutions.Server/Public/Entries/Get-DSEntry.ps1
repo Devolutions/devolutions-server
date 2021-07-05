@@ -1,5 +1,5 @@
 function Get-DSEntry {
-    [CmdletBinding(DefaultParameterSetName = 'GetAll')]
+    [CmdletBinding(DefaultParameterSetName = 'GetPage')]
     PARAM (
         [guid]$VaultID = ([guid]::Empty),
 
@@ -29,18 +29,18 @@ function Get-DSEntry {
     }
     
     PROCESS {
-        switch ($PSCmdlet.ParameterSetName) {
+        $res = switch ($PSCmdlet.ParameterSetName) {
             'GetAll' { 
-                $Entries = GetAll $VaultID
-                $res = [ServerResponse]::new($true, $null, [PSCustomObject]@{ data = $Entries }, $null, $null, 200)
+                $Entries = GetAll $VaultID | Out-Null
+                [ServerResponse]::new($true, $null, [PSCustomObject]@{ data = $Entries }, $null, $null, 200)
             }
 
             'Filter' {
-                $res = $SearchAllVaults ? (GetByName -EntryName $EntryName -FilterBy $FilterBy) : (GetByName -VaultID $VaultID -EntryName $EntryName -FilterBy $FilterBy)
+                $SearchAllVaults ? (GetByName -EntryName $EntryName -FilterBy $FilterBy) : (GetByName -VaultID $VaultID -EntryName $EntryName -FilterBy $FilterBy)
             }
 
             'GetPage' {
-
+                GetPage -VaultID $VaultID -PageNumber $PageNumber -PageSize $PageSize
             }
         }
 
@@ -121,6 +121,15 @@ function GetByName {
 
 function GetPage {
     Param(
-
+        [guid]$VaultID,
+        [int]$PageNumber,
+        [int]$PageSize
     )
+
+    $RequestParams = @{
+        URI    = "$Script:DSBaseURI/api/v3/entries?vaultid=$VaultID&pagenumber=$PageNumber&pagesize=$PageSize"
+        Method = 'GET'
+    }
+
+    return Invoke-DS @RequestParams
 }
