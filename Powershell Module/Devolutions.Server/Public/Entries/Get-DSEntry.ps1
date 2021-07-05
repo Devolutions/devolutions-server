@@ -8,6 +8,7 @@ function Get-DSEntry {
         [Parameter(ParameterSetName = 'Filter')]
         [switch]$SearchAllVaults,
         [Parameter(ParameterSetName = 'Filter')]
+        [ValidateSet('Name', 'Username', 'Folder', 'Description', 'Tag', ErrorMessage = 'Filtering by {0} is not yet supported. Please use one of the following filters: {1}')]
         [SearchItemType]$FilterBy = [SearchItemType]::Name,
 
         [Parameter(ParameterSetName = 'GetPage')]
