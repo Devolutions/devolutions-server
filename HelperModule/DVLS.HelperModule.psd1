@@ -70,7 +70,7 @@
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
     FunctionsToExport    = @('Get-DevoConsoleVersion', 'Get-SQLDBVersion', 'Install-DevolutionsServer', 'Install-DVLSConsole', 
-        'Install-DVLSInstance', 'Install-SQLServer', 'Install-SSMS', 'New-OfflineDeployment', 'New-OfflineServer', 'Start-PrerequisiteSetup', 
+        'Install-DVLSInstance', 'Install-SQLServer', 'Install-SSMS', 'New-OfflineDeployment', 'New-OfflineServer', 'Install-PrerequisiteSetup', 
         'Update-DVLSInstance', 'Update-SQLDatabase')
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport      = @()

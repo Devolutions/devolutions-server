@@ -7,6 +7,7 @@ function Install-DVLSInstance {
         Start-DVLSSetup
     }#>
 
+    #TODO Add Zip file option
     #Response file to install the DVLS Instance 
     if (!(Test-Path $JSON)) {
         Invoke-JSON
@@ -15,6 +16,6 @@ function Install-DVLSInstance {
         try {
             Write-LogEvent "Removing $JSON from $env:COMPUTERNAME" 
             Remove-Item $JSON 
-        } catch [System.Exception] { Write-EventLog $_ -Errors }
+        } catch [System.Exception] { Write-LogEvent $_ -Errors }
     }
 }

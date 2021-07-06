@@ -6,25 +6,25 @@
     $IISurl = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/58da94c9-2de7-4e33-809a-4610edcfad99'
     if (!(Test-Path $path)) { New-Item -Path $path -ItemType Directory }
     else { Write-LogEvent "'$Path\Packages' folder already exists" }
-    try {
-        If ((Test-dotNet) -and !($dotNet)) {
-            Write-LogEvent 'Downloading .Net 4.7.2'
+    
+    If ((Test-dotNet) -and !($dotNet)) {
+        Write-LogEvent 'Downloading .Net 4.7.2'
+        try {
             Start-BitsTransfer -Source $vnet -Destination "$path\NDP472-KB4054530-x86-x64-AllOS-ENU.exe"
             Write-LogEvent 'Successfully downloaded .Net 4.7.2'
-        } elseif ((Test-dotNet) -and ($dotNet)) {
-            Write-LogEvent '.net 4.7.2 EXE already present in folder'
-        } else {
-            Write-LogEvent 'This is not a Server core .Net 4.7.2 not needed.'
-        }
-    } catch { Write-LogEvent "Download encountered an error: $PSItem" -logLevel [EventLogEntryType]::Error }
-    Try {
-        if (!($Rewrite)) {
-            Write-LogEvent 'Downloading IIS URL Rewrite Module'
+        } catch [System.Exception] { Write-LogEvent $_ -Errors }
+    } elseif ((Test-dotNet) -and ($dotNet)) {
+        Write-LogEvent '.net 4.7.2 EXE already present in folder'
+    } 
+    
+    if (!($Rewrite)) {
+        Write-LogEvent 'Downloading IIS URL Rewrite Module'
+        try {
             Start-BitsTransfer -Source $IISurl -Destination "$path\rewrite_amd64_en-US.msi"
             Write-LogEvent 'Successfully downloaded IIS URL Rewrite Module'
-        } else {
-            Write-LogEvent 'Rewrite package EXE already present in folder'
-        }
-    } catch { Write-LogEvent "Download encountered an error: $PSItem" -logLevel [EventLogEntryType]::Error }
+        } catch [System.Exception] { Write-LogEvent $_ -Errors }
+    } else {
+        Write-LogEvent 'Rewrite package EXE already present in folder'
+    }
     Install-Packages
 }
