@@ -1,5 +1,7 @@
 function Install-Net472Core {
     # Installing .Net Framework 4.7.2
+    $path = "$PSScriptRoot\Packages"
+    $dotNet = Test-Path "$path\NDP472-KB4054530-x86-x64-AllOS-ENU.exe"
     $ExitCode = 0
     $net472 = "$PSScriptRoot\Packages\NDP472-KB4054530-x86-x64-AllOS-ENU.exe"
     Write-LogEvent 'Installing .Net Framework 4.7.2'
@@ -9,4 +11,8 @@ function Install-Net472Core {
     } else {
         Write-LogEvent 'Installation of .Net Framework finished!'
     }
+    Try {
+        Remove-Item $dotNet -Force
+        Write-LogEvent "Removing $dotNet from $Env:COMPUTERNAME" -Output
+    } catch [System.Exception] { Write-LogEvent $_ -Errors }
 }

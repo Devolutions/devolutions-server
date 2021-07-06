@@ -13,19 +13,20 @@ function Install-DevolutionsServer {
         if (Test-Network) {
             if (($SQLServer) -and !($SQLIntegrated) -and ($SSMS)) {
                 Write-LogEvent 'Starting installation for SQL Server and SQL Server Management Studio'
-                Install-SQLServer -SSMS
+                Install-SQLServer -SSMS -TCPProtocol -NamedPipe
             } elseif (($SQLServer) -and ($SQLIntegrated) -and ($SSMS)) {
                 Write-LogEvent 'Starting installation for SQL Server using integrated security and SQL Server Management Studio'
-                Install-SQLServer -SSMS -SQLIntegrated
+                Install-SQLServer -SSMS -SQLIntegrated -TCPProtocol -NamedPipe
             } elseif (($SQLServer) -and !($SQLIntegrated) -and !($SSMS)) {
                 Write-LogEvent 'Starting installation for SQL Server'
-                Install-SQLServer
+                Install-SQLServer -TCPProtocol -NamedPipe
             } elseif (($SQLServer) -and !($SQLIntegrated) -and ($SSMS)) {
                 Write-LogEvent 'Starting installation for SQL Server using integrated security'
-                Install-SQLServer -SQLIntegrated
+                Install-SQLServer -SQLIntegrated -TCPProtocol -NamedPipe
             }
             Write-LogEvent 'Starting installation of Devolutions Console'
             Install-DVLSConsole -ConsoleVersion $ConsoleVersion
+            Install-PrerequisiteSetup
             Write-LogEvent 'Getting JSON response file setup for installation.'
             if ($DisableHttps) { Invoke-JSON -serialKey $serialKey -DisableHttps }
             else { Invoke-JSON -serialKey $serialKey }

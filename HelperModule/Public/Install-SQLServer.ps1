@@ -2,10 +2,11 @@ function Install-SQLServer {
     param(
         [parameter(HelpMessage = 'Used to install SQL Server Management Studio')][switch]$SSMS,
         [parameter(HelpMessage = 'Used to set SQL Server to use Integrated security')][switch]$SQLIntegrated,
-        [parameter(HelpMessage = 'Used to enable TCP on your SQL Server Configuration')][switch]$tcp,
-        [parameter(HelpMessage = 'Used to enable Named Pipes on your SQL Server Configuration')][switch]$up
+        [parameter(HelpMessage = 'Used to enable TCP on your SQL Server Configuration')][switch]$TCPProtocol,
+        [parameter(HelpMessage = 'Used to enable Named Pipes on your SQL Server Configuration')][switch]$NamedPipe
 
     )
+    New-EventSource
     if (!(Test-Programs -Sql -ErrorAction:SilentlyContinue)) {
         
         if (!($SQLIntegrated)) {
@@ -45,8 +46,8 @@ function Install-SQLServer {
             $comp = $env:ComputerName
             $sql = [Microsoft.SqlServer.Management.Smo.Server]::new("$comp\SQLEXPRESS") 
             if ($SQLIntegrated) {
-                $sql.Settings.LoginMode = 'Mixed'
-            }
+                $sql.Settings.LoginMode = 'Integrated'
+            } else { $sql.Settings.LoginMode = 'Mixed' }
             $sql.Alter()
             try { Get-Service -Name 'MSSQL$SQLEXPRESS' | Restart-Service } catch [System.Exception] { Write-LogEvent $_ -Errors }
 
@@ -103,34 +104,33 @@ function Install-SQLServer {
                 Write-LogEvent "$SQLUser set as db_owner on $dbname in $SqlInstance" -Output
             }
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
-        
+        try {
+            $smo = 'Microsoft.SqlServer.Management.Smo.'
+            $wmi = New-Object ($smo + 'Wmi.ManagedComputer').
+
+            # Enable the TCP protocol on the default instance.
+            if ($TCPProtocol) {
+                Write-LogEvent 'Enabling TCP Protocol on Sql Server'
+                $uri = "ManagedComputer[@Name='" + $env:COMPUTERNAME + "']/ServerInstance[@Name='" + $sqlServerName + "']/ServerProtocol[@Name='Tcp']"
+                $Tcp = $wmi.GetSmoObject($uri)
+                $Tcp.IsEnabled = $true
+                $Tcp.Alter()
+                $Tcp
+            }
+            # Enable the named pipes protocol for the default instance.
+            if ($NamedPipe) {
+                Write-LogEvent 'Enabling Named Pipes Protocol on Sql Server'
+                $uri = "ManagedComputer[@Name='" + $env:COMPUTERNAME + "']/ServerInstance[@Name='" + $sqlServerName + "']/ServerProtocol[@Name='Np']"
+                $Np = $wmi.GetSmoObject($uri)
+                $Np.IsEnabled = $true
+                $Np.Alter()
+                $Np
+            }
+        } catch [System.Exception] { Write-LogEvent $_ -Errors }
 
         if ($SSMS) { Install-SSMS }
     } else {
         Write-LogEvent 'SQL Server is already installed.'
         if ($SSMS) { Install-SSMS }
     }
-    try {
-        $smo = 'Microsoft.SqlServer.Management.Smo.'
-        $wmi = New-Object ($smo + 'Wmi.ManagedComputer').
-
-        # Enable the TCP protocol on the default instance.
-        if ($tcp) {
-            Write-EventLog 'Enabling TCP Protocol on Sql Server'
-            $uri = "ManagedComputer[@Name='" + $env:COMPUTERNAME + "']/ServerInstance[@Name='" + $sqlServerName + "']/ServerProtocol[@Name='Tcp']"
-            $Tcp = $wmi.GetSmoObject($uri)
-            $Tcp.IsEnabled = $true
-            $Tcp.Alter()
-            $Tcp
-        }
-        # Enable the named pipes protocol for the default instance.
-        if ($np) {
-            Write-EventLog 'Enabling Named Pipes Protocol on Sql Server'
-            $uri = "ManagedComputer[@Name='" + $env:COMPUTERNAME + "']/ServerInstance[@Name='" + $sqlServerName + "']/ServerProtocol[@Name='Np']"
-            $Np = $wmi.GetSmoObject($uri)
-            $Np.IsEnabled = $true
-            $Np.Alter()
-            $Np
-        }
-    } catch [System.Exception] { Write-LogEvent $_ -Errors }
 }
