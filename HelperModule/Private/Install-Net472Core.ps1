@@ -12,7 +12,7 @@ function Install-Net472Core {
         Write-LogEvent 'Installation of .Net Framework finished!'
     }
     Try {
-        Remove-Item $dotNet -Force
+        Remove-Item $net472 -Force
         Write-LogEvent "Removing $dotNet from $Env:COMPUTERNAME" -Output
     } catch [System.Exception] { Write-LogEvent $_ -Errors }
 }

@@ -5,7 +5,9 @@ function Install-SSMS {
         if (!(Test-Path $path)) { New-Item -Path $path -ItemType Directory }
         $Installer = 'SSMSinstaller.exe'
         Write-LogEvent 'Downloading SQL Server Management Studio...'
-        try { Start-BitsTransfer $SQLStudio -Destination "$path\$Installer" } catch [System.Exception] { Write-LogEvent $_ -Errors }
+        if (!(Test-Path -Path $path\$Installer)) {
+            try { Start-BitsTransfer $SQLStudio -Destination "$path\$Installer" } catch [System.Exception] { Write-LogEvent $_ -Errors }
+        }
         Write-LogEvent 'Installing SQL Server Management Studio...'
         Set-Location $path
         try {

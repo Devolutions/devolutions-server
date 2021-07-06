@@ -11,14 +11,8 @@ function Test-Packages {
     } elseif (!($vnet) -or !($Rewrite) -and (Test-Network)) {
         Invoke-Packages
     } else {
-        Write-LogEvent 'An internet access is required to download URL Rewrite Module and .Net Framework.'
-        Write-LogEvent 'You can on run New-OfflineDeployment on your local PC and tranfer the ZIP over.' -Output
-        Write-LogEvent 'Or you can manually download files here are the download pages for these two prerequisites :' -Output
-        Write-LogEvent "Please place both files in the a folder named $Path" -Output
-        Write-LogEvent 'URL Rewrite Module : ' -Output
-        Write-LogEvent 'https://download.microsoft.com/download/1/2/8/128E2E22-C1B9-44A4-BE2A-5859ED1D4592/rewrite_amd64_en-US.msi' -Output
-        Write-LogEvent '.Net Framework 4.7.2 for Server Core : ' -Output
-        Write-LogEvent 'https://go.microsoft.com/fwlink/?LinkId=863265' -Output
-        Read-Host 'Hit enter to continue...'
+        Write-LogEvent "You are trying to run a script that requires an internet connection.`nPlease run New-OfflineServer to create a local zip on a PC with Internet access. " -Output
+        Read-Host 'Please hit enter to continue...'
+        return
     }
 }

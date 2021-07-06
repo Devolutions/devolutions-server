@@ -12,7 +12,9 @@ function Install-DVLSConsole {
         Write-LogEvent 'Downloading DVLS Console...'
         $Installer = "Setup.DPS.Console.$ConsoleVersion.exe"
         $URL = "https://cdn.devolutions.net/download/$Installer"
-        try { Start-BitsTransfer $URL -Destination "$path\$Installer" } catch [System.Exception] { Write-LogEvent $_ -Errors }
+        if (!(Test-Path -Path $path\$Installer)) {
+            try { Start-BitsTransfer $URL -Destination "$path\$Installer" } catch [System.Exception] { Write-LogEvent $_ -Errors }
+        }
         Write-LogEvent 'Installing DVLS Console...'
         try {
             Start-Process -FilePath "$path\$Installer" -Args '/qn' -Verb RunAs -Wait 

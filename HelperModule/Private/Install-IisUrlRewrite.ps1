@@ -25,7 +25,7 @@ function Install-IisUrlRewrite {
         Write-LogEvent 'Installation of IIS URL Rewrite 2.0 Module finished!'
     }
     Try {
-        Remove-Item $Rewrite -Force
+        Remove-Item $url1 -Force
         Write-LogEvent "Removing $Rewrite from $Env:COMPUTERNAME" -Output
     } catch [System.Exception] { Write-LogEvent $_ -Errors }
 

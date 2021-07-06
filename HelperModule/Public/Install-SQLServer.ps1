@@ -19,10 +19,12 @@ function Install-SQLServer {
         Write-LogEvent 'Downloading SQL Server Express...'
         $Installer = 'SQL-SSEI-Expr.exe'
         $URL = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/ef88f312-606e-4a78-bff9-2177867f7a5b'
-        try { Start-BitsTransfer $URL -Destination $path\$Installer } catch [System.Exception] { Write-LogEvent $_ -Errors }
+        if (!(Test-Path -Path $path\$Installer)) {
+            try { Start-BitsTransfer $URL -Destination $path\$Installer } catch [System.Exception] { Write-LogEvent $_ -Errors }
+        }
         Write-LogEvent 'Installing SQL Server Express...'
         try {
-            Start-Process -FilePath $Path\$Installer -Args '/ACTION=INSTALL /IACCEPTSQLSERVERLICENSETERMS /Q' -Verb RunAs -Wait 
+            Start-Process -FilePath $path\$Installer -Args '/ACTION=INSTALL /IACCEPTSQLSERVERLICENSETERMS /Q' -Verb RunAs -Wait 
             Write-LogEvent 'SQL Server Express installed' 
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
         try {
