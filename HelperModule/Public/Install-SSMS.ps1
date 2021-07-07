@@ -1,13 +1,13 @@
 function Install-SSMS {
     if (!(Test-Programs -SSMS -ErrorAction:SilentlyContinue)) {
-        $SQLStudio = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/309b2c5d-1225-4123-a27c-ff4eb5f3a378'
         $path = "$PSScriptRoot\Programs"
+        $SQLStudio = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/309b2c5d-1225-4123-a27c-ff4eb5f3a378'
         if (!(Test-Path $path)) { New-Item -Path $path -ItemType Directory }
         $Installer = 'SSMSinstaller.exe'
         Write-LogEvent 'Downloading SQL Server Management Studio...'
         if (!(Test-Path -Path $path\$Installer)) {
             try { Start-BitsTransfer $SQLStudio -Destination "$path\$Installer" } catch [System.Exception] { Write-LogEvent $_ -Errors }
-        }
+        }        
         Write-LogEvent 'Installing SQL Server Management Studio...'
         Set-Location $path
         try {
