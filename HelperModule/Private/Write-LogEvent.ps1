@@ -1,3 +1,5 @@
+using Namespace System
+using Namespace System.Diagnostics
 Function Write-LogEvent {
     [CmdletBinding()]
     param (

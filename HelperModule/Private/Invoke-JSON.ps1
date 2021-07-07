@@ -1,7 +1,7 @@
 function Invoke-JSON {
     param (
         [parameter(HelpMessage = 'Disables the use of HTTP(s) on your Devolutions Server')][switch]$DisableHttps,
-        [parameter(Mandatory)][string]$serialKey
+        [parameter()][string]$serialKey = ''
         #[parameter(HelpMessage = 'Enabled if you are planning on using Integrated Security on your Devolutions Server')][switch]$IntegratedSecurity
 
     )
@@ -64,5 +64,5 @@ function Invoke-JSON {
         $response | Out-File $JSON 
         Write-LogEvent "Please verify $path\response.json file before continuing, make sure all your info is correct." -Output
         Read-Host -Prompt 'Hit enter to continue...'
-    } catch [System.Exception] { Write-EventLog $_ -Errors }
+    } catch [System.Exception] { Write-LogEvent $_ -Errors }
 }

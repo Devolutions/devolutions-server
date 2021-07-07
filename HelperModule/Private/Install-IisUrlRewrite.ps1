@@ -1,4 +1,6 @@
 function Install-IisUrlRewrite {
+    $path = "$PSScriptRoot\Packages"
+    $Rewrite = Test-Path "$path\rewrite_amd64_en-US.msi"
     Write-LogEvent 'Install-IisUrlRewrite beginning...'
     $ExitCode = 0
     # Do nothing if URL Rewrite module is already installed
@@ -22,4 +24,9 @@ function Install-IisUrlRewrite {
     } else {
         Write-LogEvent 'Installation of IIS URL Rewrite 2.0 Module finished!'
     }
+    Try {
+        Remove-Item $url1 -Force
+        Write-LogEvent "Removing $Rewrite from $Env:COMPUTERNAME" -Output
+    } catch [System.Exception] { Write-LogEvent $_ -Errors }
+
 }
