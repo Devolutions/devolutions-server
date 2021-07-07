@@ -1,9 +1,9 @@
-﻿function New-OfflineDeployment {
+function New-OfflineDeployment {
     $path = "$PSScriptRoot\Packages"
     if (!(Test-Path $path)) { New-Item $path -ItemType Directory -Force }
     Write-LogEvent "Checking if $PSScriptRoot\Packages exists" -Output
     $path = "$PSScriptRoot\Packages"
-    $Dotnet = Test-Path "$path\NDP472-KB4054530-x86-x64-AllOS-ENU.exe"
+    $vnet = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/bd59d20f-6bd9-40d4-b742-b892a3f2df15'
     $vnet = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/2eae5a8c-fc8b-437e-a381-9dc999eef48e'
     $IISurl = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/58da94c9-2de7-4e33-809a-4610edcfad99'
     $Rewrite = Test-Path "$path\rewrite_amd64_en-US.msi"

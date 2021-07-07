@@ -9,7 +9,7 @@ function New-OfflineServer {
     Write-LogEvent "Checking if $PSScriptRoot\Packages exists" -Output
     $path = "$PSScriptRoot\Packages"
     $Script:Installer = "Setup.DPS.Console.$ConsoleVersion.exe"
-    $Script:zip = "DPS.Instance.$ConsoleVersion.exe"
+    $Script:zip = "DVLS.Instance.$ConsoleVersion.zip"
     $Console = "https://cdn.devolutions.net/download/$Installer"
     $zipFile = "https://cdn.devolutions.net/download/RDMS/DVLS.$ConsoleVersion.zip"
     if (Test-Programs -packages -ErrorAction:SilentlyContinue) {
