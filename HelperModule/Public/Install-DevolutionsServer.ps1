@@ -16,16 +16,16 @@ function Install-DevolutionsServer {
         if ($network) {
             if (($SQLServer) -and !($SQLIntegrated) -and ($SSMS)) {
                 Write-LogEvent 'Starting installation for SQL Server and SQL Server Management Studio'
-                Install-SQLServer -SSMS -TCPProtocol -NamedPipe
+                Install-SQLServer -SSMS -NamedPipe
             } elseif (($SQLServer) -and ($SQLIntegrated) -and ($SSMS)) {
                 Write-LogEvent 'Starting installation for SQL Server using integrated security and SQL Server Management Studio'
-                Install-SQLServer -SSMS -SQLIntegrated -TCPProtocol -NamedPipe
+                Install-SQLServer -SSMS -SQLIntegrated -NamedPipe
             } elseif (($SQLServer) -and !($SQLIntegrated) -and !($SSMS)) {
                 Write-LogEvent 'Starting installation for SQL Server'
-                Install-SQLServer -TCPProtocol -NamedPipe
+                Install-SQLServer -NamedPipe
             } elseif (($SQLServer) -and ($SQLIntegrated) -and !($SSMS)) {
                 Write-LogEvent 'Starting installation for SQL Server using integrated security'
-                Install-SQLServer -SQLIntegrated -TCPProtocol -NamedPipe
+                Install-SQLServer -SQLIntegrated -NamedPipe
             }
             Write-LogEvent 'Starting installation of Devolutions Console'
             Install-DVLSConsole -ConsoleVersion $ConsoleVersion

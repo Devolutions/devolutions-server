@@ -75,8 +75,13 @@ function Install-SQLServer {
             Write-LogEvent 'Recovery model is set to Simple. It is highly suggested to look at your maintenance plans for DB recoveries.' -Output
 
             # change owner
-            if (!($SQLIntegrated)) {
+            if ($SQLIntegrated) {
+                $db.SetOwner("$env:USERDOMAIN\$env:USERNAME")
+                $db.Alter()
+                Write-LogEvent "DB owner set to $env:USERDOMAIN\$env:USERNAME" -Output
+            } else {
                 $db.SetOwner('sa')
+                $db.Alter()
                 Write-LogEvent 'DB owner set to sa account.' -Output
             }
 
@@ -85,7 +90,7 @@ function Install-SQLServer {
                 $datafile.size = 1048576
                 $datafile.growth = 262144
                 $datafile.growthtype = 'kb'
-                $datafile.alter()
+                $datafile.Alter()
                 Write-LogEvent 'DB autogrowth configured to default settings' -Output
             }
 
@@ -94,7 +99,7 @@ function Install-SQLServer {
                 $logfile.size = 524288
                 $logfile.growth = 131072
                 $logfile.growthtype = 'kb'
-                $logfile.alter()
+                $logfile.Alter()
                 Write-LogEvent 'DB log file size configured to default settings' -Output
             }
             if ($SQLIntegrated) {
