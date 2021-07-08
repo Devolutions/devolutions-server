@@ -22,14 +22,14 @@ function New-OfflineServer {
             Write-LogEvent 'Successfully downloaded Devolutions Server Instance zip' -Output
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
     }
-    if (!(Test-Path $PSScriptRoot\Start-Me.ps1)) {
+    if (!(Test-Path $Scriptpath\Start-Me.ps1)) {
         $psI = @'
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs }
 import-module $PSScriptRoot\DVLS.HelperModule.psd1
 Install-DevolutionsServer
 '@
-        $psI | Out-File $PSScriptRoot\Start-Me.ps1
+        $psI | Out-File $Scriptpath\Start-Me.ps1
     }
-    Compress-Archive -Path $path -DestinationPath "$env:HOMEPATH\Desktop"
+    Compress-Archive -Path $Scriptpath -DestinationPath "$env:HOMEPATH\Desktop"
     Write-LogEvent "Zip was added to $env:HOMEPATH\Desktop" -Output
 }
