@@ -1,15 +1,15 @@
 function New-OfflineServer {
     param(
-        [parameter(Mandatory, HelpMessage = "Format for the Console Version being install. `nFormat: 2021.1.17.0")][ValidatePattern('[2][0][0-9][0-9][.][0-9][.][0-9][0-9][.][0]')][ValidateNotNullOrEmpty()][string]$ConsoleVersion
+        [parameter(Mandatory, HelpMessage = "Format for the Console Version being install. `nFormat: 2021.1.19.0")][ValidatePattern('[2][0][0-9][0-9][.][0-9][.][0-9][0-9][.][0]')][ValidateNotNullOrEmpty()][string]$ConsoleVersion
 
     )
-    #TODO Install Offline Server, need to rework Test-Programs
-    $path = "$PSScriptRoot\Packages"
+    #TODO Install Offline Server, work in temp instead of script root use $newPath = Split-Path -Path $Scriptroot -Parent
+    $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
+    $path = "$Scriptpath\Packages"
     if (!(Test-Path $path)) { New-Item $path -ItemType Directory -Force }
     Write-LogEvent "Checking if $PSScriptRoot\Packages exists" -Output
-    $path = "$PSScriptRoot\Packages"
-    $Script:Installer = "Setup.DPS.Console.$ConsoleVersion.exe"
-    $Script:zip = "DVLS.Instance.$ConsoleVersion.zip"
+    $Installer = "Setup.DPS.Console.$ConsoleVersion.exe"
+    $zip = "DVLS.Instance.$ConsoleVersion.zip"
     $Console = "https://cdn.devolutions.net/download/$Installer"
     $zipFile = "https://cdn.devolutions.net/download/RDMS/DVLS.$ConsoleVersion.zip"
     if (Test-Programs -packages -ErrorAction:SilentlyContinue) {

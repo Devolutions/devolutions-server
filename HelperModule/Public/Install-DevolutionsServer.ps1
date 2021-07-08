@@ -9,7 +9,8 @@ function Install-DevolutionsServer {
         [parameter(Mandatory, HelpMessage = 'Include full format from email.')][string]$serialKey = ''
     )
     try {
-        $path = "$PSScriptRoot\Programs"
+        $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
+        $path = "$Scriptpath\Packages"
         $network = Test-Network
         New-EventSource
         if ($network) {

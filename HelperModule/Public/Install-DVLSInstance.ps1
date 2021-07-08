@@ -9,6 +9,8 @@ function Install-DVLSInstance {
 
     #TODO Add Zip file option
     #Response file to install the DVLS Instance 
+    $path = Split-Path -Path $PSScriptRoot -Parent
+    $JSON = "$path\response.json"
     if (!(Test-Path $JSON)) {
         Invoke-JSON
     } else {

@@ -13,7 +13,8 @@ function Install-SQLServer {
             $SQLAccount = Get-Credential -Message 'Please enter the credentials you would like to use for your SQL Account: '
             $SQLUser = $SQLAccount.GetNetworkCredential().UserName
         }
-        $path = "$PSScriptRoot\Programs"
+        $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
+        $path = "$Scriptpath\Packages"
         if (!(Test-Path $path)) { New-Item -Path $path -ItemType Directory }
         #SQL Express install
         Write-LogEvent 'Downloading SQL Server Express...'

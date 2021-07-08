@@ -7,14 +7,14 @@ function Invoke-JSON {
     )
     #TODO Next step prompt for Domain Identity
     #TODO Next step Integrated on or off
-    $Path = $env:TEMP
+    $path = Split-Path -Path $PSScriptRoot -Parent
     $admin = Get-Credential -Message 'Please enter your administrator credentials for your Devolutions Server: Note: This is not an AD account.'
     $backupacc = Get-Credential -Message 'Please enter your administrator email address and a password that will be used for your Backups: '
     $adminUser = $admin.GetNetworkCredential().UserName
     $adminPass = $admin.GetNetworkCredential().Password
     $adminEmail = $backupacc.GetNetworkCredential().UserName
     $backuppass = $backupacc.GetNetworkCredential().Password
-    $Script:JSON = "$path\response.json"
+    $JSON = "$path\response.json"
     $http = if ($DisableHttps) { 'true' } else { 'false' } 
     #$IntSec = if ($IntegratedSecurity) { 'true' } else { 'false' } 
     $response = @"

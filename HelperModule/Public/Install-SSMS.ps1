@@ -1,6 +1,7 @@
 function Install-SSMS {
     if (!(Test-Programs -SSMS -ErrorAction:SilentlyContinue)) {
-        $path = "$PSScriptRoot\Programs"
+        $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
+        $path = "$Scriptpath\Packages"
         $SQLStudio = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/309b2c5d-1225-4123-a27c-ff4eb5f3a378'
         if (!(Test-Path $path)) { New-Item -Path $path -ItemType Directory }
         $Installer = 'SSMSinstaller.exe'

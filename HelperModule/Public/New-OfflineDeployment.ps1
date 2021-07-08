@@ -1,5 +1,6 @@
 function New-OfflineDeployment {
-    $path = "$PSScriptRoot\Packages"
+    $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
+    $path = "$Scriptpath\Packages"
     if (!(Test-Path $path)) { New-Item $path -ItemType Directory -Force }
     Write-LogEvent "Checking if $PSScriptRoot\Packages exists" -Output
     $path = "$PSScriptRoot\Packages"

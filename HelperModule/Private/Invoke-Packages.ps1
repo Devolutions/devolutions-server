@@ -1,5 +1,6 @@
 ﻿function Invoke-Packages {
-    $path = "$PSScriptRoot\Packages"
+    $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
+    $path = "$Scriptpath\Packages"
     $dotNet = Test-Path "$path\NDP472-KB4054530-x86-x64-AllOS-ENU.exe"
     $Rewrite = Test-Path "$path\rewrite_amd64_en-US.msi"
     $vnet = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/bd59d20f-6bd9-40d4-b742-b892a3f2df15'

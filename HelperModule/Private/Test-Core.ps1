@@ -3,9 +3,9 @@ function Test-Core {
     $Core = (Get-ItemProperty $regKey).InstallationType
     if ($Core -eq 'Server Core') {
         return $true
-        Write-LogEvent 'Confirmed this is a Server Core installation' -Output
+        Write-LogEvent "$Core machine" -Output
     } else {
         return $false
-        Write-LogEvent 'This is not a Server Core' -Output
+        Write-LogEvent 'This is not a Server Core machine' -Output
     }
 }
