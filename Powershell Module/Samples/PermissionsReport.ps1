@@ -95,7 +95,7 @@ WriteIndentedOutput "Saving file $($vfn)"
 $vaultsSummary | Export-Csv -NoTypeInformation -UseCulture -Path $vfn
 $efn = (Join-Path -Path $OutputPath -ChildPath $EntriesSummaryFilename)
 WriteIndentedOutput "Saving file $($efn)"
-$EntriesSummary | Export-Csv -NoTypeInformation -UseCulture -Path $efn
+$EntriesSummary | Sort-Object 'Vault', 'Depth', 'Name' | Export-Csv -NoTypeInformation -UseCulture -Path $efn
 
 #----------------------------->>    Teardown
 Close-DSSession | out-null
