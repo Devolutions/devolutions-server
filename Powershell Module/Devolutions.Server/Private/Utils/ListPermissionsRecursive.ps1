@@ -20,14 +20,14 @@ function ListPermissionsRecursive {
 
     $results = @()
     # start by getting the folder's own permissions
-    $innerRes = Get-DSEntry -EntryId $folder.id -IncludeAdvancedProperties
+    $innerRes = Get-DSEntry -EntryId $folder.id
     $results += GetPermissionSummary -entry $innerRes.body.data -Depth $Depth -VaultName $VaultName
     $Depth++
     foreach ($entry in $folder.PartialConnections) {
         if ($entry.ConnectionType = 26) {
             $results += ListPermissionsRecursive -Depth $Depth -Folder $entry -VaultName $VaultName
         } else {
-            $innerRes = Get-DSEntry -EntryId $entry.id -IncludeAdvancedProperties
+            $innerRes = Get-DSEntry -EntryId $entry.id
             $results += GetPermissionSummary -entry $innerRes.body.data -Depth $Depth -VaultName $VaultName
         }
     }
