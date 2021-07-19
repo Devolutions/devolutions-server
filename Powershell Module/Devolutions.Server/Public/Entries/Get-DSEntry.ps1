@@ -39,11 +39,13 @@ function Get-DSEntry {
     [CmdletBinding(DefaultParameterSetName = 'GetPage')]
     PARAM (
         [guid]$VaultID = ([guid]::Empty),
+        [switch]$SearchAllVaults,
+
+        [Parameter(ParameterSetName = 'GetById')]
+        [guid]$EntryId,
 
         [Parameter(ParameterSetName = 'Filter')]
         [string]$FilterValue,
-        [Parameter(ParameterSetName = 'Filter')]
-        [switch]$SearchAllVaults,
         [Parameter(ParameterSetName = 'Filter')]
         [ValidateSet('Name', 'Username', 'Folder', 'Description', 'Tag', ErrorMessage = 'Filtering by {0} is not yet supported. Please use one of the following filters: {1}')]
         [SearchItemType]$FilterBy = [SearchItemType]::Name,
@@ -68,8 +70,12 @@ function Get-DSEntry {
     PROCESS {
         $res = switch ($PSCmdlet.ParameterSetName) {
             'GetAll' { 
-                $Entries = GetAll $VaultID | Out-Null
+                $Entries = $SearchAllVaults ? (GetAll) : (GetAll $VaultID)
                 [ServerResponse]::new($true, $null, [PSCustomObject]@{ data = $Entries }, $null, $null, 200)
+            }
+
+            'GetById' {
+                GetById $EntryId
             }
 
             'Filter' {
@@ -94,7 +100,17 @@ function GetAll {
         [guid]$VaultID
     )
     $Entries = @() 
-    $Folders = ($res = Get-DSFolders $VaultID -IncludeSubFolders).isSuccess ? ($res.Body.data) : (throw 'Could not fetch the list of folders for this vault. Please make sure you have a valid vault ID.')
+    $Folders = @()
+
+    if ($SearchAllVaults) {
+        $VaultIDs = ($res = Get-DSVault -All).isSuccess ? ($res.Body.data | Select-Object -ExpandProperty id) : (throw 'error no vaults found')
+        $VaultIDs | ForEach-Object {
+            $Folders += ($res = Get-DSFolders $_ -IncludeSubFolders).isSuccess ? ($res.Body.data) : (throw 'Could not fetch the list of folders for this vault. Please make sure you have a valid vault ID.')
+        }
+    }
+    else {
+        $Folders = ($res = Get-DSFolders $VaultID -IncludeSubFolders).isSuccess ? ($res.Body.data) : (throw 'Could not fetch the list of folders for this vault. Please make sure you have a valid vault ID.')
+    }
 
     $Folders | ForEach-Object {
         $_.partialConnections | ForEach-Object {
@@ -105,6 +121,19 @@ function GetAll {
     return $Entries
 }
 
+function GetById {
+    param(
+        [guid]$EntryId
+    )
+
+    $RequestParams = @{
+        Uri = "$Script:DSBaseURI/api/connections/partial/$EntryId/resolved-variables"
+        Method = 'GET'
+    }
+
+    return Invoke-DS @RequestParams
+}
+
 function GetByFilter {
     param (
         [guid]$VaultID,
@@ -113,11 +142,7 @@ function GetByFilter {
     )
 
     if ($SearchAllVaults) {
-        $VaultIDs = ($res = Get-DSVault -All).isSuccess ? ($res.Body.data | Select-Object -ExpandProperty id) : $null
-
-        if (!$VaultIDs) {
-            throw 'error no vaults found'
-        }
+        $VaultIDs = ($res = Get-DSVault -All).isSuccess ? ($res.Body.data | Select-Object -ExpandProperty id) : (throw 'error no vaults found')
 
         $Body = @{
             repositoryIds    = $VaultIDs
