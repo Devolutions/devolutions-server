@@ -18,7 +18,7 @@
 #
 ################################################################################
 #until we publish the module in the PSGallery we load it by path...
-$DSModulePath =  "..\Devolutions.Server"
+$DSModulePath =  "..\Powershell Module\Devolutions.Server"
 $OutputPath = $PSScriptRoot
 
 $VaultsSummaryFilename = "VaultsSummary.csv"
@@ -46,7 +46,7 @@ if ([string]::IsNullOrEmpty($env:DS_URL)) {
 #until we publish the module in the PSGallery we load it by path...
 $modulePath = Resolve-Path -Path $DSModulePath 
 Import-Module -Name $modulePath -Force
-      
+
 [string]$credUser = $env:DS_USER
 [string]$credPassword = $env:DS_PASSWORD
 [string]$dvlsURI = $env:DS_URL
@@ -67,18 +67,9 @@ Write-Output "Generating permissions report..."
 Write-Output ""
 SetIndent($Indent++)
 WriteIndentedOutput "Processing vaults"
-$vaults = @()
-[int]$currentPage = 1
-[int]$totalPages = 1
-[int]$pageSize = 100
-#this loop will be moved inside the cmdlet code to reduce complexity for consumers of the module
-Do {
-    $res = Get-DSVaults -PageNumber $currentPage -PageSize $pageSize 
-    $totalPages = $res.Body.totalPage
-    $vaults += $res.Body.Data
-    $currentPage++
 
-} while ($currentPage -lt $totalPages)
+$Vaults = if (($res = Get-DSVault -All).isSuccess) { $res.Body.data} else { throw 'error getting vaults'}
+
 #now that we have all vaults, we must get the assigned permissions by distinct Vaults
 $vaultsSummary = @()
 $EntriesSummary = @()
