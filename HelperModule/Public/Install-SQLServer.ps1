@@ -17,14 +17,18 @@ function Install-SQLServer {
         $path = "$Scriptpath\Packages"
         if (!(Test-Path $path)) { New-Item -Path $path -ItemType Directory }
         #SQL Express install
-        Write-LogEvent 'Downloading SQL Server Express...'
+
         $Installer = 'SQL-SSEI-Expr.exe'
         $URL = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/ef88f312-606e-4a78-bff9-2177867f7a5b'
         if (!(Test-Path -Path $path\$Installer)) {
-            try { Start-BitsTransfer $URL -Destination $path\$Installer } catch [System.Exception] { Write-LogEvent $_ -Errors }
+            try {
+                Write-LogEvent 'Downloading SQL Server Express...' 
+                Start-BitsTransfer $URL -Destination $path\$Installer 
+            } catch [System.Exception] { Write-LogEvent $_ -Errors }
         }
-        Write-LogEvent 'Installing SQL Server Express...'
+        
         try {
+            Write-LogEvent 'Installing SQL Server Express...'
             Start-Process -FilePath $path\$Installer -Args '/ACTION=INSTALL /IACCEPTSQLSERVERLICENSETERMS /Q' -Verb RunAs -Wait 
             Write-LogEvent 'SQL Server Express installed' 
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
@@ -32,7 +36,7 @@ function Install-SQLServer {
             Remove-Item $path\$Installer 
             Write-LogEvent "Removing $path\$Installer from $Env:ComputerName"
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
-
+  
         #modules required for the DB creation and setting the login rights
         try {
             Install-PackageProvider -Name NuGet -Force

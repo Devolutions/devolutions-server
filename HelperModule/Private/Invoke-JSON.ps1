@@ -1,12 +1,13 @@
 function Invoke-JSON {
     param (
-        [parameter(HelpMessage = 'Disables the use of HTTP(s) on your Devolutions Server')][switch]$DisableHttps,
+        [parameter()][switch]$DisableHttps,
         [parameter()][string]$serialKey = ''
         #[parameter(HelpMessage = 'Enabled if you are planning on using Integrated Security on your Devolutions Server')][switch]$IntegratedSecurity
 
     )
     #TODO Next step prompt for Domain Identity
     #TODO Next step Integrated on or off
+    #TODO Offline mode not setup with SQL so Database-Host will not work
     $path = Split-Path -Path $PSScriptRoot -Parent
     $admin = Get-Credential -Message 'Please enter your administrator credentials for your Devolutions Server: Note: This is not an AD account.'
     $backupacc = Get-Credential -Message 'Please enter your administrator email address and a password that will be used for your Backups: '

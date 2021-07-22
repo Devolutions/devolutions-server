@@ -20,6 +20,6 @@ function Install-SSMS {
             Remove-Item "$path\$Installer" 
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
     } else {
-        Write-LogEvent 'SQL Server Management Studio is already installed.'
+        Write-LogEvent "SSMS is already installed on $Env:ComputerName."
     }
 }

@@ -1,6 +1,7 @@
 function Test-Packages {
     Write-LogEvent "Checking if $PSScriptRoot\Packages exists"
-    $path = "$PSScriptRoot\Packages"
+    $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
+    $path = "$Scriptpath\Packages"
     $vnet = Test-Path "$path\NDP472-KB4054530-x86-x64-AllOS-ENU.exe"
     $Rewrite = Test-Path "$path\rewrite_amd64_en-US.msi"
 

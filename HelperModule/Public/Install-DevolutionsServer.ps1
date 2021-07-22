@@ -1,5 +1,5 @@
 function Install-DevolutionsServer {
-    #TODO Try and working in offline or simplify this
+    #TODO Try to get working in offline or simplify this
     param (
         [parameter(Mandatory, HelpMessage = "Format for the Console Version being install. `nFormat: 2021.1.17.0")][ValidatePattern('[2][0][0-9][0-9][.][0-9][.][0-9][0-9][.][0]')][ValidateNotNullOrEmpty()][string]$ConsoleVersion,
         [parameter(HelpMessage = 'Used to install an SQL Server')][switch]$SQLServer,
