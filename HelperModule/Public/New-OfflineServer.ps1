@@ -23,6 +23,7 @@ function New-OfflineServer {
         "$path\SQL-SSEI-Expr.exe"
         "$path\SSMSinstaller.exe"
         "$path\Microsoft.PackageManagement.NuGetProvider-2.8.5.208.dll"
+        "$path\sqlserver.21.1.18256.nupkg"
     )
     $source = @(
         "https://cdn.devolutions.net/download/Setup.DPS.Console.$ConsoleVersion.exe"
@@ -32,6 +33,7 @@ function New-OfflineServer {
         $SQL
         $SSMS
         'https://onegetcdn.azureedge.net/providers/Microsoft.PackageManagement.NuGetProvider-2.8.5.208.dll'
+        'https://www.powershellgallery.com/api/v2/package/SqlServer/21.1.18256' #TODO Find perma links 
     )
 
     try {
@@ -39,16 +41,18 @@ function New-OfflineServer {
         Write-LogEvent 'Downloading Devolutions Server Instance zip' -Output
         Write-LogEvent 'Downloading IIS URL Rewrite Module' -Output
         Write-LogEvent 'Downloading .Net 4.7.2' -Output
+        Write-LogEvent 'Downloading SQL Server Express' -Output
+        Write-LogEvent 'Downloading SQL Server Management Studio' -Output
         Start-BitsTransfer $source -Destination $destination
-        Write-LogEvent "Successfully downloaded $_" -Output 
     } catch [System.Exception] { Write-LogEvent $_ -Errors }
     
+    Rename-Item "$path\sqlserver.21.1.18256.nupkg" -NewName "$path\sqlserver.21.1.18256.zip"  -Force -Confirm:$false
+
     if (!(Test-Path $Scriptpath\Start-Me.ps1)) {
         $psI = @"
 
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -noexit -File `".\Start-Me.ps1`"" -Verb RunAs }
-import-module .\DVLS.HelperModule.psd1
-Copy-Item ".\Packages\Microsoft.PackageManagement.NuGetProvider-2.8.5.208.dll" -Destination "C:\Program Files\PackageManagement\ProviderAssemblies" -Force
+import-module ".\DVLS.HelperModule.psd1"
 Install-DevolutionsServer -ConsoleVersion "$ConsoleVersion" -SQLServer -SQLIntegrated -SSMS -serialKey "$serialKey"
 "@
         $psI | Out-File $Scriptpath\Start-Me.ps1
