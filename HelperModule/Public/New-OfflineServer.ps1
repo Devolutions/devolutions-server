@@ -21,9 +21,8 @@ function New-OfflineServer {
         "$path\rewrite_amd64_en-US.msi"
         "$path\NDP472-KB4054530-x86-x64-AllOS-ENU.exe"
         "$path\SQL-SSEI-Expr.exe"
-        "$path\SSMSinstaller.exe"
-        "$path\Microsoft.PackageManagement.NuGetProvider-2.8.5.208.dll"
-        "$path\sqlserver.21.1.18256.nupkg"
+        "$path\SSMS-Setup-ENU.exe"
+        "$path\Microsoft.PackageManagement.NuGetProvider.dll"
     )
     $source = @(
         "https://cdn.devolutions.net/download/Setup.DPS.Console.$ConsoleVersion.exe"
@@ -33,7 +32,6 @@ function New-OfflineServer {
         $SQL
         $SSMS
         'https://onegetcdn.azureedge.net/providers/Microsoft.PackageManagement.NuGetProvider-2.8.5.208.dll'
-        'https://www.powershellgallery.com/api/v2/package/SqlServer/21.1.18256' #TODO Find perma links 
     )
 
     try {
@@ -45,13 +43,22 @@ function New-OfflineServer {
         Write-LogEvent 'Downloading SQL Server Management Studio' -Output
         Start-BitsTransfer $source -Destination $destination
     } catch [System.Exception] { Write-LogEvent $_ -Errors }
-    
-    Rename-Item "$path\sqlserver.21.1.18256.nupkg" -NewName "$path\sqlserver.21.1.18256.zip"  -Force -Confirm:$false
 
+    try {       
+        Save-Module -Name 'SQLServer' -Path $path
+    } catch [System.Exception] { Write-LogEvent $_ -Errors }
+  
     if (!(Test-Path $Scriptpath\Start-Me.ps1)) {
         $psI = @"
 
 if (!([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Start-Process powershell.exe "-NoProfile -ExecutionPolicy Bypass -noexit -File `".\Start-Me.ps1`"" -Verb RunAs }
+# For Nuget Install 
+mkdir "C:\Program Files\PackageManagement\ProviderAssemblies\nuget\2.8.5.208"
+Copy-Item -Path '.\Packages\Microsoft.PackageManagement.NuGetProvider.dll' -Destination 'C:\Program Files\PackageManagement\ProviderAssemblies\nuget\2.8.5.208'
+# For the SQLServer Module
+Copy-Item -Path '.\Packages\SqlServer'  -Destination 'Program Files\WindowsPowerShell\Modules'
+
+
 import-module ".\DVLS.HelperModule.psd1"
 Install-DevolutionsServer -ConsoleVersion "$ConsoleVersion" -SQLServer -SQLIntegrated -SSMS -serialKey "$serialKey"
 "@
