@@ -14,6 +14,7 @@ function GetPermissionSummary {
             $results += [PSCustomObject]@{
                 Vault        = $vaultName
                 Depth        = $Depth
+                Path         = $entry.group
                 Entry        = $entry.Name
                 OverrideType = [SecurityRoleOverride]::Default
                 Right        = [SecurityRoleRight]::View
@@ -29,6 +30,7 @@ function GetPermissionSummary {
                 $results += [PSCustomObject]@{
                     Vault        = $vaultName
                     Depth        = $Depth
+                    Path         = $entry.group
                     Entry        = $entry.Name
                     OverrideType = $perm.override ? ([enum]::ToObject([SecurityRoleOverride], $perm.override)) : $null     
                     Right        = $perm.right ? ([enum]::ToObject([SecurityRoleRight], $perm.right)) : $null   
