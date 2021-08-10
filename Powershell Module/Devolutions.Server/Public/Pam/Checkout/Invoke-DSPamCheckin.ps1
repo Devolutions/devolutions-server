@@ -17,7 +17,7 @@ function Invoke-DSPamCheckin {
         $PamCheckout.status = [CheckoutStatus]::Ended
 
         $RequestParams = @{
-            URI    = "$Script:DSBaseURI/api/pam/checkouts/${$PamCheckout.ID}"
+            URI    = "$Script:DSBaseURI/api/pam/checkouts/$($PamCheckout.ID)"
             Method = 'PUT'
             Body   = (ConvertTo-Json $PamCheckout)
         }
