@@ -51,7 +51,7 @@
     # RequiredAssemblies   = @()
     
     # Script files (.ps1) that are run in the caller's environment prior to importing this module.
-    ScriptsToProcess     = @('.\Private\Types\Field.ps1', '.\Private\Types\ServerResponse.ps1')
+    ScriptsToProcess     = @('.\Private\Types\Field.ps1', '.\Private\Types\ServerResponse.ps1', '.\Private\Types\PamCheckout.ps1')
     
     # Type files (.ps1xml) to be loaded when importing this module
     # TypesToProcess = @()
@@ -76,6 +76,8 @@
         'New-DSEntryBase', 'Update-DSEntryBase', 'New-DSRDPEntry', 'Update-DSRDPEntry', 'New-DSSSHShellEntry', 'Update-DSSSHShellEntry',
 
         'Get-DSPasswordsReport'
+
+        'Invoke-DSPamCheckout', 'Invoke-DSPamCheckin', 'Get-DSPamCheckout', 'Get-DSPamCredential'
     )
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
