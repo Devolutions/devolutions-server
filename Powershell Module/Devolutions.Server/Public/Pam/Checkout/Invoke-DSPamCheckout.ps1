@@ -5,7 +5,11 @@ function Invoke-DSPamCheckout {
     )
     
     BEGIN {
-        
+        Write-Verbose '[Invoke-DSPamCheckout] Beginning...'
+
+        if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
+            throw 'Session does not seem authenticated, call New-DSSession.'
+        }
     }
     
     PROCESS {
