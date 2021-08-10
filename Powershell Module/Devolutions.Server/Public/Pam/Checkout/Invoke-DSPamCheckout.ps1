@@ -17,7 +17,13 @@ function Invoke-DSPamCheckout {
         $PamCredential = ($res = Get-DSPamCredential $PamCredentialID).isSuccess ? ($res.Body) : $(throw 'Failed while fetching credentials. Please make sure the ID you provided is a valid PAM account ID and try again.')
 
         #2. Checkout
-        [PamCheckout]$CredentialCheckout = ($res = Get-DSPamCheckout $PamCredentialID).isSuccess ? ($res.Body) : ($res.ErrorMessage ? $(throw $res.ErrorMessage) : $(throw 'Failed while trying to checkout the account. See logs for information.'))
+        $RequestParams = @{
+            URI    = "$Script:DSBaseURI/api/pam/checkouts"
+            Method = 'POST'
+            Body   = (ConvertTo-Json @{credentialID = $PamCredentialID; duration = $PamCredential.duration})
+        }
+
+        [PamCheckout]$CredentialCheckout = ($res = Invoke-DS @RequestParams).isSuccess ? ($res.Body) : ($res.ErrorMessage ? $(throw $res.ErrorMessage) : $(throw 'Failed while trying to checkout the account. See logs for information.'))
 
         #3. Get Password
         $EncryptedPassword = ($res = Get-DSPamPassword $PamCredentialID).isSuccess ? ($res.Body) : ($res.ErrorMessage ? $(throw $res.ErrorMessage): $(throw 'Failed while fetching password. See logs for information.'))

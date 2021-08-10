@@ -14,11 +14,10 @@ function Get-DSPamCheckout {
     
     PROCESS {
         $RequestParams = @{
-            URI    = "$Script:DSBaseURI/api/pam/checkouts" 
-            Method = 'POST' 
-            Body   = (ConvertTo-Json @{ credentialID = $PamCredentialID; duration = 240 })
+            URI    = "$Script:DSBaseURI/api/pam/checkouts/$PamCredentialID"
+            Method = 'GET' 
         }
-
+        
         try {
             $res = Invoke-DS @RequestParams
             return $res
