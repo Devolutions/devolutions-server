@@ -20,6 +20,7 @@ function Get-DSPamPassword {
 
         try {
             $res = Invoke-DS @RequestParams
+            $res.Body = [pscustomobject]@{encrypted = $res.Body; decrypted = (Decrypt-String $Global:DSSessionKey $res.Body) }
             return $res
         }
         catch { throw $_.ErrorDetails }
