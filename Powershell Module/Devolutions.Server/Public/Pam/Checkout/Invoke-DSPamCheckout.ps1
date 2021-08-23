@@ -17,16 +17,6 @@ function Invoke-DSPamCheckout {
     PROCESS {
         #1. Fetch PAM cred (api/pam/credentials/$id) 
         $PamCredential = ($res = Get-DSPamCredential $PamCredentialID).isSuccess ? ($res.Body) : $(throw 'Failed while fetching credentials. Please make sure the ID you provided is a valid PAM account ID and try again.')
-    
-        #1.1 Check for approver
-        if (($PamCredential.checkoutApprovalMode -eq 2) -and !$ApproverID) {
-            Write-Error 'This entry requires an approver to check out. Please provide an approver ID and try again.'
-        }
-
-        #1.2 Check for reason mode
-        if (($PamCredential.checkoutReasonMode -eq 2) -and !$Reason) {
-            Write-Error 'This entry requires a reason to check out. Please provide a reason and try again.'
-        }
 
         #2. Checkout
         $RequestParams = @{
@@ -42,12 +32,14 @@ function Invoke-DSPamCheckout {
         if ($PamCredential.checkoutReasonMode -in @(2, 3)) {
             $RequestParams.Body += @{reason = $Reason }
         }
-
+    
         $RequestParams.Body = ConvertTo-Json $RequestParams.Body
 
-        [PamCheckout]$CredentialCheckout = ($res = Invoke-DS @RequestParams).isSuccess ? ($res.Body) : ($res.ErrorMessage ? $(throw $res.ErrorMessage) : $(throw 'Failed while trying to checkout the account. See logs for information.'))
+        [PamCheckout]$CredentialCheckout = ($res = Invoke-DS @RequestParams).isSuccess ? ($res.Body) : $(Write-Error 'Please validate that the approver ID correspond to an existing user.')
 
-        if ($CredentialCheckout.Status -ne 1) {
+        if ($CredentialCheckout.Status -eq 4) {
+            Write-Verbose '[Invoke-DSPamCheckout] The checkout is already completed since this credential does not require an approval.'
+
             #3. Get Password
             $EncryptedPassword = ($res = Get-DSPamPassword $PamCredentialID).isSuccess ? ($res.Body) : ($res.ErrorMessage ? $(throw $res.ErrorMessage): $(throw 'Failed while fetching password. See logs for information.'))
 

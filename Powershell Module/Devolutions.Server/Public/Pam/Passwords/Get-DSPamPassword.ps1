@@ -1,7 +1,8 @@
 function Get-DSPamPassword {
     [CmdletBinding()]
     PARAM (
-        [guid]$PamCredentialID
+        [guid]$PamCredentialID,
+        [switch]$Decrypted
     )
     
     BEGIN {
@@ -20,7 +21,7 @@ function Get-DSPamPassword {
 
         try {
             $res = Invoke-DS @RequestParams
-            $res.Body = [pscustomobject]@{encrypted = $res.Body; decrypted = (Decrypt-String $Global:DSSessionKey $res.Body) }
+            if ($Decrypted) { $res.Body = (Decrypt-String $Global:DSSessionKey $res.Body) }
             return $res
         }
         catch { throw $_.ErrorDetails }
