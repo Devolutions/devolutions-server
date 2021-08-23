@@ -1,4 +1,12 @@
 function Invoke-DSPamCheckin {
+    <#
+        .SYNOPSIS
+        Check in a currently checked out PAM credential.
+        .DESCRIPTION
+        To retreive the checkout, as a [PamCheckout] object, pleasee use Get-DSPamCheckout CMDlet.
+        .EXAMPLE
+        Please check the sample script provided with the module.
+    #>
     [CmdletBinding()]
     PARAM (
         [Parameter(Mandatory)]

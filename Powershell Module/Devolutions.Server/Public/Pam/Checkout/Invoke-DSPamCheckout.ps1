@@ -1,4 +1,13 @@
 function Invoke-DSPamCheckout {
+    <#
+        .SYNOPSIS
+        Creates a checkout request.
+        .DESCRIPTION
+        Creates a checkout request for the provided PAM credential. Also decrypt and return the password
+        if approval is not required or if approved ID is the same as the asking user's ID.
+        .EXAMPLE
+        Please check the sample script provided with the module.
+    #>
     [CmdletBinding()]
     PARAM (
         [guid]$PamCredentialID = $(throw 'You must provide a valid ID.'),
@@ -35,9 +44,22 @@ function Invoke-DSPamCheckout {
     
         $RequestParams.Body = ConvertTo-Json $RequestParams.Body
 
-        [PamCheckout]$CredentialCheckout = ($res = Invoke-DS @RequestParams).isSuccess ? ($res.Body) : $(Write-Error 'Please validate that the approver ID correspond to an existing user.')
+        try {
+            $CheckoutRes = Invoke-DS @RequestParams
+            if (!$CheckoutRes.isSuccess) {
+                throw $CheckoutRes.ErrorMessage
+            }
+        }
+        catch {
+            if ($_.Exception.Message -eq 'The credential is already checked out.') {
+                Write-Error "The credential '$($PamCredential.label)' is already checked out."
+            } else {
+                Write-Error $_.Exception.Message
+            }
+            Return
+        }
 
-        if ($CredentialCheckout.Status -eq 4) {
+        if ($CheckoutRes.Body.Status -eq 4) {
             Write-Verbose '[Invoke-DSPamCheckout] The checkout is already completed since this credential does not require an approval.'
 
             #3. Get Password
@@ -47,10 +69,10 @@ function Invoke-DSPamCheckout {
             $DecryptedPassword = Decrypt-String $Global:DSSessionKey $EncryptedPassword
 
             #5. Return checkout info and decrypted password
-            return @{CheckoutInfo = $CredentialCheckout; Password = $DecryptedPassword }
+            $CheckoutRes.Body = @{CheckoutInfo = [pscustomobject]$CheckoutRes.Body; Password = $DecryptedPassword}
         }
         
-        return $CredentialCheckout
+        return $CheckoutRes
     }
     
     END {

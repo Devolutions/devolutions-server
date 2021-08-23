@@ -1,4 +1,12 @@
 function Invoke-DSPamCheckoutPending {
+    <#
+        .SYNOPSIS
+        Approve or deny a pending checkout request.
+        .DESCRIPTION
+        Change the state of a pending checkout request depending on the -Accept flag parameter.
+        .EXAMPLE
+        Please check the sample script provided with the module.
+    #>
     [CmdletBinding()]
     PARAM (
         [PamCheckout]$CredentialCheckout,

@@ -1,4 +1,14 @@
 function Get-DSPamPassword {
+    <#
+        .SYNOPSIS
+        Returns the PAM credential password.
+        .DESCRIPTION
+        Retrurns the PAM credential password if it is currently checked out and user has rights. By default,
+        password stays encrypted. The 'Decrypted' flag need to be present in order to see the password
+        in clear text.
+        .EXAMPLE
+        Please check the sample script provided with the module.
+    #>
     [CmdletBinding()]
     PARAM (
         [guid]$PamCredentialID,

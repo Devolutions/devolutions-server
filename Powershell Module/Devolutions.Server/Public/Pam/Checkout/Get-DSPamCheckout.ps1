@@ -1,4 +1,10 @@
 function Get-DSPamCheckout {
+    <#
+        .SYNOPSIS
+        Returns the current checkout state of the provided PAM credential.
+        .EXAMPLE
+        Please check the sample script provided with the module.
+    #>
     [CmdletBinding()]
     PARAM (
         [guid]$PamCredentialID
