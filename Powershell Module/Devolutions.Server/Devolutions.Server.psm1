@@ -33,9 +33,22 @@ foreach ($Enum in $Enums) {
     Add-Type -TypeDefinition ($typedef | Out-String)
 }
 
+<# CLASSES #>
+if (Test-Path "$PSScriptRoot\Classes\Classes.psd1") {
+    $ClassLoadOrder = Import-PowerShellDataFile -Path "$PSScriptRoot\Classes\Classes.psd1" -ErrorAction SilentlyContinue
+}
+
+foreach ($Class in $ClassLoadOrder.order) {
+    $Path = '{0}\Classes\{1}.ps1' -f $PSScriptRoot, $Class
+    if (Test-Path $Path) {
+        . $Path
+    }
+}
+<# ------- #>
+
 foreach ($Import in @($Public + $Private + $Deprecate)) {
     try {
-            . $Import.FullName 
+        . $Import.FullName 
     }
     catch {
         Write-Error -Message "Failed to import function $($Import.FullName): $_"
