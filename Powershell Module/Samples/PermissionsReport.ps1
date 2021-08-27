@@ -82,7 +82,7 @@ Do {
 #now that we have all vaults, we must get the assigned permissions by distinct Vaults
 $vaultsSummary = @()
 $EntriesSummary = @()
-foreach ($vault in $vaults) {
+foreach ($vault in $vaults.data) {
     SetIndent($Indent++)
     WriteIndentedOutput "Processing vault : $($vault.Name)"
 
