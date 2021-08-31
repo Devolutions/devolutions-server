@@ -27,7 +27,8 @@ function New-DSSession {
         [pscredential]$Credential = [pscredential]::Empty,
         #URL to your Devolutions Server instance
         [ValidateNotNullOrEmpty()]
-        [string]$BaseUri = $(throw "You must provide your DVLS instance's URI.")
+        [string]$BaseUri = $(throw "You must provide your DVLS instance's URI."),
+        [switch]$AsApplication
     )
     
     BEGIN {
@@ -78,7 +79,7 @@ function New-DSSession {
                 RDMOLoginParameters = @{
                     SafePassword     = $SafePassword
                     SafeSessionKey   = $Global:DSSafeSessionKey
-                    Client           = 'Scripting'
+                    Client           = $AsApplication ? [ApplicationSource]::Cli : [ApplicationSource]::Scripting
                     Version          = $ModuleVersion
                     LocalMachineName = [System.Environment]::MachineName
                     LocalUserName    = [System.Environment]::UserName
