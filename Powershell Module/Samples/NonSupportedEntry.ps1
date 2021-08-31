@@ -20,7 +20,7 @@
 ################################################################################
 
 # 1. Importing module
-Import-Module -Name (Resolve-Path -Path '..\Powershell Module\Devolutions.Server') -Force
+Import-Module -Name (Resolve-Path -Path 'C:\dev\git\devolutions-server\Powershell Module\Devolutions.Server') -Force
 
 # 2. Authenticating
 if (-Not(Test-Path env:DS_USER) -or -Not(Test-Path env:DS_PASSWORD)) { throw 'Please initialize your DS_USER and/or DS_PASSWORD in environment variables.' }
@@ -38,32 +38,40 @@ if (!(New-DSSession -Credential $Credentials -BaseURI $env:DS_URL).IsSuccess) {
 # For this reason, you will need to investigate the entry type you want to create using this module. 
 #
 # To do this, we are going to create a base entry in RDM and fetch it in your script to explore the response object as a complete connection.
-$BaseEntry = Get-DSEntry -FilterBy Name -FilterValue 'PSM-Server'
-$BaseEntryID = $BaseEntry.Body.data[0].id
-$Response = Get-DSEntry -EntryId $BaseEntryID -AsRDMConnection
+$BaseEntry = Get-DSEntry -FilterBy Name -FilterValue 'AHK' # Fetch the entry by name
+$BaseEntryID = $BaseEntry.Body.data[0].id # Get the entry's ID
+$Response = Get-DSEntry -EntryId $BaseEntryID -AsRDMConnection # Get the entry as as RDM connection object
 
-($Response.Body.result -eq [SaveResult]::Success) ? ($BaseEntryConnectionInfo = $Response.Body.data.connectionInfo) : (throw 'Could not find an entry matching the provided ID.')
+if ($Response.Body.result -eq [SaveResult]::Success) {
+    # Classes are loaded in Devolutions.Server module, but you cannot export classes due to scripting language limitation. Use this format
+    # to return a [ConnectionInfoEntity] type
+    $BaseEntryConnectionInfo = & (Get-Module 'Devolutions.Server') { [ConnectionInfoEntity]$Response.Body.data.connectionInfo }
+}
+else {
+    throw 'Could not find an entry matching the provided ID.'
+}
 
-# Now that you have the entry, you could either update it or create a new [customobject] from scratch and save that instead. If you prefer
-# updating, it is important to clear the ID and change the name, or else it won't save. The data portion of the connection is only
-# available in XML, so if we need it to update the entry, we need to cast it in XML type like so:
-[xml]$EntryData = $BaseEntryConnectionInfo.data
-$EntryData.Connection.RemoveChild($EntryData.SelectSingleNode('//Connection/CreatedBy'))
+# It's easier to work with the data once converted to an object, and it'll also be easier to construct the XML from an object.
+# There is a CMDlet for both of these actions.
+$ConnectionData = Convert-XMLToPSCustomObject ([xml]$BaseEntryConnectionInfo.Data) # Convert the connection's data segment to a PSCustomObject
 
-$Node.InnerXml = Get-Date
-$Body = @{
-    splittedGroupMain = $BaseEntryConnectionInfo.splittedGroupMain
-    connectionType    = $BaseEntryConnectionInfo.connectionType
-    data              = $EntryData.InnerXml
-    group             = $BaseEntryConnectionInfo.group
-    groupMain         = $BaseEntryConnectionInfo.groupMain
-    groups            = $BaseEntryConnectionInfo.groups
-    id                = [guid]::NewGuid()
-    metaData          = $BaseEntryConnectionInfo.metaData
-    metaDataString    = $BaseEntryConnectionInfo.metaDataString
-    name              = 'LmaoNewServer'
-    repositoryID      = [guid]::Empty
-} | ConvertTo-Json
+$NewGUID = [guid]::NewGuid()
+$ConnectionData.Connection.Name = 'Test'
+$ConnectionData.Connection.ID = $NewGUID
+
+$ConnectionDataXML = Convert-PSCustomObjectToXML $ConnectionData.Connection # Convert the PSCustomObject back to a proper XML format
+
+$ConnectionMetaData = Convert-XMLToPSCustomObject ([xml]$BaseEntryConnectionInfo.MetaDataString) # Convert connection's metadata to PSCustomObject
+$ConnectionMetaData.ConnectionMetaDataEntity.Name = 'Test'
+$ConnectionMetaDataXML = Convert-PSCustomObjectToXML $ConnectionMetaData.ConnectionMetaDataEntity -RootName 'ConnectionMetaDataEntity' # Convert the PSCustomObject back to a proper XML format
+
+$BaseEntryConnectionInfo.ID = $NewGUID
+$BaseEntryConnectionInfo.Name = 'Test'
+$BaseEntryConnectionInfo.Data = $ConnectionDataXML.OuterXML
+$BaseEntryConnectionInfo.MetaDataString = $ConnectionMetaDataXML.OuterXml
+$BaseEntryConnectionInfo.MetaData.Name = 'Test'
+
+$Body = ConvertTo-Json ($BaseEntryConnectionInfo) -Depth 6
 
 $res = Invoke-WebRequest -Uri 'http://localhost/dps/api/connection/save' -Method 'PUT' -Body $Body -ContentType 'application/json' -WebSession $Global:WebSession
 $res
