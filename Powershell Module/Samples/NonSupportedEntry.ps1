@@ -12,15 +12,11 @@
 # solution for the entry type you're trying to create, please submit a request 
 # on our forums or directly on our public GitHub repository and we'll try to code 
 # the CMDlet.
-#
-# Please keep in mind that there's only so many hours and ressources that we can 
-# allocate to develop this module, as it's only a tool for one of our product.
-#
-# Thank you for choosing Devolutions for your IT management needs.
 ################################################################################
 
 # 1. Importing module
-Import-Module -Name (Resolve-Path -Path 'C:\dev\git\devolutions-server\Powershell Module\Devolutions.Server') -Force
+$ModulePath = (Resolve-Path (Get-Module -Name 'Devolutions.Server')).Path
+Import-Module $ModulePath -Force
 
 # 2. Authenticating
 if (-Not(Test-Path env:DS_USER) -or -Not(Test-Path env:DS_PASSWORD)) { throw 'Please initialize your DS_USER and/or DS_PASSWORD in environment variables.' }
@@ -33,45 +29,51 @@ if (!(New-DSSession -Credential $Credentials -BaseURI $env:DS_URL).IsSuccess) {
 }
 
 # 3. Investigate
-# All entries vary a lot in terms of required fields, naming, etc... It is not really a feasable solution for us
-# to include all entry types in this module, nor is it to give you access to a CMDlet with all possible fields (over 300).
-# For this reason, you will need to investigate the entry type you want to create using this module. 
-#
-# To do this, we are going to create a base entry in RDM and fetch it in your script to explore the response object as a complete connection.
-$BaseEntry = Get-DSEntry -FilterBy Name -FilterValue 'AHK' # Fetch the entry by name
-$BaseEntryID = $BaseEntry.Body.data[0].id # Get the entry's ID
-$Response = Get-DSEntry -EntryId $BaseEntryID -AsRDMConnection # Get the entry as as RDM connection object
+# Automating your needs require some investigating. First of all, create a base entry with all the fields you need in Remote Desktop Manager and
+# fetch it using this module.
+$BaseEntryID = if (($res = Get-DSEntry -FilterBy Name -FilterValue 'AHK').isSuccess) {
+    ($res.Body.data | Where-Object { $_.Name -eq 'AHK' }).ID
+}
+else {
+    throw 'An error occured.'
+}
 
-if ($Response.Body.result -eq [SaveResult]::Success) {
-    # Classes are loaded in Devolutions.Server module, but you cannot export classes due to scripting language limitation. Use this format
-    # to return a [ConnectionInfoEntity] type
-    $BaseEntryConnectionInfo = & (Get-Module 'Devolutions.Server') { [ConnectionInfoEntity]$Response.Body.data.connectionInfo }
+$BaseEntryConnectionInfo = if (($res = Get-DSEntry -EntryId $BaseEntryID -AsRDMConnection).isSuccess) {
+    # Cannot export classes from module. This format returns a ConnectionInfoEntity object made from the server response.
+    & (Get-Module 'Devolutions.Server') { [ConnectionInfoEntity]$Response.Body.data.connectionInfo }
 }
 else {
     throw 'Could not find an entry matching the provided ID.'
 }
 
 # It's easier to work with the data once converted to an object, and it'll also be easier to construct the XML from an object.
-# There is a CMDlet for both of these actions.
-$ConnectionData = Convert-XMLToPSCustomObject ([xml]$BaseEntryConnectionInfo.Data) # Convert the connection's data segment to a PSCustomObject
-
+# Convert-XMLToPSCustomObject / Convert-XMLToPSCustomObject
 $NewGUID = [guid]::NewGuid()
+
+# Convert both Data segement and Metadata segment to PSCustomObject.
+$ConnectionData = Convert-XMLToPSCustomObject ([xml]$BaseEntryConnectionInfo.Data)
+$ConnectionMetaData = Convert-XMLToPSCustomObject ([xml]$BaseEntryConnectionInfo.MetaDataString)
+
+# Edit the desired fields in both objects.
 $ConnectionData.Connection.Name = 'Test'
 $ConnectionData.Connection.ID = $NewGUID
-
-$ConnectionDataXML = Convert-PSCustomObjectToXML $ConnectionData.Connection # Convert the PSCustomObject back to a proper XML format
-
-$ConnectionMetaData = Convert-XMLToPSCustomObject ([xml]$BaseEntryConnectionInfo.MetaDataString) # Convert connection's metadata to PSCustomObject
 $ConnectionMetaData.ConnectionMetaDataEntity.Name = 'Test'
-$ConnectionMetaDataXML = Convert-PSCustomObjectToXML $ConnectionMetaData.ConnectionMetaDataEntity -RootName 'ConnectionMetaDataEntity' # Convert the PSCustomObject back to a proper XML format
 
+# Convert the PSCustomObject back to a proper XML format
+$ConnectionDataXML = Convert-PSCustomObjectToXML $ConnectionData.Connection 
+$ConnectionMetaDataXML = Convert-PSCustomObjectToXML $ConnectionMetaData.ConnectionMetaDataEntity -RootName 'ConnectionMetaDataEntity'
+
+# Edit the desired fields in the base object
 $BaseEntryConnectionInfo.ID = $NewGUID
 $BaseEntryConnectionInfo.Name = 'Test'
 $BaseEntryConnectionInfo.Data = $ConnectionDataXML.OuterXML
 $BaseEntryConnectionInfo.MetaDataString = $ConnectionMetaDataXML.OuterXml
 $BaseEntryConnectionInfo.MetaData.Name = 'Test'
 
+# Set the base connection data and metadata to their respective serialized XML strings
+$BaseEntryConnectionInfo.Data = (Convert-XMLToSerializedString $ConnectionDataXML)
+$BaseEntryConnectionInfo.MetaDataString = (Convert-XMLToSerializedString $ConnectionMetaDataXML)
+
 $Body = ConvertTo-Json ($BaseEntryConnectionInfo) -Depth 6
 
 $res = Invoke-WebRequest -Uri 'http://localhost/dps/api/connection/save' -Method 'PUT' -Body $Body -ContentType 'application/json' -WebSession $Global:WebSession
-$res
