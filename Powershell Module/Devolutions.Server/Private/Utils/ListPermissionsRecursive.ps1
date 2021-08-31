@@ -15,22 +15,32 @@ function ListPermissionsRecursive {
         [string]$VaultName
     )
     if (!@(26, 92) -Contains $folder.ConnectionType) {
-        throw "assertion - not a folder"
+        throw 'assertion - not a folder'
     }
 
     $results = @()
     # start by getting the folder's own permissions
-    $innerRes = Get-DSEntry -EntryId $folder.id -IncludeAdvancedProperties
-    $results += GetPermissionSummary -entry $innerRes.body.data -Depth $Depth -VaultName $VaultName
-    $Depth++
-    foreach ($entry in $folder.PartialConnections) {
-        if ($entry.ConnectionType = 26) {
-            $results += ListPermissionsRecursive -Depth $Depth -Folder $entry -VaultName $VaultName
-        } else {
-            $innerRes = Get-DSEntry -EntryId $entry.id -IncludeAdvancedProperties
-            $results += GetPermissionSummary -entry $innerRes.body.data -Depth $Depth -VaultName $VaultName
-        }
-    }
+    $innerRes = Get-DSEntry -EntryId $folder.id
 
-    return $results
+    if ($innerRes.isSuccess) {
+        $results += GetPermissionSummary -entry $innerRes.body.data -Depth $Depth -VaultName $VaultName
+        $Depth++
+
+        if ($folder.PartialConnections) {
+            foreach ($entry in $folder.PartialConnections) {
+                if ($entry.ConnectionType = 26) {
+                    $results += ListPermissionsRecursive -Depth $Depth -Folder $entry -VaultName $VaultName
+                }
+                else {
+                    $innerRes = Get-DSEntry -EntryId $entry.id
+                    $results += GetPermissionSummary -entry $innerRes.body.data -Depth $Depth -VaultName $VaultName
+                }
+            } 
+        }
+
+        return $results
+    }
+    else {
+        Write-Output "A folder matching the ID ${folder.id} could not be found..."
+    }
 }

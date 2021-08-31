@@ -53,7 +53,7 @@ function Invoke-DS {
             return $res
         }
         catch [System.UriFormatException] {
-            throw 'Not initialized, please use New-DSSession'
+            throw "There was a problem while trying to reach '$URI'. Please make sure the URI is valid and try again."
         }
         catch {
             $exc = $_.Exception

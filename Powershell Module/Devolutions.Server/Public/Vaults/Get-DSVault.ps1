@@ -1,22 +1,63 @@
 function Get-DSVault {
     <#
-    .SYNOPSIS
-    Gets a specific vault or a collection of vaults.
-    .DESCRIPTION
-    By default, it will return a vault with the ID matching the one you provided. If you use the -All parameter, it will
-    fetch all vaults in your Devolutions Server Instance.
-    .EXAMPLE
+        .SYNOPSIS
+        Gets a specific vault or a collection of vaults.
 
-    .EXAMPLE
+        .DESCRIPTION
+        By default, this will return the first page containing the 25 first vaults in your Devolutions Server. You can
+        specify if you want only one vault by ID, all of your vaults or you can also specify a page size and a page number
+        to get paginated results.
+
+        .EXAMPLE
+        > Get-DSVault
+
+        [ServerResponse]::@{
+            ...
+            Body = @{
+                currentPage = 1
+                data = [object[]] #Vaults are stored in here
+                pageSize = 25
+                totalCount = 100
+                totalPage = 3
+            }
+        }
+
+        .EXAMPLE
+        > Get-DSVault -All
+
+        [ServerResponse]::@{
+            ...
+            Body = [object[]] #Vaults are stored in here
+        }
+
+        .EXAMPLE
+        > Get-DSVault -PageNumber 1 -PageSize 1
+
+        [ServerResponse]::@{
+            ...
+            Body = @{
+                currentPage = 1
+                data = [object[]] #Vaults are stored in here
+                pageSize = 1
+                totalCount = 100
+                totalPage = 100
+            }
+        }
     #>
-    [CmdletBinding()]
-    param(			
-        [guid]$VaultID,
-        [switch]$All
+    [CmdletBinding(DefaultParameterSetName = 'GetPage')]
+    param(		
+        [Parameter(ParameterSetName = 'GetOne')]	
+        [guid]$VaultID, #= $(throw 'Vault ID cannot be null or empty. Please provide a valid vault ID or use the -All parameter.'), *Cant seem to be able to use this sort of validation when using parameters set*
+        [Parameter(ParameterSetName = 'GetAll')]	
+        [switch]$All,
+        [Parameter(ParameterSetName = 'GetPage')]
+        [int]$PageSize = 25,
+        [Parameter(ParameterSetName = 'GetPage')]
+        [int]$PageNumber = 1
     )
         
-        BEGIN {
-            Write-Verbose '[Get-DSVault] Beginning...'
+    BEGIN {
+        Write-Verbose '[Get-DSVault] Beginning...'
     
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw 'Session does not seem authenticated, call New-DSSession.'
@@ -24,46 +65,58 @@ function Get-DSVault {
     }
     
     PROCESS {
-        $URI = if ($All) {
-            "$Script:DSBaseURI/api/security/vaults" 
-        }
-        else { 
-            if ($null -eq $VaultID) {
-                throw 'Please provide a valid vault ID or use the "All" parameter.'
-            }
-            "$Script:DSBaseURI/api/security/vaults/$VaultID" 
+        $RequestParams = @{
+            Uri    = ''
+            Method = 'GET'
         }
 
-        try {   	
-            $params = @{
-                Uri    = $URI
-                Method = 'GET'
+        switch ($PSCmdlet.ParameterSetName) {
+            'GetOne' { 
+                $RequestParams.Uri = "$Script:DSBaseURI/api/security/repositories/$VaultID"
+
+                try { $res = Invoke-DS @RequestParams }
+                catch { Write-Error $_.ErrorDetails.Message }
             }
 
-            Write-Verbose "[Get-DSVault] about to call with $($params.Uri)"
+            'GetAll' {
+                $RequestParams.Uri = "$Script:DSBaseURI/api/v3/vaults?pagesize=100"
+                $AllVaults = @()
 
-            [ServerResponse] $response = Invoke-DS @params
+                try {
+                    $res = Invoke-DS @RequestParams
+                    
+                    if ($res.isSuccess) {
+                        $AllVaults += $res.Body.data
 
-            if ($response.isSuccess) { 
-                Write-Verbose "[Get-DSVault] Got $($response.Body.data)"
+                        for ($Page = 2; $Page -le $res.Body.totalPage; $Page++) {
+                            $RequestParams.Uri = "$Script:DSBaseURI/api/v3/vaults?pagesize=100&pagenumber=$Page"
+                            $res = Invoke-DS @RequestParams
+                            $AllVaults += if ($res.isSuccess) { $res.Body.data }
+                        }
+
+                        $res.Body = [PSCustomObject]@{
+                            data = $AllVaults
+                        }
+                        $res.originalResponse = $null
+                    }
+                }
+                catch {
+                    Write-Error $_.ErrorDetails.Message
+                }
             }
-                
-            If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
-                Write-Debug "[Response.Body] $($response.Body)"
-            }
 
-            return $response
+            'GetPage' {
+                $RequestParams.Uri = "$Script:DSBaseURI/api/v3/vaults?pagenumber=$PageNumber&pagesize=$PageSize"
+
+                $res = Invoke-DS @RequestParams
+            }
         }
-        catch {
-            $exc = $_.Exception
-            If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
-                Write-Debug "[Exception] $exc"
-            } 
-        }
+
+        return $res
     }
     
     END {
-        If ($?) {
+        If ($res.isSuccess) {
             Write-Verbose '[Get-DSVault] Completed Successfully.'
         }
         else {
