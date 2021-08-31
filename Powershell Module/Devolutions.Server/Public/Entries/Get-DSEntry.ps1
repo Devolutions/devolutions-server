@@ -40,9 +40,11 @@ function Get-DSEntry {
     PARAM (
         [guid]$VaultID = ([guid]::Empty),
         [switch]$SearchAllVaults,
-
+        
         [Parameter(ParameterSetName = 'GetById')]
         [guid]$EntryId,
+        [Parameter(ParameterSetName = 'GetById')]
+        [switch]$AsRDMConnection,
 
         [Parameter(ParameterSetName = 'Filter')]
         [string]$FilterValue,
@@ -127,9 +129,11 @@ function GetById {
     )
 
     $RequestParams = @{
-        Uri = "$Script:DSBaseURI/api/connections/partial/$EntryId/resolved-variables"
+        Uri    = $null
         Method = 'GET'
     }
+
+    $RequestParams.Uri = $AsRDMConnection ? ("$Script:DSBaseURI/api/connections/$EntryId") : ("$Script:DSBaseURI/api/connections/partial/$EntryId")
 
     return Invoke-DS @RequestParams
 }
