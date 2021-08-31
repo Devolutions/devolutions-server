@@ -74,7 +74,7 @@
         'New-DSRole', 'Get-DSRoles', 'Update-DSRole', 'Remove-DSRole',
         'New-DSUser', 'Update-DSUser', 'Remove-DSUser', 'Get-DSUsers',
         'New-DSEntryBase', 'Update-DSEntryBase', 'New-DSRDPEntry', 'Update-DSRDPEntry', 'New-DSSSHShellEntry', 'Update-DSSSHShellEntry',
-
+        'Convert-XMLToPSCustomObject', 'Convert-PSCustomObjectToXML', 'Convert-XMLToSerializedString',
         'Get-DSPasswordsReport'
 
         'Invoke-DSPamCheckout', 'Invoke-DSPamCheckin', 'Get-DSPamCheckout', 'Get-DSPamCredential', 'Invoke-DSPamCheckoutPending', 'Get-DSPamPassword'
