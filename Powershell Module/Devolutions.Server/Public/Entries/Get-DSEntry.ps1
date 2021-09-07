@@ -56,6 +56,8 @@ function Get-DSEntry {
         [int]$PageSize = 25,
         [Parameter(ParameterSetName = 'GetPage')]
         [int]$PageNumber = 1,
+        [Parameter(ParameterSetName = 'GetPage')]
+        [guid]$FolderID = $null,
 
         [Parameter(ParameterSetName = 'GetAll')]
         [switch]$All
@@ -85,7 +87,7 @@ function Get-DSEntry {
             }
 
             'GetPage' {
-                GetPage -VaultID $VaultID -PageNumber $PageNumber -PageSize $PageSize
+                GetPage -VaultID $VaultID -PageNumber $PageNumber -PageSize $PageSize -FolderID $FolderID
             }
         }
 
@@ -142,7 +144,7 @@ function GetByFilter {
     param (
         [guid]$VaultID,
         [string]$FilterValue,
-        [SearchItemType]$FilterBy
+        [string]$FilterBy
     )
 
     if ($SearchAllVaults) {
@@ -189,11 +191,12 @@ function GetPage {
     Param(
         [guid]$VaultID,
         [int]$PageNumber,
-        [int]$PageSize
+        [int]$PageSize,
+        [guid]$FolderID
     )
 
     $RequestParams = @{
-        URI    = "$Script:DSBaseURI/api/v3/entries?vaultid=$VaultID&pagenumber=$PageNumber&pagesize=$PageSize"
+        URI    = "$Script:DSBaseURI/api/v3/entries?vaultid=$VaultID&folderid=$FolderID&pagenumber=$PageNumber&pagesize=$PageSize"
         Method = 'GET'
     }
 
