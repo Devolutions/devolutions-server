@@ -57,7 +57,7 @@ function Get-DSEntry {
         [Parameter(ParameterSetName = 'GetPage')]
         [int]$PageNumber = 1,
         [Parameter(ParameterSetName = 'GetPage')]
-        [guid]$FolderID = $null,
+        [nullable[guid]]$FolderID = $null,
 
         [Parameter(ParameterSetName = 'GetAll')]
         [switch]$All
