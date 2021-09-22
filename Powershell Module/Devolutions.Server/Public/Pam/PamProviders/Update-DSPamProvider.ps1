@@ -83,7 +83,7 @@ function Update-DSPamProvider {
             $params = @{
                 Uri    = $URI
                 Method = 'PUT'
-                Body   = $ProviderInfos | ConvertTo-Json
+                Body   = $ProviderInfos | ConvertTo-Json -Depth 100
             }
             $res = Invoke-DS @params
             return $res

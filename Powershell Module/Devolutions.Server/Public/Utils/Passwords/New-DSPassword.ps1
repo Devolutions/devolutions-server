@@ -144,7 +144,7 @@ function New-DSPassword {
         $RequestParams = @{
             URI    = $URI
             Method = "POST"
-            Body   = $PasswordConfiguration | ConvertTo-Json
+            Body   = $PasswordConfiguration | ConvertTo-Json -Depth 100
         }
 
         $res = Invoke-DS @RequestParams

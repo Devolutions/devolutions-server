@@ -43,7 +43,7 @@ function New-DSPamTeamFolder {
             $params = @{
                 Uri    = $URI
                 Method = 'POST'
-                Body   = $newFolderData | ConvertTo-Json
+                Body   = $newFolderData | ConvertTo-Json -Depth 100
             }
 
             $res = Invoke-DS @params

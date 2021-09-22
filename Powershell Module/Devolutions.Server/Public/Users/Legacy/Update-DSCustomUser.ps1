@@ -99,7 +99,7 @@ function Update-DSCustomUser {
             }  
         }
 
-        $params.Body = $currentUserData | ConvertTo-Json
+        $params.Body = $currentUserData | ConvertTo-Json -Depth 100
 
         $res = Invoke-DS @params
         return $res

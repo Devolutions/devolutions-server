@@ -87,7 +87,7 @@ function New-DSVault {
             $RequestParams = @{
                 URI    = $URI
                 Method = "PUT"
-                Body   = $NewVault | ConvertTo-Json
+                Body   = $NewVault | ConvertTo-Json -Depth 100
             }
 
             $res = Invoke-DS @RequestParams -Verbose

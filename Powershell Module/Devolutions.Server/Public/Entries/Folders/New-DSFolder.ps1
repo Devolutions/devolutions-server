@@ -73,7 +73,7 @@ function New-DSFolder {
         $RequestParams = @{
             URI    = "$Script:DSBaseURI/api/connections/partial/save"
             Method = 'POST'
-            Body   = ConvertTo-Json $Body
+            Body   = ConvertTo-Json $Body -Depth 100
         }
 
         $res = Invoke-DS @RequestParams -Verbose

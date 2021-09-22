@@ -127,7 +127,7 @@ function Update-DSPamCheckoutPolicy {
                 $params = @{
                     Uri    = $URI
                     Method = 'PUT'
-                    Body   = $policyInfos | ConvertTo-Json
+                    Body   = $policyInfos | ConvertTo-Json  -Depth 100
                 }
     
                 $res = Invoke-DS @params

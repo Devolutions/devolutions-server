@@ -22,7 +22,7 @@ function New-DSDataSegment {
             Default { $null }
         }
 
-        return Protect-ResourceToHexString ($data | ConvertTo-Json)
+        return Protect-ResourceToHexString ($data | ConvertTo-Json -Depth 100)
     }
 }
 

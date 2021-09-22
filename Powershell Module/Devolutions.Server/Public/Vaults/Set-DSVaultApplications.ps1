@@ -89,7 +89,7 @@ function Set-DSVaultApplications {
             $RequestParams = @{
                 URI    = "$Script:DSBaseURI/api/security/repositories/$VaultID/applications"
                 Method = "PUT"
-                Body   = ConvertTo-Json $ApplicationsListToSave
+                Body   = ConvertTo-Json $ApplicationsListToSave -Depth 100
             }
 
             $res = Invoke-DS @RequestParams -Verbose

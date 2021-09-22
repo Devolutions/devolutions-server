@@ -107,7 +107,7 @@ function Update-DSVault {
             $RequestParams = @{
                 URI    = "$Script:DSBaseURI/api/security/repositories"
                 Method = "PUT"
-                Body   = ConvertTo-Json $NewVault
+                Body   = ConvertTo-Json $NewVault -Depth 100
             }
 
             $res = Invoke-DS @RequestParams -Verbose

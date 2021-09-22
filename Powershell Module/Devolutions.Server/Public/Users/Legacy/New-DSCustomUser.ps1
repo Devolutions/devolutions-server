@@ -144,7 +144,7 @@ function New-DSCustomUser {
             }
         }
 
-        $params.Body = $newUserData | ConvertTo-Json
+        $params.Body = $newUserData | ConvertTo-Json -Depth 100
 
         $res = Invoke-DS @params
         return $res

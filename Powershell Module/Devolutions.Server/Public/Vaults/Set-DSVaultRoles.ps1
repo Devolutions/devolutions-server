@@ -89,7 +89,7 @@ function Set-DSVaultRoles {
             $RequestParams = @{
                 URI    = "$Script:DSBaseURI/api/security/repositories/$VaultID/roles"
                 Method = "PUT"
-                Body   = ConvertTo-Json $RolesListToSave
+                Body   = ConvertTo-Json $RolesListToSave -Depth 100
             }
 
             $res = Invoke-DS @RequestParams -Verbose

@@ -20,7 +20,7 @@ function Set-DSUserPassword {
         $RequestParams = @{
             URI    = $URI
             Method = "PUT"
-            Body   = $RequestBody | ConvertTo-Json
+            Body   = $RequestBody | ConvertTo-Json -Depth 100
         }
 
         Invoke-DS @RequestParams -Verbose

@@ -308,7 +308,7 @@ function New-DSRDPEntry {
             }
 
             #Converts data to JSON, then encrypt the whole thing
-            $RDPEntry.data = Protect-ResourceToHexString (ConvertTo-Json $RDPEntry.data)
+            $RDPEntry.data = Protect-ResourceToHexString (ConvertTo-Json $RDPEntry.data -Depth 100)
 
             $res = New-DSEntryBase -Body $RDPEntry
 

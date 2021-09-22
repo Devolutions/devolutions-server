@@ -99,7 +99,7 @@ function New-DSPamCheckoutPolicy {
             $params = @{
                 Uri    = $URI
                 Method = 'POST'
-                Body   = $newCheckoutPolicyData | ConvertTo-Json
+                Body   = $newCheckoutPolicyData | ConvertTo-Json -Depth 100
             }
 
             $res = Invoke-DS @params

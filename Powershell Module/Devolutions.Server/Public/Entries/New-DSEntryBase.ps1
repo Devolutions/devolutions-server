@@ -27,7 +27,7 @@ function New-DSEntryBase {
             $RequestParams = @{
                 URI    = $URI
                 Method = "POST"
-                Body   = $Body | ConvertTo-Json
+                Body   = $Body | ConvertTo-Json -Depth 100
             }
 
             $res = Invoke-DS @RequestParams -Verbose

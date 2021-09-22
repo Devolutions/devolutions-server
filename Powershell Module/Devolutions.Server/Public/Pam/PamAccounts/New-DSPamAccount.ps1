@@ -47,7 +47,7 @@ function New-DSPamAccount {
         $params = @{
             Uri    = $URI
             Method = 'POST'
-            Body   = $PamCredentials | ConvertTo-Json
+            Body   = $PamCredentials | ConvertTo-Json -Depth 100
         }
 
         $res = Invoke-DS @params

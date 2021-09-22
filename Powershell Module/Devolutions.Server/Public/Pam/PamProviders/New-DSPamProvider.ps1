@@ -52,7 +52,7 @@ function New-DSPamProvider {
             $params = @{
                 Uri    = $URI
                 Method = 'POST'
-                Body   = $newProviderData | ConvertTo-Json
+                Body   = $newProviderData | ConvertTo-Json -Depth 100
             }
 
             Write-Verbose "[New-DSPamProvider] About to call with ${params.Uri}"

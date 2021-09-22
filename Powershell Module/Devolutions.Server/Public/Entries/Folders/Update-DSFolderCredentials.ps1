@@ -69,14 +69,14 @@ function Update-DSFolderCredentials {
             }
 
             #Encrypt data for sending to backend
-            $FolderCtx.data = Protect-ResourceToHexString ($NewData | ConvertTo-Json)
+            $FolderCtx.data = Protect-ResourceToHexString ($NewData | ConvertTo-Json -Depth 100)
             #Empty group or else it places itself in a subfolder with same name
             $FolderCtx.group = ""
 
             $RequestParams = @{
                 URI    = $URI
                 Method = "PUT"
-                Body   = $FolderCtx | ConvertTo-Json
+                Body   = $FolderCtx | ConvertTo-Json -Depth 100
             }
 
             $res = Invoke-DS @RequestParams

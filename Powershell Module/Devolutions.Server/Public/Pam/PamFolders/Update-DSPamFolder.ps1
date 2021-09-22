@@ -94,7 +94,7 @@ function Update-DSPamFolder {
             $params = @{
                 Uri    = $URI
                 Method = 'PUT'
-                Body   = $folderInfos | ConvertTo-Json
+                Body   = $folderInfos | ConvertTo-Json -Depth 100
             }
 
             $res = Invoke-DS @params

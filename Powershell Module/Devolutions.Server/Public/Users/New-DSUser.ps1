@@ -90,7 +90,7 @@ function New-DSUser {
         $RequestParams = @{
             URI    = $URI
             Method = "PUT"
-            Body   = $User | ConvertTo-Json
+            Body   = $User | ConvertTo-Json -Depth 100
         }
 
         $res = Invoke-DS @RequestParams -Verbose

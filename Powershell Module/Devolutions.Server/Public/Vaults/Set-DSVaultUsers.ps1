@@ -89,7 +89,7 @@ function Set-DSVaultUsers {
             $RequestParams = @{
                 URI    = "$Script:DSBaseURI/api/security/repositories/$VaultID/users"
                 Method = "PUT"
-                Body   = ConvertTo-Json $UserListToSave
+                Body   = ConvertTo-Json $UserListToSave -Depth 100
             }
 
             $res = Invoke-DS @RequestParams -Verbose

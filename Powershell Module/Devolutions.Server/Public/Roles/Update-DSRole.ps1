@@ -97,7 +97,7 @@ function Update-DSRole {
                 $params = @{
                     Uri    = $URI
                     Method = 'PUT'
-                    Body   = $updatedRoleData | ConvertTo-Json
+                    Body   = $updatedRoleData | ConvertTo-Json -Depth 100
                 }
         
                 $res = Invoke-DS @params
