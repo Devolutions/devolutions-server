@@ -16,7 +16,7 @@ function Get-DSEntryOTP {
         try {        
             $RequestParams = @{
                 URI    = "$($Script:DSBaseURI)/api/resolve-otp/$($EntryID)"
-                Method = 'POST'
+                Method = ($Global:DSInstanceVersion -ge ([version]'2021.2.4')) ? 'POST' : 'GET'
             }
 
             $res = Invoke-DS @RequestParams
