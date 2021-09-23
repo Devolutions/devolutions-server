@@ -9,7 +9,7 @@ function New-DSEntryBase {
     #>
     [CmdletBinding()]
     PARAM (
-        $Body
+        $JsonBody
     )
 
     BEGIN {
@@ -27,7 +27,7 @@ function New-DSEntryBase {
             $RequestParams = @{
                 URI    = $URI
                 Method = "POST"
-                Body   = $Body | ConvertTo-Json
+                Body   = $JsonBody
             }
 
             $res = Invoke-DS @RequestParams -Verbose
