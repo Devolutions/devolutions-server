@@ -14,7 +14,7 @@ function Get-DSEntrySubConnections {
     
     process {
         $RequestParams = @{
-            URI = "${$Global:DSBaseURI}/api/connections/partial/${$EntryID}/sub-connections"
+            URI = "$($Global:DSBaseURI)/api/connections/partial/$($EntryID)/sub-connections"
             Method = 'GET'
         }
 
@@ -24,6 +24,5 @@ function Get-DSEntrySubConnections {
     
     end {
         $res.IsSuccess ? (Write-Verbose '[Get-DSEntrySubConnections] Completed successfully!') : (Write-Verbose '[Get-DSEntrySubConnections] Ended with errors...')
-
     }
 }
