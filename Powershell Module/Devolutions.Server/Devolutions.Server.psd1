@@ -6,7 +6,7 @@
     RootModule           = 'Devolutions.Server.psm1'
     
     # Version number of this module.
-    ModuleVersion        = '2021.5.0'
+    ModuleVersion        = '2021.7.0'
 
     # Supported PSEditions
     CompatiblePSEditions = 'Core'
@@ -65,8 +65,8 @@
     FunctionsToExport    = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Get-DSIsLogged', 'Protect-ResourceToHexString',
         'Get-DSSecureMessages',
         'Get-DSVaults', 'Get-DSVault', 'Get-DSVaultPermissions', 'New-DSVault', 'Update-DSVault', 'Remove-DSVault', 'Set-DSVaultUsers', 'Set-DSVaultRoles', 'Set-DSVaultApplications',
-        'Get-DSEntriesTree', 'Get-DSFolders', 'New-DSFolder', 'Get-DSFolder',
-        'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData', 'Get-DSEntriesPermissions', 'Remove-DSEntry', 'Get-DSEntryOTP', 'Get-DSEntrySubConnections'
+        'Get-DSEntriesTree', 'Get-DSFolders', 'New-DSFolder', 'Get-DSFolder', 'Update-DSFolderCredentials',
+        'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData', 'Get-DSEntriesPermissions', 'Remove-DSEntry', 'Get-DSEntryOTP', 'Get-DSEntrySubConnections',
         'New-DSCredentialEntry',
         'Get-DSPamProviders', 'New-DSPamProvider', 'Remove-DSPamProvider', 'Update-DSPamProvider', 
         'Get-DSPamFolders', 'Get-DSPamFolder', 'New-DSPamTeamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder', 
