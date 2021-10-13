@@ -1,18 +1,29 @@
-function Get-DSRoles {
+function Get-DSRole {
     <#
     .SYNOPSIS
     Fetch all the currently existing roles.
     .EXAMPLE
-    $res = Get-DSRoles
-    $rolesList = (Get-DSRoles).Body.data
+    > Get-DSRole -PageSize 20 -PageNumber 3
+    [ServerResponse]@{
+        ...
+        Body = @{
+            data = @{
+                @{Role 1...}
+                @{Role 2...}
+                @{Role 3...}
+            }
+        }
+    }
     #>
     [CmdletBinding()]
     param(
+        [int]$PageSize = 100,
+        [int]$PageNumber = 1
     )
 
     BEGIN {
         Write-Verbose '[Get-DSRoles] Beginning...'
-        $URI = "$Script:DSBaseURI/api/v3/usergroups"
+        $URI = "$Script:DSBaseURI/api/v3/usergroups?pageSize=$PageSize&pageNumber=$PageNumber&sortOrder=1"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
