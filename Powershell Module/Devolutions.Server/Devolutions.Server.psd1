@@ -71,7 +71,7 @@
         'Get-DSPamProviders', 'New-DSPamProvider', 'Remove-DSPamProvider', 'Update-DSPamProvider', 
         'Get-DSPamFolders', 'Get-DSPamFolder', 'New-DSPamTeamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder', 
         'Get-DSPamAccounts', 'New-DSPamAccount', 'Remove-DSPamAccount', 
-        'New-DSRole', 'Get-DSRoles', 'Update-DSRole', 'Remove-DSRole',
+        'New-DSRole', 'Get-DSRole', 'Update-DSRole', 'Remove-DSRole',
         'New-DSUser', 'Update-DSUser', 'Remove-DSUser', 'Get-DSUsers',
         'New-DSEntryBase', 'Update-DSEntryBase', 'New-DSRDPEntry', 'Update-DSRDPEntry', 'New-DSSSHShellEntry', 'Update-DSSSHShellEntry',
         'Convert-XMLToPSCustomObject', 'Convert-PSCustomObjectToXML', 'Convert-XMLToSerializedString',
