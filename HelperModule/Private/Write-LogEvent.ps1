@@ -1,7 +1,6 @@
-using Namespace System
+﻿using Namespace System
 using Namespace System.Diagnostics
 Function Write-LogEvent {
-    [CmdletBinding()]
     param (
         [Parameter(Mandatory)][string]$Message,
         [Parameter()][switch]$Output,
@@ -11,7 +10,7 @@ Function Write-LogEvent {
         [EventLogEntryType]$logError = [EventLogEntryType]::Error
     )
     If ($Output) {
-        Write-Output $Message 
+        Write-Output $Message
     } elseif ($LogIt) {
         Write-EventLog -LogName 'Application' -Source 'Devolutions Server Install Script' -EntryType $logInfo -EventID 1 -Message $Message
     } elseif ($Errors) {

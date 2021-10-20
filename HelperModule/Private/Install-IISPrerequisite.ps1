@@ -1,4 +1,4 @@
-function Install-PrerequisiteServer {
+function Install-IISPrerequisite {
     param ([string]$serverRole)
     Write-LogEvent "Checking status of $serverRole"
     if ((Get-WindowsFeature -Name $serverRole).Installed -eq $false) {

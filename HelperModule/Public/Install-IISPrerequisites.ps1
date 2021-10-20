@@ -1,4 +1,4 @@
-function Install-PrerequisiteSetup {
+function Install-IISPrerequisites {
     New-EventSource
     Test-Packages
 }
