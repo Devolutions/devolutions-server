@@ -1,102 +1,85 @@
-function Install-DevolutionsServer {
-    #TODO Try to get working in offline or simplify this
+﻿function Install-DevolutionsServer {
+    [CmdletBinding(DefaultParameterSetName = 'GA')]
     param (
-        [parameter(Mandatory, HelpMessage = "Format for the Console Version being install. `nFormat: 2021.1.17.0")][ValidatePattern('[2][0][0-9][0-9][.][0-9][.][0-9][0-9][.][0]')][ValidateNotNullOrEmpty()][string]$ConsoleVersion,
-        [parameter(HelpMessage = 'Used to install an SQL Server')][switch]$SQLServer,
-        [parameter(HelpMessage = 'Used to set SQL Server to use Integrated security')][switch]$SQLIntegrated,
-        [parameter(HelpMessage = 'Used to install SQL Server Management Studio')][switch]$SSMS,
-        [parameter(HelpMessage = 'Disables the use of HTTP(s) on your Devolutions Server.')][switch]$DisableHttps,
-        [parameter(Mandatory, HelpMessage = 'Include full format from email.')][string]$serialKey = ''
+        [Parameter(Mandatory, ParameterSetName = 'GA', Position = 0)][switch]$GA,
+        [Parameter(Mandatory, ParameterSetName = 'LTS', Position = 0)][switch]$LTS,
+        [parameter(HelpMessage = 'Used to set Integrated security for both SQL and Devolutions Console', Position = 2)][switch]$IntegratedSecurity,
+        [parameter(HelpMessage = 'Used to install an SQL Server', Position = 3)][switch]$SQLServer,
+        [parameter(HelpMessage = 'Used to install SQL Server Management Studio', Position = 4)][switch]$SSMS,
+        [parameter(HelpMessage = 'Disables the use of HTTP(s) on your Devolutions Server.', Position = 5)][switch]$DisableHttps,
+        [parameter(Mandatory, HelpMessage = 'Include full format of your license key from email.', Position = 1)][string]$LicenseKey
     )
-    try {
-        $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
-        $path = "$Scriptpath\Packages"
-        $network = Test-Network
-        New-EventSource
-        if ($network) {
-            if (($SQLServer) -and !($SQLIntegrated) -and ($SSMS)) {
-                Write-LogEvent 'Starting installation for SQL Server and SQL Server Management Studio'
-                Install-SQLServer -SSMS -NamedPipe
-            } elseif (($SQLServer) -and ($SQLIntegrated) -and ($SSMS)) {
-                Write-LogEvent 'Starting installation for SQL Server using integrated security and SQL Server Management Studio'
-                Install-SQLServer -SSMS -SQLIntegrated -NamedPipe
-            } elseif (($SQLServer) -and !($SQLIntegrated) -and !($SSMS)) {
-                Write-LogEvent 'Starting installation for SQL Server'
-                Install-SQLServer -NamedPipe
-            } elseif (($SQLServer) -and ($SQLIntegrated) -and !($SSMS)) {
-                Write-LogEvent 'Starting installation for SQL Server using integrated security'
-                Install-SQLServer -SQLIntegrated -NamedPipe
-            }
-            Write-LogEvent 'Starting installation of Devolutions Console'
-            Install-DVLSConsole -ConsoleVersion $ConsoleVersion
-            Install-PrerequisiteSetup
-            Write-LogEvent 'Getting JSON response file setup for installation.'
-            if ($DisableHttps) { Invoke-JSON -serialKey $serialKey -DisableHttps }
-            else { Invoke-JSON -serialKey $serialKey }
-            Write-LogEvent 'Creating a Devolutions Server instance.'
-            Install-DVLSInstance
-            Write-LogEvent 'Installation process complete.' -Output
-            if (!($DisableHttps)) {
-                Write-LogEvent 'Please make sure you have configured IIS Bindings with certificate for HTTP(s).' -Output 
-                Write-LogEvent 'Opening IIS...' -Output 
-                Start-Process 'InetMgr.exe'
-            }
-        } elseif (!($network)) {
-            
-            if (($SQLServer) -and (Test-Path -Path "$path\SQL-SSEI-Expr.exe")) {
-                if (($SQLServer) -and ($SQLIntegrated)) {
-                    Write-LogEvent 'Starting installation for SQL Server and SQL Server Management Studio'
-                    Install-SQLServer -SQLIntegrated -TCPProtocol -NamedPipe
-                } elseif (($SQLServer) -and !($SQLIntegrated)) {
-                    Write-LogEvent 'Starting installation for SQL Server'
-                    Install-SQLServer -TCPProtocol -NamedPipe
-                } 
-            } elseif (($SQLServer) -and !(Test-Path -Path "$path\SQL-SSEI-Expr.exe")) {
-                Write-LogEvent 'No EXE was found to install SQL Server' -Output
-                Write-LogEvent "Please add exe to $path folder and rerun command" -Output
-                continue  
-            }
-            
-            if (($SSMS) -and (Test-Path -Path "$path\SSMSinstaller.exe")) {
-                Install-SSMS
-            } elseif (($SSMS) -and !(Test-Path -Path "$path\SSMSinstaller.exe")) {
-                Write-LogEvent 'No EXE was found to install SQL Server Management Studio' -Output
-                Write-LogEvent "Please add exe to $path folder and rerun command" -Output
-                continue  
-            }
+    <#
+    #Handles missing SQL and SSMS switches in case of user error
+    if (!($SQLServer) -and !($SSMS)) {
+        $choices = New-Object Collections.ObjectModel.Collection[Management.Automation.Host.ChoiceDescription]
+        $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&MS SQL Server'))
+        $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&SQL Studio'))
+        $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&Both'))
+        $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&None'))
 
-            if (Test-Path -Path "$path\Setup.DPS.Console.$ConsoleVersion.exe") {
-                Write-LogEvent 'Starting installation of Devolutions Console'
-                Install-DVLSConsole -ConsoleVersion $ConsoleVersion
-                Install-PrerequisiteSetup
-                Write-LogEvent 'Getting JSON response file setup for installation.'
-                if ($DisableHttps) { Invoke-JSON -serialKey $serialKey -DisableHttps }
-                else { Invoke-JSON -serialKey $serialKey }
-                if (Test-Path -Path "$path\DVLS.Instance.$ConsoleVersion.zip") {
-                    Write-LogEvent 'Creating a Devolutions Server instance.'
-                    Install-DVLSInstance
-                    Write-LogEvent 'Installation process complete.' -Output
-                    if (!($DisableHttps)) {
-                        Write-LogEvent 'Please make sure you have configured IIS Bindings with certificate for HTTP(s).' -Output 
-                        Write-LogEvent 'Opening IIS...' -Output 
-                        Start-Process 'InetMgr.exe'
-                    }
-                } else {
-                    Write-LogEvent 'No zip was found to install your Devolutions Server Instance' -Output
-                    Write-LogEvent "Please add zip to $path folder and rerun command" -Output
-                    continue
-                }
+        $decision = $Host.UI.PromptForChoice('SQL Installation Choices', 'Do you want to install MS SQL Server, MS SQL Server Management Studio, Both or None?', $choices, 2)
+
+        if ($decision -eq 0) { $SQLServer = $true }
+        if ($decision -eq 1) { $SSMS = $true }
+        if ($decision -eq 2) {
+            $SQLServer = $true
+            $SSMS = $true
+        }
+    }#>
+    $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
+    $dvlszip = "$Scriptpath\Packages\DVLS.Instance.zip"
+
+    New-EventSource
+
+    if (($SQLServer)) { if ($IntegratedSecurity) { Install-SqlServer -SQLIntegrated } else { Install-SqlServer } }
+    if (($SSMS)) { Install-SqlStudio }
+
+    if ($GA) { Install-DevolutionsConsole -GA }
+    if ($LTS) { Install-DevolutionsConsole -LTS }
+
+    if (Test-Network) {
+        if (!(Test-DevoZip)) {
+            if ($IntegratedSecurity) {
+                if ($DisableHttps) { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip }
+                else { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -ZipFileLocation $dvlszip }
             } else {
-                Write-LogEvent 'No EXE was found to install your Devolutions Server Console' -Output
-                Write-LogEvent "Please add exe to $path folder and rerun command" -Output
-                return 
+                Write-Output 'Please make sure to have your SQL accounts ready for Owner, Scheduler and Web App access.'
+                Read-Host 'Please hit enter to acknowledge'
+                if ($DisableHttps) { New-ResponseFile -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip }
+                else { New-ResponseFile -LicenseKey $LicenseKey -ZipFileLocation $dvlszip }
             }
+            if ($GA) { Invoke-DevolutionsZip -GA }
+            if ($LTS) { Invoke-DevolutionsZip -LTS }
         } else {
-            Write-LogEvent 'You are trying to run a script that requires an internet connection and/or local files if not online.' -Output
-            Write-LogEvent 'Please run New-OfflineServer to create a local zip on a PC with Internet access.' -Output
-            Write-LogEvent "Place files on the your Offline Server here: $path" -Output
-            Read-Host 'Please hit enter to continue...'
+            if ($IntegratedSecurity) {
+                if ($DisableHttps) { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip }
+                else { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -ZipFileLocation $dvlszip }
+            } else {
+                Write-Output 'Please make sure to have your SQL accounts ready for Owner, Scheduler and Web App access.'
+                Read-Host 'Please hit enter to acknowledge'
+                if ($DisableHttps) { New-ResponseFile -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip } else {
+                    New-ResponseFile -LicenseKey $LicenseKey -ZipFileLocation $dvlszip
+                }
+            }
+            Install-DevolutionsInstance
+        }
+    } elseif (!(Test-Network)) {
+        if ((Test-DevoZip)) {
+            if ($IntegratedSecurity) {
+                if ($DisableHttps) { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip }
+                else { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -ZipFileLocation $dvlszip }
+            } else {
+                if ($DisableHttps) { New-ResponseFile -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip } else {
+                    New-ResponseFile -LicenseKey $LicenseKey -ZipFileLocation $dvlszip
+                }
+            }
+            Install-DevolutionsInstance
+        } else {
+            Write-LogEvent "Installation ZIP file for Devolutions Server Instance is not present on $env:COMPUTERNAME `nin $Scriptpath\Packages folder for offline installation.`n" -Output
+            Write-LogEvent "Note: Due to SQL Express' constraints you will need to install SQL Server on the same or seperate server before installing Devolutions Server.`n" -Output
+            Write-LogEvent "Please run New-OfflineServer on a network capable PC/Server,`nthen move files to your offline server.`n`nInstallation will now end." -Output
             return
         }
-    } catch [System.Exception] { Write-LogEvent $_ -Errors }
+    }
 }

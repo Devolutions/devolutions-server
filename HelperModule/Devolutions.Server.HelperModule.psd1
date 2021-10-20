@@ -9,28 +9,28 @@
 @{
 
     # Script module or binary module file associated with this manifest.
-    RootModule           = 'DVLS.HelperModule.psm1'
+    RootModule        = 'Devolutions.Server.HelperModule.psm1'
 
     # Version number of this module.
-    ModuleVersion        = '2021.1.0'
+    ModuleVersion     = '2021.1.0'
 
     # Supported PSEditions
-    CompatiblePSEditions = 'Core'
+    #CompatiblePSEditions = 'Core'
 
     # ID used to uniquely identify this module
-    GUID                 = 'd4bf4888-0049-4d60-86be-61ef1248aabb'
+    GUID              = 'd4bf4888-0049-4d60-86be-61ef1248aabb'
 
     # Author of this module
-    Author               = 'Devolutions'
+    Author            = 'Devolutions'
 
     # Company or vendor of this module
-    CompanyName          = 'Devolutions'
+    CompanyName       = 'Devolutions'
 
     # Copyright statement for this module
-    Copyright            = '(c) 2021 Devolutions Inc. All rights reserved.'
+    Copyright         = '(c) 2021 Devolutions Inc. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description          = 'Devolutions Server Helper PowerShell Module'
+    Description       = 'Devolutions Server Helper PowerShell Module'
 
     # Minimum version of the PowerShell engine required by this module
     #PowerShellVersion    = '7.0'
@@ -66,20 +66,20 @@
     # FormatsToProcess = @()
 
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-    NestedModules        = @()
+    NestedModules     = @()
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport    = @('Get-DevoConsoleVersion', 'Get-SQLDBVersion', 'Install-DevolutionsServer', 'Install-DVLSConsole', 
-        'Install-DVLSInstance', 'Install-SQLServer', 'Install-SSMS', 'New-OfflineDeployment', 'New-OfflineServer', 'Install-PrerequisiteSetup', 
-        'Update-DVLSInstance', 'Update-SQLDatabase', 'New-SqlDatabase')
+    FunctionsToExport = @('Get-DevolutionsConsoleVersion', 'Get-SQLDBVersion', 'Install-DevolutionsConsole', 'Install-DevolutionsInstance',
+        'Install-DevolutionsServer', 'Install-SqlServer', 'Install-SqlStudio', 'Install-IISPrerequisites',
+        'New-DatabaseAdvanced', 'New-OfflineServer', 'New-ResponseFile', 'Update-DVLSInstance', 'Update-SQLDatabase')
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
-    CmdletsToExport      = @()
+    CmdletsToExport   = @()
 
     # Variables to export from this module
-    VariablesToExport    = @()
+    VariablesToExport = @()
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport      = @()
+    AliasesToExport   = @()
 
     # DSC resources to export from this module
     # DscResourcesToExport = @()
@@ -91,7 +91,7 @@
     # FileList = @()
 
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
-    PrivateData          = @{
+    PrivateData       = @{
 
         PSData = @{
 

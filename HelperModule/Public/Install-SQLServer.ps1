@@ -1,122 +1,33 @@
-function Install-SQLServer {
+﻿function Install-SqlServer {
     param(
-        [parameter(HelpMessage = 'Used to install SQL Server Management Studio')][switch]$SSMS,
+        [parameter(HelpMessage = 'Used to set SQL Server to use Advanced settings')][switch]$AdvancedDB,
         [parameter(HelpMessage = 'Used to set SQL Server to use Integrated security')][switch]$SQLIntegrated,
         [parameter(HelpMessage = 'Used to enable TCP on your SQL Server Configuration')][switch]$TCPProtocol,
         [parameter(HelpMessage = 'Used to enable Named Pipes on your SQL Server Configuration')][switch]$NamedPipe
-
     )
     New-EventSource
-    if (!(Test-Programs -Sql -ErrorAction:SilentlyContinue)) {
-        
-        if (!($SQLIntegrated)) {
-            $SQLAccount = Get-Credential -Message 'Please enter the credentials you would like to use for your SQL Account: '
-            $SQLUser = $SQLAccount.GetNetworkCredential().UserName
-        }
-        $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
-        $path = "$Scriptpath\Packages"
-        if (!(Test-Path $path)) { New-Item -Path $path -ItemType Directory }
-        #SQL Express install
-
-        $Installer = 'SQL-SSEI-Expr.exe'
-        $URL = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/ef88f312-606e-4a78-bff9-2177867f7a5b'
-        if (!(Test-Path -Path $path\$Installer)) {
-            try {
-                Write-LogEvent 'Downloading SQL Server Express...' 
-                Start-BitsTransfer $URL -Destination $path\$Installer 
-            } catch [System.Exception] { Write-LogEvent $_ -Errors }
-        }
-        
-        try {
-            Write-LogEvent 'Installing SQL Server Express...'
-            Start-Process -FilePath $path\$Installer -Args '/ACTION=INSTALL /IACCEPTSQLSERVERLICENSETERMS /Q' -Verb RunAs -Wait 
-            Write-LogEvent 'SQL Server Express installed' 
-        } catch [System.Exception] { Write-LogEvent $_ -Errors }
-        try {
-            Remove-Item $path\$Installer 
-            Write-LogEvent "Removing $path\$Installer from $Env:ComputerName"
-        } catch [System.Exception] { Write-LogEvent $_ -Errors }
-  
-        #modules required for the DB creation and setting the login rights
-        try {
-            Install-PackageProvider -Name NuGet -Force
-            if ( ! (Get-Module SqlServer )) {
-                Write-LogEvent "SQLServer module not found on $env:ComputerName."
-                Write-LogEvent 'Installing SQLServer module for PowerShell.'
-                Install-Module -Name 'SqlServer' -Force
+    $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
+    $path = "$Scriptpath\Packages"
+    if (Test-Programs -Sql -ErrorAction:SilentlyContinue) {
+        Write-LogEvent "Sql Server is already present on the $env:COMPUTERNAME."
+        return
+    }
+    if (Test-Network) {
+        if (!(Test-SQL -SQLServer)) {
+            if ($SQLIntegrated) { 
+                if ($AdvancedDB) { Invoke-SqlServer -SQLIntegrated -AdvancedDB } else { Invoke-SqlServer -SQLIntegrated }
+            } else {
+                if ($AdvancedDB) { Invoke-SqlServer -AdvancedDB } else { Invoke-SqlServer }         
             }
-            Import-Module -Name 'SqlServer'
-            Write-LogEvent 'Imported SQLServer module for PowerShell.'
-        } catch [System.Exception] { Write-LogEvent $_ -Errors }
+        } elseif (Test-SQL -SQLServer) {
+            if ($SQLIntegrated) { 
+                if ($AdvancedDB) { Install-SQL -SQLIntegrated -AdvancedDB } else { Install-SQL -SQLIntegrated }
+            } else {
+                if ($AdvancedDB) { Install-SQL -AdvancedDB } else { Install-SQL }         
+            }
+        }
         try {
-            #set mixed mode for authentication
-            $comp = $env:ComputerName
-            $sql = [Microsoft.SqlServer.Management.Smo.Server]::new("$comp\SQLEXPRESS") 
-            if ($SQLIntegrated) {
-                $sql.Settings.LoginMode = 'Integrated'
-            } else { $sql.Settings.LoginMode = 'Mixed' }
-            $sql.Alter()
-            try { Get-Service -Name 'MSSQL$SQLEXPRESS' | Restart-Service } catch [System.Exception] { Write-LogEvent $_ -Errors }
-
-            #TODO Next Step: Add naming for more customizability
-            # set instance and database name variables
-            $dbname = 'DVLS'
-            $Script:SqlInstance = 'localhost\SQLEXPRESS'
             $sqlServerName = 'SQLEXPRESS'
-
-            # change to SQL Server instance directory
-            Set-Location SQLSERVER:\SQL\$SqlInstance
-
-            # create object and database
-            $db = New-Object -TypeName Microsoft.SqlServer.Management.Smo.Database -ArgumentList $SqlInstance, $dbname
-            $db.Create()
-            Write-LogEvent "New database SQL Server located: $SqlInstance and Database Name: $dbname." -Output
-
-            # set recovery model
-            #TODO Next step: look at maintenance plans for DB recovery models
-            $db.RecoveryModel = 'simple'
-            $db.Alter()
-            Write-LogEvent 'Recovery model is set to Simple. It is highly suggested to look at your maintenance plans for DB recoveries.' -Output
-
-            # change owner
-            if ($SQLIntegrated) {
-                $db.SetOwner("$env:USERDOMAIN\$env:USERNAME")
-                $db.Alter()
-                Write-LogEvent "DB owner set to $env:USERDOMAIN\$env:USERNAME" -Output
-            } else {
-                $db.SetOwner('sa')
-                $db.Alter()
-                Write-LogEvent 'DB owner set to sa account.' -Output
-            }
-
-            # change data file size and autogrowth amount
-            foreach ($datafile in $db.filegroups.files) {
-                $datafile.size = 1048576
-                $datafile.growth = 262144
-                $datafile.growthtype = 'kb'
-                $datafile.Alter()
-                Write-LogEvent 'DB autogrowth configured to default settings' -Output
-            }
-
-            # change log file size and autogrowth
-            foreach ($logfile in $db.logfiles) {
-                $logfile.size = 524288
-                $logfile.growth = 131072
-                $logfile.growthtype = 'kb'
-                $logfile.Alter()
-                Write-LogEvent 'DB log file size configured to default settings' -Output
-            }
-            if ($SQLIntegrated) {
-                Add-UserToRole -server $SqlInstance -Database $dbname -User "$env:USERDOMAIN\$env:USERNAME" -Role 'db_owner'
-                Write-LogEvent "$env:USERDOMAIN\$env:USERNAME set as db_owner on $dbname in $SqlInstance" -Output
-            } else {
-                #create sql login for db
-                Add-SqlLogin -LoginPSCredential $SQLAccount -LoginType 'SqlLogin' -Enable -GrantConnectSql
-                Add-UserToRole -server $SqlInstance -Database $dbname -User $SQLUser -Role 'db_owner'
-                Write-LogEvent "$SQLUser set as db_owner on $dbname in $SqlInstance" -Output
-            }
-        } catch [System.Exception] { Write-LogEvent $_ -Errors }
-        try {
             $smo = 'Microsoft.SqlServer.Management.Smo.'
             $wmi = New-Object ($smo + 'Wmi.ManagedComputer').
 
@@ -139,10 +50,11 @@ function Install-SQLServer {
                 $Np
             }
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
+    } elseif (!(Test-Network)) {
+        if ((Test-SQL -SQLServer)) { Install-SQL } else {
+            Write-LogEvent "Installation files for Sql Server are not present on $env:COMPUTERNAME `nin $path folder for offline installation.`n" -Output
 
-        if ($SSMS) { Install-SSMS }
-    } else {
-        Write-LogEvent 'SQL Server is already installed.'
-        if ($SSMS) { Install-SSMS }
+        }
     }
+
 }
