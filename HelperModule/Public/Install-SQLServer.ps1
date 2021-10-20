@@ -13,17 +13,22 @@ function Install-SQLServer {
             $SQLAccount = Get-Credential -Message 'Please enter the credentials you would like to use for your SQL Account: '
             $SQLUser = $SQLAccount.GetNetworkCredential().UserName
         }
-        $path = "$PSScriptRoot\Programs"
+        $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
+        $path = "$Scriptpath\Packages"
         if (!(Test-Path $path)) { New-Item -Path $path -ItemType Directory }
         #SQL Express install
-        Write-LogEvent 'Downloading SQL Server Express...'
+
         $Installer = 'SQL-SSEI-Expr.exe'
         $URL = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/ef88f312-606e-4a78-bff9-2177867f7a5b'
         if (!(Test-Path -Path $path\$Installer)) {
-            try { Start-BitsTransfer $URL -Destination $path\$Installer } catch [System.Exception] { Write-LogEvent $_ -Errors }
+            try {
+                Write-LogEvent 'Downloading SQL Server Express...' 
+                Start-BitsTransfer $URL -Destination $path\$Installer 
+            } catch [System.Exception] { Write-LogEvent $_ -Errors }
         }
-        Write-LogEvent 'Installing SQL Server Express...'
+        
         try {
+            Write-LogEvent 'Installing SQL Server Express...'
             Start-Process -FilePath $path\$Installer -Args '/ACTION=INSTALL /IACCEPTSQLSERVERLICENSETERMS /Q' -Verb RunAs -Wait 
             Write-LogEvent 'SQL Server Express installed' 
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
@@ -31,7 +36,7 @@ function Install-SQLServer {
             Remove-Item $path\$Installer 
             Write-LogEvent "Removing $path\$Installer from $Env:ComputerName"
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
-
+  
         #modules required for the DB creation and setting the login rights
         try {
             Install-PackageProvider -Name NuGet -Force
@@ -74,8 +79,13 @@ function Install-SQLServer {
             Write-LogEvent 'Recovery model is set to Simple. It is highly suggested to look at your maintenance plans for DB recoveries.' -Output
 
             # change owner
-            if (!($SQLIntegrated)) {
+            if ($SQLIntegrated) {
+                $db.SetOwner("$env:USERDOMAIN\$env:USERNAME")
+                $db.Alter()
+                Write-LogEvent "DB owner set to $env:USERDOMAIN\$env:USERNAME" -Output
+            } else {
                 $db.SetOwner('sa')
+                $db.Alter()
                 Write-LogEvent 'DB owner set to sa account.' -Output
             }
 
@@ -84,7 +94,7 @@ function Install-SQLServer {
                 $datafile.size = 1048576
                 $datafile.growth = 262144
                 $datafile.growthtype = 'kb'
-                $datafile.alter()
+                $datafile.Alter()
                 Write-LogEvent 'DB autogrowth configured to default settings' -Output
             }
 
@@ -93,7 +103,7 @@ function Install-SQLServer {
                 $logfile.size = 524288
                 $logfile.growth = 131072
                 $logfile.growthtype = 'kb'
-                $logfile.alter()
+                $logfile.Alter()
                 Write-LogEvent 'DB log file size configured to default settings' -Output
             }
             if ($SQLIntegrated) {

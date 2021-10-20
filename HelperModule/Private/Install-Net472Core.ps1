@@ -1,9 +1,9 @@
 function Install-Net472Core {
     # Installing .Net Framework 4.7.2
-    $path = "$PSScriptRoot\Packages"
-    $dotNet = Test-Path "$path\NDP472-KB4054530-x86-x64-AllOS-ENU.exe"
+    $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
+    $path = "$Scriptpath\Packages"
     $ExitCode = 0
-    $net472 = "$PSScriptRoot\Packages\NDP472-KB4054530-x86-x64-AllOS-ENU.exe"
+    $net472 = "$path\NDP472-KB4054530-x86-x64-AllOS-ENU.exe"
     Write-LogEvent 'Installing .Net Framework 4.7.2'
     $ExitCode = (Start-Process -FilePath 'msiexec.exe' -ArgumentList "/I $net472 /q" -Wait -PassThru).ExitCode
     if ($ExitCode -ne 0 -and $ExitCode -ne 1641 -and $ExitCode -ne 3010) {
@@ -13,6 +13,6 @@ function Install-Net472Core {
     }
     Try {
         Remove-Item $net472 -Force
-        Write-LogEvent "Removing $dotNet from $Env:COMPUTERNAME" -Output
+        Write-LogEvent "Removing $net472 from $Env:COMPUTERNAME" -Output
     } catch [System.Exception] { Write-LogEvent $_ -Errors }
 }

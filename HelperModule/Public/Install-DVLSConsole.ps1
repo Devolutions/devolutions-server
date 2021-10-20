@@ -5,7 +5,8 @@ function Install-DVLSConsole {
     )
     if (!(Test-Programs -DevoConsole -ErrorAction:SilentlyContinue)) {
         
-        $path = "$PSScriptRoot\Programs"
+        $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
+        $path = "$Scriptpath\Packages"
         if (!(Test-Path $path)) { New-Item -Path $path -ItemType Directory }
         $DevoPath = "${env:ProgramFiles(x86)}\Devolutions\Devolutions Server Console\DPS.Console.UI.exe"
         #Install-DVLSConsole {
