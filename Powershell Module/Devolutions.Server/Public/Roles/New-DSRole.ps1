@@ -18,7 +18,7 @@ function New-DSRole {
     #>
     [CmdletBinding()]
     param(
-        [ValidateSet([ServerUserType]::Builtin, [ServerUserType]::Domain)]
+        [ValidateSet([ServerUserType]::Builtin, [ServerUserType]::Domain, [ServerUserType]::AzureAD)]
         [string]$AuthenticationType = [ServerUserType]::Builtin,
         [ValidateNotNullOrEmpty()]
         [string]$displayName,
@@ -77,6 +77,7 @@ function New-DSRole {
         $newRoleData.userSecurity.authenticationType = switch ($AuthenticationType) {
             ([ServerUserType]::Builtin) { 0 }
            ([ServerUserType]::Domain) { 3 }
+           ([ServerUserType]::AzureAD) { 8 }
         }
 
         $params = @{
