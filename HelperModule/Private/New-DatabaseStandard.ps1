@@ -56,7 +56,7 @@
                 $datafile.growth = 262144
                 $datafile.growthtype = 'kb'
                 $datafile.Alter()
-                Write-LogEvent 'DB autogrowth configured to default settings' -Output
+                Write-LogEvent 'DB autogrowth configured with default settings' -Output
             }
 
             # change log file size and autogrowth
@@ -65,7 +65,7 @@
                 $logfile.growth = 131072
                 $logfile.growthtype = 'kb'
                 $logfile.Alter()
-                Write-LogEvent 'DB log file size configured to default settings' -Output
+                Write-LogEvent 'DB log file size configured with default settings' -Output
             }
             #SQL DB Permissions
             if ($SQLIntegrated) {

@@ -44,8 +44,6 @@
                 if ($DisableHttps) { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip }
                 else { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -ZipFileLocation $dvlszip }
             } else {
-                Write-Output 'Please make sure to have your SQL accounts ready for Owner, Scheduler and Web App access.'
-                Read-Host 'Please hit enter to acknowledge'
                 if ($DisableHttps) { New-ResponseFile -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip }
                 else { New-ResponseFile -LicenseKey $LicenseKey -ZipFileLocation $dvlszip }
             }
@@ -56,8 +54,6 @@
                 if ($DisableHttps) { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip }
                 else { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -ZipFileLocation $dvlszip }
             } else {
-                Write-Output 'Please make sure to have your SQL accounts ready for Owner, Scheduler and Web App access.'
-                Read-Host 'Please hit enter to acknowledge'
                 if ($DisableHttps) { New-ResponseFile -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip } else {
                     New-ResponseFile -LicenseKey $LicenseKey -ZipFileLocation $dvlszip
                 }
