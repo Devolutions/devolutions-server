@@ -18,6 +18,8 @@ function New-DSRole {
     #>
     [CmdletBinding()]
     param(
+        [ValidateSet([ServerUserType]::Builtin, [ServerUserType]::Domain)]
+        [string]$AuthenticationType = [ServerUserType]::Builtin,
         [ValidateNotNullOrEmpty()]
         [string]$displayName,
         [string]$description,
@@ -29,7 +31,8 @@ function New-DSRole {
         [bool]$canImport,
         [bool]$canExport,
         [bool]$denyAddInRoot,
-        [int]$offlineMode
+        [int]$offlineMode,
+        [string]$domainName = $null
     )
 
     BEGIN {
@@ -37,12 +40,12 @@ function New-DSRole {
         $URI = "$Script:DSBaseURI/api/security/role/save?csToXml=1"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
-            throw "Session invalid. Please call New-DSSession."
+            throw 'Session invalid. Please call New-DSSession.'
         }
 
         if ($offlineMode) {
             if ($offlineMode -notin @('0', '2', '3')) {
-                throw "Offline mode invalid. Should be 0 (Disabled), 2 (Read-only) or 3 (Read-write)."
+                throw 'Offline mode invalid. Should be 0 (Disabled), 2 (Read-only) or 3 (Read-write).'
             }
         }
     }
@@ -55,10 +58,12 @@ function New-DSRole {
             userSecurity = @{
                 name                 = $displayName
                 isAdministrator      = $isAdministrator
+                authenticationType   = 0
                 canAdd               = $canAdd
                 canEdit              = $canEdit
                 canDelete            = $canDelete
                 repositoryEntities   = @() #TODO maybe? Would require fetching all vaults and looking through them to see if it exists
+                domainName           = $domainName
                 customSecurityEntity = @{
                     allowDragAndDrop = $allowDragAndDrop
                     canImport        = $canImport
@@ -69,10 +74,15 @@ function New-DSRole {
             }
         }
 
+        $newRoleData.userSecurity.authenticationType = switch ($AuthenticationType) {
+            ([ServerUserType]::Builtin) { 0 }
+           ([ServerUserType]::Domain) { 3 }
+        }
+
         $params = @{
             Uri    = $URI
             Method = 'PUT'
-            Body   = $newRoleData | ConvertTo-Json
+            Body   = (ConvertTo-Json $newRoleData)
         }
 
         $res = Invoke-DS @params
@@ -80,11 +90,6 @@ function New-DSRole {
     }
 
     END {
-        If ($res.isSuccess) {
-            Write-Verbose '[New-DSRole] Completed Successfully.'
-        }
-        else {
-            Write-Verbose '[New-DSRole] Ended with errors...'
-        }
+        $res.isSuccess ? (Write-Verbose '[New-DSRole] Completed Successfully.') : (Write-Verbose '[New-DSRole] Ended with errors...')
     }    
 }
