@@ -15,8 +15,10 @@ function Get-DSRole {
         }
     }
     #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'Paging')]
     param(
+        [Parameter(ParameterSetName = 'GetAll')]
+        [switch]$GetAll,
         [int]$PageSize = 100,
         [int]$PageNumber = 1
     )
@@ -26,7 +28,7 @@ function Get-DSRole {
         $URI = "$Script:DSBaseURI/api/v3/usergroups?pageSize=$PageSize&pageNumber=$PageNumber&sortOrder=1"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
-            throw "Session invalid. Please call New-DSSession."
+            throw 'Session invalid. Please call New-DSSession.'
         }
     }
 
