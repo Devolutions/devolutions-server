@@ -1,39 +1,30 @@
 function Get-DSPamFolder {
-    <#
-    .SYNOPSIS
-    
-    .DESCRIPTION
-    
-    .EXAMPLE
-    
-    .NOTES
-    
-    .LINK
-    #>
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName = 'GetById')]
     param(		
-        [ValidateNotNullOrEmpty()]
-        [guid]$candidFolderID
+        [parameter(ParameterSetName = 'GetById')]
+        [guid]$FolderID,
+        [parameter(ParameterSetName = 'GetRoot')]
+        [switch]$Root
     )
         
     BEGIN {
         Write-Verbose '[Get-DSPamFolder] Beginning...'
     
-        $URI = "$Script:DSBaseURI/api/pam/folders?folderID=$candidFolderID"
+        $URI = $Root ? "$Script:DSBaseURI/api/pam/folders?folderID=null" : "$Script:DSBaseURI/api/pam/folders/$FolderID"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
-            throw "Session does not seem authenticated, call New-DSSession."
+            throw 'Session does not seem authenticated, call New-DSSession.'
         }
     }
     
     PROCESS {
         try {   	
-            $params = @{
+            $RequestParams = @{
                 Uri    = $URI
                 Method = 'GET'
             }
 
-            $res = Invoke-DS @params -Verbose
+            $res = Invoke-DS @RequestParams -Verbose
             return $res
         }
         catch {
@@ -45,11 +36,6 @@ function Get-DSPamFolder {
     }
     
     END {
-        If ($res.isSuccess) {
-            Write-Verbose '[Get-DSPamFolders] Completed Successfully.'
-        }
-        else {
-            Write-Verbose '[Get-DSPamFolders] ended with errors...'
-        }
+        $res.isSuccess ? (Write-Verbose '[Get-DSPamFolders] Completed Successfully.') : (Write-Verbose '[Get-DSPamFolders] ended with errors...')
     }
 }
