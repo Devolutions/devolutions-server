@@ -69,7 +69,7 @@
         'Get-DSEntries', 'Get-DSEntry', 'Get-DSEntrySensitiveData', 'Get-DSEntriesPermissions', 'Remove-DSEntry', 'Get-DSEntryOTP', 'Get-DSEntrySubConnections',
         'New-DSCredentialEntry',
         'Get-DSPamProviders', 'New-DSPamProvider', 'Remove-DSPamProvider', 'Update-DSPamProvider', 
-        'Get-DSPamFolders', 'Get-DSPamFolder', 'New-DSPamTeamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder', 
+        'Get-DSPamFolders', 'Get-DSPamFolder', 'New-DSPamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder',
         'Get-DSPamAccounts', 'New-DSPamAccount', 'Remove-DSPamAccount', 
         'New-DSRole', 'Get-DSRole', 'Update-DSRole', 'Remove-DSRole',
         'New-DSUser', 'Update-DSUser', 'Remove-DSUser', 'Get-DSUsers',
