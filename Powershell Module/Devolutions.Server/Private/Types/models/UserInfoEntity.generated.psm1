@@ -1,0 +1,51 @@
+using module '..\models\CustomSecurity.generated.psm1'
+using module '..\enums\ServerUserType.generated.psm1'
+
+class UserInfoEntity
+{
+	[String]$CustomSecurity = ''
+	[CustomSecurity]$CustomSecurityValue = [CustomSecurity]::new()
+	[String]$GroupInfos = $null
+	[boolean]$IsChangePasswordAllowed = $false
+	[boolean]$IsGroupLoaded = $false
+	[boolean]$IsRoleLoaded = $false
+	[String]$RoleGroupInfos = $null
+	[string[]]$Roles = [string[]]::new()
+	[boolean]$SerializeCustomSecurityValue = $false
+	[ServerUserType]$ServerUserType = [ServerUserType]::new()
+	[ServerUserType]$UserType = [ServerUserType]::new()
+	[int]$AuthenticationType = $null
+	[boolean]$CanAdd = $false
+	[boolean]$CanDelete = $false
+	[boolean]$CanEdit = $false
+	[String]$ConnectionOverrides = ''
+	[String]$ConnectionOverridesCacheID = ''
+	[String]$CreationDate = $null
+	[String]$Email = ''
+	[String]$FullName = ''
+	[boolean]$HasAccessAndroidRDM = $true
+	[boolean]$HasAccessCli = $true
+	[boolean]$HasAccessIOSRDM = $true
+	[boolean]$HasAccessLauncher = $true
+	[boolean]$HasAccessLinuxRDM = $true
+	[boolean]$HasAccessMacRDM = $true
+	[boolean]$HasAccessRDM = $true
+	[boolean]$HasAccessScripting = $true
+	[boolean]$HasAccessWeb = $true
+	[boolean]$HasAccessWebLogin = $true
+	[boolean]$HasAccessWindowsRDM = $true
+	[boolean]$HasAccessWorkspace = $true
+	[String]$ID = $null
+	[boolean]$IsAdministrator = $false
+	[boolean]$IsEnabled = $true
+	[boolean]$IsOwner = $false
+	[boolean]$IsTemplate = $false
+	[String]$LoginEmail = ''
+	[String]$Name = ''
+	[int]$PasswordFormat = 0
+	[String]$Repositories = ''
+	[boolean]$ResetTwoFactor = $false
+	[String]$SecurityKey = ''
+	[String]$UPN = ''
+	[boolean]$UserMustChangePasswordAtNextLogon = $false
+}

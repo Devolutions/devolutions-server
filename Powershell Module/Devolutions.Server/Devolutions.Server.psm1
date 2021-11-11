@@ -8,7 +8,7 @@ Export-ModuleMember -Cmdlet @($manifest.CmdletsToExport)
 $Public = @(Get-ChildItem -Path "$PSScriptRoot/Public/*.ps1" -Recurse)
 $Private = @(Get-ChildItem -Path "$PSScriptRoot/Private/*.ps1" -Recurse | Where-Object { $_.FullName -inotmatch 'enums' })
 $Deprecate = @(Get-ChildItem -Path "$PSScriptRoot/Deprecate/*.ps1" -Recurse)
-$Enums = @(Get-ChildItem -Path "$PSScriptRoot/Private/Types/enums/*.ps1" -Recurse)
+$Enums = @(Get-ChildItem -Path "$PSScriptRoot/Private/Types/enums/*.psm1" -Recurse)
 
 #Load enums as types before loading cmdlets
 foreach ($Enum in $Enums) {
@@ -32,19 +32,6 @@ foreach ($Enum in $Enums) {
     #This loads the type in global scope so it can be used outside of this script.
     Add-Type -TypeDefinition ($typedef | Out-String)
 }
-
-<# CLASSES #>
-if (Test-Path "$PSScriptRoot\Classes\Classes.psd1") {
-    $ClassLoadOrder = Import-PowerShellDataFile -Path "$PSScriptRoot\Classes\Classes.psd1" -ErrorAction SilentlyContinue
-}
-
-foreach ($Class in $ClassLoadOrder.order) {
-    $Path = '{0}\Classes\{1}.ps1' -f $PSScriptRoot, $Class
-    if (Test-Path $Path) {
-        . $Path
-    }
-}
-<# ------- #>
 
 foreach ($Import in @($Public + $Private + $Deprecate)) {
     try {

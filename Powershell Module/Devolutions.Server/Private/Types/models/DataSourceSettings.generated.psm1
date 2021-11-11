@@ -1,0 +1,229 @@
+using module '..\enums\AddEntryMode.generated.psm1'
+using module '..\enums\ClipboardAccess.generated.psm1'
+using module '..\enums\ConnectionLogUserType.generated.psm1'
+using module '..\models\DataSourceLicense.generated.psm1'
+using module '..\models\DataSourcePermission.generated.psm1'
+using module '..\models\DataSourceVariable.generated.psm1'
+using module '..\enums\DefaultBoolean.generated.psm1'
+using module '..\enums\ForbiddenPasswordUsage.generated.psm1'
+using module '..\enums\ForbiddenPasswordVerificationMode.generated.psm1'
+using module '..\enums\OfflineMode.generated.psm1'
+using module '..\enums\PasswordComplexityTemplateUsage.generated.psm1'
+using module '..\enums\PasswordComplexityUsage.generated.psm1'
+using module '..\models\PasswordConfiguration.generated.psm1'
+using module '..\enums\PasswordPwnedUsage.generated.psm1'
+using module '..\enums\PasswordStrengthCalculator.generated.psm1'
+using module '..\enums\PermissionRightValue.generated.psm1'
+using module '..\enums\PromptForOfflinePassword.generated.psm1'
+using module '..\enums\RiskyEvents.generated.psm1'
+using module '..\enums\SerializationMode.generated.psm1'
+using module '..\enums\SessionRecordingStorageType.generated.psm1'
+using module '..\enums\SessionRecordingType.generated.psm1'
+using module '..\enums\TimeBasedConnectionUsageDays.generated.psm1'
+using module '..\enums\TimeBasedConnectionUsageHours.generated.psm1'
+using module '..\enums\TwoFactorAuthenticationType.generated.psm1'
+using module '..\models\UserInfoTemplate.generated.psm1'
+using module '..\enums\VaultRootLabel.generated.psm1'
+
+class DataSourceSettings
+{
+	[boolean]$AllowOfflineMode = $true
+	[String]$ConnectionCacheID = ''
+	[object]$Custom = $null
+	[boolean]$FlagAsClosed = $false
+	[String]$IntelligentCacheID = ''
+	[DataSourceLicense]$Licenses = [DataSourceLicense]::new()
+	[int]$MaxFileSizeKByte = 0
+	[int]$MaxFileSizeMByte = 0
+	[OfflineMode]$OfflineMode = [OfflineMode]::new()
+	[int]$OfflineModeDocumentSyncMaximumFileSize = 5
+	[int]$OfflineModeExpiration = 7
+	[int]$OfflineModeExpirationNotification = 3
+	[DataSourcePermission]$Permissions = [DataSourcePermission]::new()
+	[String]$SafeLicenses = ''
+	[SerializationMode]$SerializationMode = [SerializationMode]::new()
+	[AddEntryMode]$AddEntryMode = [AddEntryMode]::new()
+	[boolean]$AllowAccessAndroidRDM = $true
+	[boolean]$AllowAccessAndroidRDMDefault = $true
+	[boolean]$AllowAccessCliDPS = $true
+	[boolean]$AllowAccessCliDPSDefault = $true
+	[boolean]$AllowAccessDWL = $true
+	[boolean]$AllowAccessDWLDefault = $true
+	[boolean]$AllowAccessIOSRDM = $true
+	[boolean]$AllowAccessIOSRDMDefault = $true
+	[boolean]$AllowAccessLauncher = $true
+	[boolean]$AllowAccessLauncherDefault = $true
+	[boolean]$AllowAccessLinuxRDM = $true
+	[boolean]$AllowAccessLinuxRDMDefault = $true
+	[boolean]$AllowAccessMacRDM = $true
+	[boolean]$AllowAccessMacRDMDefault = $true
+	[boolean]$AllowAccessScripting = $true
+	[boolean]$AllowAccessScriptingDefault = $true
+	[boolean]$AllowAccessWebDPS = $true
+	[boolean]$AllowAccessWebDPSDefault = $true
+	[boolean]$AllowAccessWindowsRDM = $true
+	[boolean]$AllowAccessWindowsRDMDefault = $true
+	[boolean]$AllowAccessWorkspace = $true
+	[boolean]$AllowAccessWorkspaceDefault = $true
+	[boolean]$AllowAttachments = $true
+	[boolean]$AllowClipboardPassword = $false
+	[boolean]$AllowConnectionLogs = $true
+	[boolean]$AllowConnectionStates = $true
+	[boolean]$AllowCredentialRepositoryInPrivateVault = $false
+	[boolean]$AllowDatabaseCleanUp = $true
+	[boolean]$AllowDatasourceDomainVariable = $false
+	[boolean]$AllowDatasourcePasswordVariable = $false
+	[boolean]$AllowDatasourceUsernameVariable = $false
+	[boolean]$AllowEmbeddedCredentialSourceMode = $false
+	[boolean]$AllowLocalPasswordTemplates = $false
+	[boolean]$AllowLocalSpecificSettings = $true
+	[boolean]$AllowLocalTemplates = $false
+	[boolean]$AllowLogCommentsEditing = $false
+	[boolean]$AllowMacroScriptToolUsageFromPrivateVault = $false
+	[boolean]$AllowOfflineCaching = $true
+	[boolean]$AllowOfflineEdit = $false
+	[boolean]$AllowRevealPassword = $true
+	[boolean]$AllowRightsPropagationByRole = $false
+	[boolean]$AllowSendKeyPassword = $false
+	[boolean]$AllowSharedPasswordTemplates = $true
+	[boolean]$AllowSharedTemplates = $true
+	[boolean]$AllowShortcuts = $true
+	[DefaultBoolean]$AllowSubConnection = [DefaultBoolean]::new()
+	[boolean]$AllowUserSpecificSettings = $true
+	[boolean]$AllowVirtualGroups = $false
+	[PermissionRightValue]$ApplicationAccessUserGroupsPrecedence = [PermissionRightValue]::new()
+	[int]$AutoCheckInAfter = 60
+	[DefaultBoolean]$AutoLockAutomaticallyReconnectOnActivity = [DefaultBoolean]::new()
+	[DefaultBoolean]$AutoLockGoOfflineIfAvailable = [DefaultBoolean]::new()
+	[DefaultBoolean]$AutoLockOnGoOffline = [DefaultBoolean]::new()
+	[DefaultBoolean]$AutoLockOnIdle = [DefaultBoolean]::new()
+	[DefaultBoolean]$AutoLockOnMinimize = [DefaultBoolean]::new()
+	[DefaultBoolean]$AutoLockOnStandby = [DefaultBoolean]::new()
+	[DefaultBoolean]$AutoLockOnWindowsLock = [DefaultBoolean]::new()
+	[int]$AutoLockTimeOut = 0
+	[int]$AutomaticallyCloseSessionAfter = 30
+	[boolean]$CheckMaximalVersion = $false
+	[boolean]$CheckMaximalVersionLinux = $false
+	[boolean]$CheckMaximalVersionMac = $false
+	[boolean]$CheckMinimalVersion = $false
+	[boolean]$CheckMinimalVersionLinux = $false
+	[boolean]$CheckMinimalVersionMac = $false
+	[int]$CommentMinimumLength = 0
+	[ConnectionLogUserType]$ConnectionLogUserType = [ConnectionLogUserType]::new()
+	[String]$ConnectionUnsafePassword = ''
+	[int]$CustomUserPasswordMinimumLength = 0
+	[int]$CustomUserPasswordMinimumLowercase = 0
+	[int]$CustomUserPasswordMinimumNumeric = 0
+	[int]$CustomUserPasswordMinimumSymbols = 0
+	[int]$CustomUserPasswordMinimumUppercase = 0
+	[PasswordPwnedUsage]$CustomUserPasswordPwnedUsage = [PasswordPwnedUsage]::new()
+	[String]$CustomUserPasswordTemplateID = ''
+	[PasswordComplexityTemplateUsage]$CustomUserPasswordTemplateUsage = [PasswordComplexityTemplateUsage]::new()
+	[DataSourceVariable]$DataSourceVariables = [DataSourceVariable]::new()
+	[String]$DBID = ''
+	[String]$DefaultHtmlWelcomePage = ''
+	[String]$DefaultPasswordTemplate = ''
+	[String]$DefaultTags = ''
+	[String]$DefaultTemplatePath = ''
+	[TwoFactorAuthenticationType]$DefaultTwoFactorAuthentication = [TwoFactorAuthenticationType]::new()
+	[VaultRootLabel]$DefaultVaultRootLabel = [VaultRootLabel]::new()
+	[boolean]$DisableAutoUpdate = $false
+	[boolean]$DisableAutoUpdateLinux = $false
+	[boolean]$DisableAutoUpdateMac = $false
+	[boolean]$DisableDataSourcePassword = $false
+	[boolean]$DisableDefaultTemplatesEditing = $false
+	[boolean]$DisableDragAndDrop = $false
+	[boolean]$DisableExportVaultMenus = $false
+	[boolean]$DisableLocalFavorites = $false
+	[boolean]$DisableLocalPassword = $false
+	[boolean]$DisablePasswordVariable = $false
+	[boolean]$DisablePrivateVault = $false
+	[boolean]$DisableQuickConnect = $false
+	[boolean]$DisableRdmAgentAndJump = $false
+	[boolean]$DisableSharedFavorites = $false
+	[boolean]$DisableSharedPassword = $false
+	[boolean]$DisableStackTrace = $false
+	[boolean]$DisableToolPassword = $false
+	[boolean]$DisableUserSpecificSettingsPassword = $false
+	[boolean]$DisableWebsiteCredentialAutoFillAfterDelay = $false
+	[boolean]$EnableApplicationAccessForUserGroups = $false
+	[boolean]$EnableConnectionAfterExpiration = $false
+	[boolean]$EnableConnectionStates = $true
+	[boolean]$EnableSynchronizationByNonAdministrators = $false
+	[string[]]$ExcludedTypes = [string[]]::new()
+	[boolean]$FlagAsClosedAutomatically = $false
+	[int]$FlagAsClosedAutomaticallyDays = 2
+	[string[]]$ForbiddenPasswords = [string[]]::new()
+	[boolean]$ForbiddenPasswordsCaseSensitive = $false
+	[ForbiddenPasswordVerificationMode]$ForbiddenPasswordsVerificationMode = [ForbiddenPasswordVerificationMode]::new()
+	[ForbiddenPasswordUsage]$ForbiddenPasswordUsage = [ForbiddenPasswordUsage]::new()
+	[boolean]$ForceApplicationGoogleAuthentification = $false
+	[boolean]$ForceApplicationPasswordWindows = $false
+	[boolean]$ForceDataSourceTwoFactor = $false
+	[boolean]$ForceDefaultHtmlWelcomePage = $false
+	[boolean]$ForceDefaultPasswordTemplate = $false
+	[boolean]$HidePortInRDP = $false
+	[boolean]$HideRegistration = $false
+	[boolean]$IncludePrivateVaultLogs = $false
+	[string[]]$InstalledAddOns = [string[]]::new()
+	[boolean]$IsAutoCheckIn = $false
+	[boolean]$IsAutomaticCloseSessionAfter = $false
+	[boolean]$IsLockedDownByDefault = $false
+	[String]$JumpSerial = ''
+	[boolean]$LoadCredentialsInSessions = $true
+	[boolean]$LoadSessionToolInSessions = $true
+	[String]$LucidClientApp = ''
+	[String]$LucidClientAppStaging = ''
+	[int]$MaxFileSizeByte = 26214400
+	[String]$MaximalLinuxVersionMessage = ''
+	[String]$MaximalMacVersionMessage = ''
+	[String]$MaximalVersionMessage = ''
+	[DefaultBoolean]$MergeCredentialsInSessions = [DefaultBoolean]::new()
+	[String]$MinimalLinuxVersionMessage = ''
+	[String]$MinimalMacVersionMessage = ''
+	[String]$MinimalVersionMessage = ''
+	[ClipboardAccess]$PasswordClipboard = [ClipboardAccess]::new()
+	[PasswordComplexityUsage]$PasswordComplexityUsage = [PasswordComplexityUsage]::new()
+	[PasswordConfiguration]$PasswordConfigurationTemplates = [PasswordConfiguration]::new()
+	[int]$PasswordHistory = 5
+	[PasswordPwnedUsage]$PasswordPwnedUsage = [PasswordPwnedUsage]::new()
+	[PasswordStrengthCalculator]$PasswordStrengthMethod = [PasswordStrengthCalculator]::new()
+	[PromptForOfflinePassword]$PromptForOfflinePassword = [PromptForOfflinePassword]::new()
+	[boolean]$PromptForTwoFactorBeforeGoingOffline = $false
+	[boolean]$PromptRefreshAllVaultsOnStartup = $false
+	[String]$RDMInstallerPath = ''
+	[String]$RDMInstallerPathLinux = ''
+	[String]$RDMInstallerPathMac = ''
+	[String]$RDMMaximalVersion = ''
+	[String]$RDMMaximalVersionLinux = ''
+	[String]$RDMMaximalVersionMac = ''
+	[String]$RDMMinimalVersion = ''
+	[String]$RDMMinimalVersionLinux = ''
+	[String]$RDMMinimalVersionMac = ''
+	[String]$RecordingServerAuthenticationToken = ''
+	[int]$RecordingServerCommunicationPort = 50505
+	[boolean]$RecordingServerEnabled = $false
+	[String]$RecordingServerName = ''
+	[String]$RecordingStoragePath = ''
+	[SessionRecordingStorageType]$RecordingStorageType = [SessionRecordingStorageType]::new()
+	[boolean]$ResolveCredentialsInOverview = $true
+	[RiskyEvents]$RiskyEvents = [RiskyEvents]::new()
+	[String]$SafeLucidClientApp = ''
+	[String]$SafeLucidClientAppStaging = ''
+	[String]$SecurityProviderName = ''
+	[String]$SecurityProviderSettings = ''
+	[int]$SelectedDayOfWeek = 0
+	[String]$SelectedTimeZoneId = ''
+	[String]$Serial = ''
+	[SessionRecordingType]$SSHSessionRecordingType = [SessionRecordingType]::new()
+	[String]$SystemMessage = ''
+	[boolean]$TemporaryAccessNotificationEnabled = $false
+	[boolean]$TemporaryAccessNotificationEnabledStaging = $false
+	[TimeBasedConnectionUsageDays]$TimeBasedUsageDays = [TimeBasedConnectionUsageDays]::new()
+	[String]$TimeBasedUsageEndTime = ''
+	[TimeBasedConnectionUsageHours]$TimeBasedUsageHours = [TimeBasedConnectionUsageHours]::new()
+	[String]$TimeBasedUsageStartTime = ''
+	[boolean]$UseLegacySecurity = $true
+	[boolean]$UseRoleSecurity = $true
+	[UserInfoTemplate]$UserTemplatesArray = [UserInfoTemplate]::new()
+}

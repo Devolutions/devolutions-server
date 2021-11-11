@@ -1,0 +1,5 @@
+
+class LogEntriesEntity
+{
+	[String]$Data = ''
+}

@@ -1,0 +1,59 @@
+using module '..\models\RemoteAccount.generated.psm1'
+using module '..\models\RemoteBios.generated.psm1'
+using module '..\models\RemoteCDRom.generated.psm1'
+using module '..\models\RemoteComputerSystem.generated.psm1'
+using module '..\models\RemoteDevice.generated.psm1'
+using module '..\models\RemoteLogicalDisk.generated.psm1'
+using module '..\models\RemoteMemory.generated.psm1'
+using module '..\models\RemoteMonitor.generated.psm1'
+using module '..\models\RemoteMotherboard.generated.psm1'
+using module '..\models\RemoteNetworkAdapter.generated.psm1'
+using module '..\models\RemoteOperatingSystem.generated.psm1'
+using module '..\models\RemotePrinter.generated.psm1'
+using module '..\models\RemoteProcessor.generated.psm1'
+using module '..\models\RemoteProgram.generated.psm1'
+using module '..\models\RemoteQuickFixEngineering.generated.psm1'
+using module '..\models\RemoteService.generated.psm1'
+using module '..\models\RemoteShare.generated.psm1'
+using module '..\models\RemoteSound.generated.psm1'
+using module '..\models\RemoteStartUp.generated.psm1'
+using module '..\models\RemoteTimeZone.generated.psm1'
+using module '..\models\RemoteVideo.generated.psm1'
+
+class InventorySystemInformation
+{
+	[RemoteBios]$Bios = [RemoteBios]::new()
+	[String]$BiosName = ''
+	[RemoteCDRom]$CDRoms = [RemoteCDRom]::new()
+	[String]$ComputerName = ''
+	[RemoteDevice]$Devices = [RemoteDevice]::new()
+	[String]$DeviceType = ''
+	[int]$FreePhysicalMemory = 0
+	[int]$FreeVirtualMemory = 0
+	[String]$Hostname = ''
+	[String]$IPAddress = ''
+	[RemoteAccount]$LocalAccounts = [RemoteAccount]::new()
+	[RemoteLogicalDisk]$LogicalDrives = [RemoteLogicalDisk]::new()
+	[String]$MACAddress = ''
+	[RemoteMemory]$Memory = [RemoteMemory]::new()
+	[RemoteMonitor]$Monitors = [RemoteMonitor]::new()
+	[RemoteMotherboard]$Motherboards = [RemoteMotherboard]::new()
+	[RemoteNetworkAdapter]$NetworkAdapters = [RemoteNetworkAdapter]::new()
+	[RemoteOperatingSystem]$OperatingSystem = [RemoteOperatingSystem]::new()
+	[String]$OSName = ''
+	[int]$PageFileSize = 0
+	[RemotePrinter]$Printers = [RemotePrinter]::new()
+	[RemoteProcessor]$Processors = [RemoteProcessor]::new()
+	[RemoteProgram]$Products = [RemoteProgram]::new()
+	[RemoteQuickFixEngineering]$QuickFixEngineerings = [RemoteQuickFixEngineering]::new()
+	[String]$SerialNumber = ''
+	[RemoteService]$Services = [RemoteService]::new()
+	[RemoteShare]$Shares = [RemoteShare]::new()
+	[RemoteSound]$SoundDevice = [RemoteSound]::new()
+	[RemoteStartUp]$StartUps = [RemoteStartUp]::new()
+	[RemoteComputerSystem]$System = [RemoteComputerSystem]::new()
+	[RemoteTimeZone]$TimeZone = [RemoteTimeZone]::new()
+	[int]$TotalPhysicalMemory = 0
+	[int]$TotalVirtualMemory = 0
+	[RemoteVideo]$Videos = [RemoteVideo]::new()
+}

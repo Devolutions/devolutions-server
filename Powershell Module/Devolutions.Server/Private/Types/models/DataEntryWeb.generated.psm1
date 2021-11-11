@@ -1,0 +1,63 @@
+using module '..\enums\BrowserExtensionLinkerCompareType.generated.psm1'
+using module '..\enums\CredentialSourceMode.generated.psm1'
+using module '..\models\EquivalentUrlItem.generated.psm1'
+using module '..\enums\OTPCodeSize.generated.psm1'
+using module '..\enums\OTPCombineMode.generated.psm1'
+using module '..\enums\OTPHashAlgorithm.generated.psm1'
+using module '..\models\PartialConnectionCredentials.generated.psm1'
+using module '..\models\RecoveryCodeItem.generated.psm1'
+using module '..\models\SensitiveItem.generated.psm1'
+using module '..\enums\WebBrowserApplication.generated.psm1'
+using module '..\models\WebCustomAutoFillHtmlItem.generated.psm1'
+
+class DataEntryWeb
+{
+	[String]$CredentialConnectionId = ''
+	[String]$PamCredentialId = ''
+	[String]$PamCredentialName = ''
+	[String]$PersonalCredentialConnectionId = ''
+	[CredentialSourceMode]$CredentialMode = [CredentialSourceMode]::new()
+	[PartialConnectionCredentials]$Credentials = [PartialConnectionCredentials]::new()
+	[EquivalentUrlItem]$EquivalentUrls = [EquivalentUrlItem]::new()
+	[SensitiveItem]$PasswordItem = [SensitiveItem]::new()
+	[String]$PrivateVaultSearchString = ''
+	[String]$Url = ''
+	[BrowserExtensionLinkerCompareType]$UrlCompareType = [BrowserExtensionLinkerCompareType]::new()
+	[String]$WebDomain = ''
+	[String]$WebUserName = ''
+	[boolean]$EnableWebBrowserExtension = $true
+	[String]$CredentialDynamicValue = ''
+	[String]$CredentialDynamicDescription = ''
+	[WebCustomAutoFillHtmlItem]$CustomFields = [WebCustomAutoFillHtmlItem]::new()
+	[String]$OTPControlId = ''
+	[String]$SecurityQuestion1 = ''
+	[String]$SecurityQuestion2 = ''
+	[String]$SecurityQuestion3 = ''
+	[String]$SecurityQuestion4 = ''
+	[String]$SecurityQuestion5 = ''
+	[SensitiveItem]$SecurityAnswer1Item = [SensitiveItem]::new()
+	[SensitiveItem]$SecurityAnswer2Item = [SensitiveItem]::new()
+	[SensitiveItem]$SecurityAnswer3Item = [SensitiveItem]::new()
+	[SensitiveItem]$SecurityAnswer4Item = [SensitiveItem]::new()
+	[SensitiveItem]$SecurityAnswer5Item = [SensitiveItem]::new()
+	[RecoveryCodeItem]$OtpRecoveryCodeItems = [RecoveryCodeItem]::new()
+	[SensitiveItem]$OTPKeyItem = [SensitiveItem]::new()
+	[OTPCodeSize]$OTPCodeSize = [OTPCodeSize]::new()
+	[OTPCombineMode]$OTPCombineMode = [OTPCombineMode]::new()
+	[String]$OTPConnectionID = ''
+	[OTPHashAlgorithm]$OTPHashAlgorithm = [OTPHashAlgorithm]::new()
+	[String]$OTPPrivateVaultSearchString = ''
+	[String]$OTPQrCodeAccountName = ''
+	[String]$OTPQrCodeApplicationName = ''
+	[CredentialSourceMode]$OTPSourceMode = [CredentialSourceMode]::new()
+	[int]$OTPTimeStep = 30
+	[String]$RegularExpression = ''
+	[WebBrowserApplication]$WebBrowserApplication = [WebBrowserApplication]::new()
+	[boolean]$ClearCache = $false
+	[boolean]$PrivateSession = $false
+	[String]$FormId = ''
+	[String]$UserNameControlId = ''
+	[String]$DomainControlId = ''
+	[String]$PasswordControlId = ''
+	[String]$SubmitControlId = ''
+}

@@ -1,0 +1,83 @@
+using module '..\models\BaseSessionEntry.generated.psm1'
+using module '..\enums\DefaultBoolean.generated.psm1'
+using module '..\enums\InternetProtocol.generated.psm1'
+using module '..\models\SensitiveItem.generated.psm1'
+using module '..\enums\TelnetTerminalDnsLookupType.generated.psm1'
+using module '..\enums\TelnetTerminalProxyType.generated.psm1'
+using module '..\enums\TerminalAutoWrap.generated.psm1'
+using module '..\enums\TerminalBackspaceKeyMode.generated.psm1'
+using module '..\enums\TerminalCursorBlink.generated.psm1'
+using module '..\enums\TerminalCursorKeyMode.generated.psm1'
+using module '..\enums\TerminalCursorType.generated.psm1'
+using module '..\enums\TerminalEncoding.generated.psm1'
+using module '..\enums\TerminalFunctionKeysMode.generated.psm1'
+using module '..\enums\TerminalHomeEndKeyMode.generated.psm1'
+using module '..\enums\TerminalKeypadMode.generated.psm1'
+using module '..\enums\TerminalLocalEcho.generated.psm1'
+using module '..\enums\TerminalLogMode.generated.psm1'
+using module '..\enums\TerminalLogOverwriteMode.generated.psm1'
+using module '..\enums\TerminalLogPathType.generated.psm1'
+
+class TelnetEntry : BaseSessionEntry 
+{
+	[string[]]$PostLoginMacros = $null
+	[int]$PostLoginMacroDelay = 500
+	[boolean]$PostLoginEnterAfterCommand = $true
+	[boolean]$EnableKeepAlive = $false
+	[DefaultBoolean]$IgnoreSubstituteCharacter = [DefaultBoolean]::new()
+	[String]$PingCharacter = ''
+	[int]$PingInterval = 0
+	[DefaultBoolean]$ErrorDisplayMode = [DefaultBoolean]::new()
+	[TerminalLogPathType]$LogPathType = [TerminalLogPathType]::new()
+	[String]$LogFilename = ''
+	[TerminalFunctionKeysMode]$FunctionKeysMode = [TerminalFunctionKeysMode]::new()
+	[TerminalHomeEndKeyMode]$HomeEndKeyMode = [TerminalHomeEndKeyMode]::new()
+	[TerminalBackspaceKeyMode]$BackspaceKeyMode = [TerminalBackspaceKeyMode]::new()
+	[TerminalCursorKeyMode]$CursorKeyMode = [TerminalCursorKeyMode]::new()
+	[boolean]$SendNewLine = $false
+	[int]$MaxScrollbackLines = 2000
+	[boolean]$ImplicitLFinCR = $false
+	[boolean]$ImplicitCRinLF = $false
+	[boolean]$ForceNonDestructiveBackspace = $false
+	[TerminalCursorBlink]$CursorBlink = [TerminalCursorBlink]::new()
+	[TerminalCursorType]$CursorType = [TerminalCursorType]::new()
+	[DefaultBoolean]$DisableKeypadMode = [DefaultBoolean]::new()
+	[TerminalKeypadMode]$KeypadMode = [TerminalKeypadMode]::new()
+	[TerminalLocalEcho]$LocalEcho = [TerminalLocalEcho]::new()
+	[TerminalAutoWrap]$AutoWrap = [TerminalAutoWrap]::new()
+	[TerminalEncoding]$Encoding = [TerminalEncoding]::new()
+	[String]$OverrideTerminalName = ''
+	[boolean]$UseCredentialRepository = $false
+	[boolean]$AlwaysAskForPassword = $false
+	[boolean]$CloseOnDisconnect = $true
+	[String]$Domain = ''
+	[String]$DoubleClickDelimiters = ''
+	[boolean]$EnableLogging = $false
+	[String]$ExpectedPasswordPrompt = ''
+	[String]$ExpectedUserPrompt = ''
+	[String]$Host = ''
+	[int]$HostPort = 23
+	[InternetProtocol]$InternetProtocol = [InternetProtocol]::new()
+	[TerminalLogMode]$LogMode = [TerminalLogMode]::new()
+	[TerminalLogOverwriteMode]$LogOverwriteMode = [TerminalLogOverwriteMode]::new()
+	[String]$LogPath = ''
+	[int]$PasswordDelay = 1000
+	[SensitiveItem]$PasswordItem = [SensitiveItem]::new()
+	[TelnetTerminalDnsLookupType]$ProxyDnsLookupType = [TelnetTerminalDnsLookupType]::new()
+	[String]$ProxyExcludedHosts = ''
+	[String]$ProxyHost = ''
+	[boolean]$ProxyLocalHostConnections = $false
+	[SensitiveItem]$ProxyPasswordItem = [SensitiveItem]::new()
+	[int]$ProxyPort = 80
+	[String]$ProxyTelnetCommand = ''
+	[TelnetTerminalProxyType]$ProxyType = [TelnetTerminalProxyType]::new()
+	[String]$ProxyUsername = ''
+	[boolean]$SilentMode = $false
+	[String]$Username = ''
+	[int]$VerboseLevel = 0
+	[int]$Rows = 24
+	[int]$Columns = 80
+	[DefaultBoolean]$ResetScrollOnDisplay = [DefaultBoolean]::new()
+	[String]$ProxyCredentialId = ''
+	[string[]]$PostLoginMacrosMore = [string[]]::new()
+}

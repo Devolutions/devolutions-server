@@ -51,9 +51,7 @@
     # RequiredAssemblies   = @()
     
     # Script files (.ps1) that are run in the caller's environment prior to importing this module.
-    ScriptsToProcess     = @('.\Private\Types\Field.ps1', '.\Private\Types\ServerResponse.ps1', '.\Private\Types\PamCheckout.ps1', 
-        '.\Classes\BaseConnection.generated.ps1', '.\Classes\ConnectionPermission.generated.ps1', '.\Classes\DataSourcePermission.generated.ps1', '.\Classes\SecurityConnection.generated.ps1',
-        '.\Classes\BrowserExtensionMetaData.generated.ps1', '.\Classes\ConnectionMetaDataEntity.generated.ps1', '.\Classes\ConnectionInfoEntity.generated.ps1')
+    ScriptsToProcess     = @('.\Exports.ps1')
     
     # Type files (.ps1xml) to be loaded when importing this module
     # TypesToProcess = @()
@@ -62,7 +60,7 @@
     # FormatsToProcess = @()
     
     # Modules to import as nested modules of the module specified in RootModule/ModuleToProcess
-    NestedModules        = @()
+    # NestedModules        = @()
     
     FunctionsToExport    = @('Get-DSServerInfo', 'New-DSSession', 'Close-DSSession', 'Get-DSIsLogged', 'Protect-ResourceToHexString',
         'Get-DSSecureMessages',

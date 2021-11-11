@@ -1,0 +1,126 @@
+using module '..\enums\AuthentificationLevel.generated.psm1'
+using module '..\models\BaseSessionEntry.generated.psm1'
+using module '..\enums\DefaultBoolean.generated.psm1'
+using module '..\enums\KeyboardHook.generated.psm1'
+using module '..\enums\RDPApplicationExternal.generated.psm1'
+using module '..\enums\RDPAudioQualityMode.generated.psm1'
+using module '..\enums\RDPClientSpec.generated.psm1'
+using module '..\enums\RDPGatewayCredentialsSource.generated.psm1'
+using module '..\enums\RDPGatewayProfileUsageMethod.generated.psm1'
+using module '..\enums\RDPGatewayUsageMethod.generated.psm1'
+using module '..\enums\RDPLogOffMethod.generated.psm1'
+using module '..\enums\RDPNetworkConnectionType.generated.psm1'
+using module '..\enums\RDPScreenSizingMode.generated.psm1'
+using module '..\enums\RDPType.generated.psm1'
+using module '..\enums\RDPVersion.generated.psm1'
+using module '..\enums\RDPVideoPlaybackMode.generated.psm1'
+using module '..\enums\ReconnectMode.generated.psm1'
+using module '..\enums\ScreenColor.generated.psm1'
+using module '..\enums\ScreenSize.generated.psm1'
+using module '..\models\SensitiveItem.generated.psm1'
+using module '..\enums\SoundHook.generated.psm1'
+
+class RDPConfiguredEntry : BaseSessionEntry 
+{
+	[boolean]$AdminMode = $false
+	[int]$AfterLoginDelay = 500
+	[boolean]$AfterLoginExecuteProgram = $false
+	[String]$AfterLoginProgram = ''
+	[boolean]$AllowBackgroundInput = $false
+	[String]$AlternateFullAddress = ''
+	[String]$AlternateShell = ''
+	[boolean]$AlwaysAskForResources = $false
+	[boolean]$Animations = $false
+	[RDPApplicationExternal]$ApplicationExternalExternal = [RDPApplicationExternal]::new()
+	[boolean]$AudioCaptureRedirectionMode = $false
+	[RDPAudioQualityMode]$AudioQualityMode = [RDPAudioQualityMode]::new()
+	[AuthentificationLevel]$AuthentificationLevel = [AuthentificationLevel]::new()
+	[boolean]$AutoReconnection = $true
+	[int]$AzureInstanceID = 0
+	[String]$AzureRoleName = ''
+	[boolean]$BandWidthAutoDetect = $true
+	[boolean]$BarPinned = $true
+	[boolean]$Centered = $false
+	[RDPClientSpec]$ClientSpec = [RDPClientSpec]::new()
+	[boolean]$Compression = $true
+	[RDPNetworkConnectionType]$ConnectionType = [RDPNetworkConnectionType]::new()
+	[int]$CustomHeight = 0
+	[int]$CustomWidth = 0
+	[boolean]$DesktopBackground = $true
+	[boolean]$DesktopComposition = $false
+	[boolean]$DisplayConnectionBar = $true
+	[String]$Domain = ''
+	[boolean]$EnableSuperPan = $false
+	[boolean]$FontSmoothing = $false
+	[String]$GatewayAccessToken = ''
+	[String]$GatewayCredentialConnectionID = ''
+	[String]$GatewayCredentialDynamicValue = ''
+	[String]$GatewayCredentialDynamicDescription = ''
+	[RDPGatewayCredentialsSource]$GatewayCredentialsSource = [RDPGatewayCredentialsSource]::new()
+	[String]$GatewayDomain = ''
+	[String]$GatewayHostname = ''
+	[String]$GatewayPassword = ''
+	[String]$GatewayPersonalConnectionID = ''
+	[String]$GatewayPrivateVaultSearchString = ''
+	[RDPGatewayProfileUsageMethod]$GatewayProfileUsageMethod = [RDPGatewayProfileUsageMethod]::new()
+	[RDPGatewayUsageMethod]$GatewayUsageMethod = [RDPGatewayUsageMethod]::new()
+	[String]$GatewayUserName = ''
+	[String]$Host = ''
+	[String]$HyperVInstanceID = ''
+	[int]$KeepAliveInterval = 0
+	[KeyboardHook]$KeyboardHook = [KeyboardHook]::new()
+	[String]$KeyboardLayoutStr = ''
+	[String]$KeyboardLayoutText = ''
+	[DefaultBoolean]$LoadAddOnsMode = [DefaultBoolean]::new()
+	[String]$LoadBalanceInfo = ''
+	[int]$MinInputSendInterval = 100
+	[boolean]$MultiMonitors = $false
+	[String]$SelectedMonitors = ''
+	[String]$MyDefaultCredentialConnectionID = '9F3C3BCF-068A-4927-B996-CA52154CAE3B'
+	[boolean]$NetworkAutoDetect = $false
+	[boolean]$NetworkLevelAuthentication = $true
+	[SensitiveItem]$PasswordItem = [SensitiveItem]::new()
+	[boolean]$PersistentBitmapCaching = $true
+	[boolean]$PingForGateway = $false
+	[int]$Port = 3389
+	[String]$PrivateVaultSearchCredentialConnectionID = '88E4BE76-4C5B-4694-AA9C-D53B7E0FE0DC'
+	[boolean]$PromptCredentialOnce = $false
+	[boolean]$PromptCredentials = $false
+	[boolean]$PromptForCredsOnClient = $false
+	[boolean]$PublicMode = $false
+	[RDPLogOffMethod]$RDPLogOffMethod = [RDPLogOffMethod]::new()
+	[DefaultBoolean]$RDPLogOffWhenDisconnecting = [DefaultBoolean]::new()
+	[RDPType]$RdpType = [RDPType]::new()
+	[ReconnectMode]$ReconnectMode = [ReconnectMode]::new()
+	[boolean]$RedirectCameras = $false
+	[boolean]$RedirectDirectX = $false
+	[string[]]$RedirectedDrives = [string[]]::new()
+	[boolean]$RemoteApp = $false
+	[String]$RemoteApplicationCmdLine = ''
+	[String]$RemoteApplicationProgram = ''
+	[boolean]$RemoteCredentialGuard = $false
+	[boolean]$RestrictedAdminMode = $false
+	[ScreenColor]$ScreenColor = [ScreenColor]::new()
+	[ScreenSize]$ScreenSize = [ScreenSize]::new()
+	[RDPScreenSizingMode]$ScreenSizingMode = [RDPScreenSizingMode]::new()
+	[String]$ShellWorkingDirectory = ''
+	[boolean]$ShowContentWhileDragging = $true
+	[SoundHook]$SoundHook = [SoundHook]::new()
+	[boolean]$Span = $false
+	[boolean]$UseAlternateShell = $false
+	[boolean]$UseEnhancedSessionMode = $false
+	[boolean]$UseRedirectionServerName = $false
+	[String]$Username = ''
+	[boolean]$UsesClipboard = $true
+	[boolean]$UsesDevices = $false
+	[boolean]$UsesHardDrives = $true
+	[boolean]$UsesPrinters = $false
+	[boolean]$UsesSerialPorts = $true
+	[boolean]$UsesSmartDevices = $false
+	[boolean]$UseWinposstr = $false
+	[RDPVersion]$Version = [RDPVersion]::new()
+	[RDPVideoPlaybackMode]$VideoPlaybackMode = [RDPVideoPlaybackMode]::new()
+	[boolean]$VisualStyles = $true
+	[String]$Winposstr = ''
+	[String]$WorkspaceId = ''
+}

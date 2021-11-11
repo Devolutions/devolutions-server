@@ -1,0 +1,5 @@
+
+class LanguageEntity
+{
+	[String]$Key = ''
+}

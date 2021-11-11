@@ -1,0 +1,5 @@
+
+class RemoteTimeZone
+{
+	[String]$Description = ''
+}

@@ -1,0 +1,5 @@
+
+class UserSerial
+{
+	[String]$Serial = ''
+}
