@@ -1,0 +1,51 @@
+using module '..\models\PasswordComplexity.generated.psm1'
+using module '..\enums\PasswordGeneratorMode.generated.psm1'
+using module '..\enums\PronounceableCaseMode.generated.psm1'
+
+class PasswordConfiguration
+{
+	[int]$BracketsMin = 0
+	[PasswordComplexity]$Complexity = [PasswordComplexity]::new()
+	[String]$CustomCharacters = ''
+	[int]$CustomCharactersMin = 0
+	[String]$CustomExcludeCharacters = ''
+	[int]$DigitsMin = 0
+	[String]$ExcludeCharacters = ''
+	[boolean]$ExcludeLookAlike = $false
+	[int]$HighAnsiMin = 0
+	[String]$ID = ''
+	[boolean]$IncludeBrackets = $false
+	[boolean]$IncludeDigits = $true
+	[boolean]$IncludeHighAnsi = $false
+	[boolean]$IncludeHyphenate = $false
+	[boolean]$IncludeLowerCase = $true
+	[boolean]$IncludeMinus = $false
+	[boolean]$IncludeSpace = $false
+	[boolean]$IncludeSpecialChar = $false
+	[boolean]$IncludeUnderline = $false
+	[boolean]$IncludeUpperCase = $true
+	[boolean]$IsShared = $false
+	[int]$Length = 8
+	[int]$LowerCaseMin = 0
+	[int]$MinusMin = 0
+	[PasswordGeneratorMode]$Mode = [PasswordGeneratorMode]::new()
+	[String]$ModeString = ''
+	[boolean]$MorePronounceable = $false
+	[String]$MruPattern = ''
+	[string[]]$MRUPatternArray = [string[]]::new()
+	[String]$Name = ''
+	[boolean]$NoRepeatingCharacters = $false
+	[int]$Numerics = 1
+	[String]$Pattern = ''
+	[boolean]$PatternShuffleCharacters = $true
+	[int]$PreviewPasswordCount = 30
+	[PronounceableCaseMode]$PronounceableCaseMode = [PronounceableCaseMode]::new()
+	[int]$RequiredChars = 0
+	[int]$SpaceMin = 0
+	[int]$SpecialCharMin = 0
+	[int]$Syllables = 1
+	[int]$Symbols = 1
+	[int]$UnderlineMin = 0
+	[int]$UpperCaseMin = 0
+	[boolean]$XmlCompliant = $false
+}

@@ -1,0 +1,78 @@
+using module '..\models\BaseSessionEntry.generated.psm1'
+using module '..\enums\BrowserExtensionLinkerCompareType.generated.psm1'
+using module '..\enums\ChromeProxyType.generated.psm1'
+using module '..\enums\DefaultBoolean.generated.psm1'
+using module '..\models\EquivalentUrlItem.generated.psm1'
+using module '..\enums\MozillaManualProxyConfigurationProxyType.generated.psm1'
+using module '..\enums\MozillaNetworkProxyType.generated.psm1'
+using module '..\models\RecoveryCodeItem.generated.psm1'
+using module '..\models\SensitiveItem.generated.psm1'
+using module '..\enums\WebBrowserApplication.generated.psm1'
+using module '..\enums\WebBrowserAuthenticationMode.generated.psm1'
+using module '..\models\WebCustomAutoFillHtmlItem.generated.psm1'
+
+class WebBrowserEntry : BaseSessionEntry 
+{
+	[boolean]$AlwaysLaunchOnProtocolRequest = $false
+	[WebBrowserAuthenticationMode]$AuthenticationMode = [WebBrowserAuthenticationMode]::new()
+	[boolean]$AutoFillLogin = $false
+	[boolean]$AutomaticRefresh = $false
+	[int]$AutomaticRefreshTime = 0
+	[boolean]$AutoSubmit = $false
+	[BrowserExtensionLinkerCompareType]$BrowserExtensionLinkerCompareType = [BrowserExtensionLinkerCompareType]::new()
+	[ChromeProxyType]$ChromeProxyType = [ChromeProxyType]::new()
+	[WebCustomAutoFillHtmlItem]$CustomAutoFillHtmlItems = [WebCustomAutoFillHtmlItem]::new()
+	[String]$CustomJavaScript = ''
+	[int]$DelayedRefreshTime = 0
+	[String]$Domain = ''
+	[String]$DomainControlId = ''
+	[boolean]$EnableKeyboardShortcuts = $false
+	[boolean]$EnableWebBrowserExtension = $false
+	[boolean]$Force32Bit = $false
+	[boolean]$ForceHttps = $false
+	[String]$FormId = ''
+	[String]$Host = ''
+	[boolean]$IgnoreCertificateAuthentication = $false
+	[boolean]$IgnoreCertificateErrors = $false
+	[String]$LanguageCode = ''
+	[String]$MobileDomainControlId = ''
+	[String]$MobileFormId = ''
+	[String]$MobileOTPControlId = ''
+	[String]$MobilePasswordControlId = ''
+	[String]$MobileSubmitControlId = ''
+	[String]$MobileUserNameControlId = ''
+	[MozillaManualProxyConfigurationProxyType]$MozillaManualProxyConfigurationProxyType = [MozillaManualProxyConfigurationProxyType]::new()
+	[MozillaNetworkProxyType]$MozillaProxyType = [MozillaNetworkProxyType]::new()
+	[boolean]$NoMerge = $false
+	[String]$OTPControlId = ''
+	[String]$PasswordControlId = ''
+	[SensitiveItem]$PasswordItem = [SensitiveItem]::new()
+	[boolean]$PrivateSession = $false
+	[String]$ProxyExcludedList = ''
+	[int]$ProxyPort = 0
+	[String]$ProxyUrl = ''
+	[String]$RegularExpression = ''
+	[boolean]$ScriptErrorsSuppressed = $false
+	[SensitiveItem]$SecurityAnswer1Item = [SensitiveItem]::new()
+	[SensitiveItem]$SecurityAnswer2Item = [SensitiveItem]::new()
+	[SensitiveItem]$SecurityAnswer3Item = [SensitiveItem]::new()
+	[SensitiveItem]$SecurityAnswer4Item = [SensitiveItem]::new()
+	[SensitiveItem]$SecurityAnswer5Item = [SensitiveItem]::new()
+	[String]$SecurityQuestion1 = ''
+	[String]$SecurityQuestion2 = ''
+	[String]$SecurityQuestion3 = ''
+	[String]$SecurityQuestion4 = ''
+	[String]$SecurityQuestion5 = ''
+	[boolean]$ShowFavicon = $true
+	[boolean]$ShowToolbar = $true
+	[boolean]$ShowUrl = $true
+	[String]$SubmitControlId = ''
+	[String]$Url = ''
+	[boolean]$UrlEncodeBasicAuthentication = $false
+	[DefaultBoolean]$UseLegacyClick = [DefaultBoolean]::new()
+	[String]$Username = ''
+	[String]$UserNameControlId = ''
+	[WebBrowserApplication]$WebBrowserApplication = [WebBrowserApplication]::new()
+	[RecoveryCodeItem]$OTPRecoveryCodes = [RecoveryCodeItem]::new()
+	[EquivalentUrlItem]$EquivalentUrls = [EquivalentUrlItem]::new()
+}

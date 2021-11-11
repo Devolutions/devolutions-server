@@ -1,0 +1,5 @@
+
+class RemoteSimpleDevice
+{
+	[String]$Name = ''
+}

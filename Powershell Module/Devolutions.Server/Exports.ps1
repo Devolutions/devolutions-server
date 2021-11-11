@@ -1,0 +1,7 @@
+using module '.\Private\Types\models\BaseConnection.generated.psm1'
+using module '.\Private\Types\models\ConnectionPermission.generated.psm1'
+using module '.\Private\Types\models\DataSourcePermission.generated.psm1'
+using module '.\Private\Types\models\SecurityConnection.generated.psm1'
+#using module '\Private.\Types\models\BrowserExtensionMetaData.generated.psm1'
+using module '.\Private\Types\models\ConnectionMetaDataEntity.generated.psm1'
+using module '.\Private\Types\models\ConnectionInfoEntity.generated.psm1'

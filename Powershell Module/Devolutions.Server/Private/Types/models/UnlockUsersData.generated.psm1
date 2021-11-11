@@ -1,0 +1,5 @@
+
+class UnlockUsersData
+{
+	[String]$Users = ''
+}

@@ -1,0 +1,100 @@
+using module '..\enums\ConnectionDisplayMode.generated.psm1'
+using module '..\models\CredentialUsernamePassword.generated.psm1'
+using module '..\enums\DefaultBoolean.generated.psm1'
+using module '..\enums\DisplayMonitor.generated.psm1'
+using module '..\enums\DisplayVirtualDesktop.generated.psm1'
+using module '..\models\JumpConnection.generated.psm1'
+using module '..\enums\KeyboardHook.generated.psm1'
+using module '..\enums\PrivateKeyType.generated.psm1'
+using module '..\enums\RDPAudioQualityMode.generated.psm1'
+using module '..\enums\RDPScreenSizingMode.generated.psm1'
+using module '..\enums\ScreenSize.generated.psm1'
+using module '..\models\SensitiveItem.generated.psm1'
+using module '..\enums\SoundHook.generated.psm1'
+using module '..\enums\WebBrowserApplication.generated.psm1'
+
+class PartialConnectionOverride
+{
+	[RDPAudioQualityMode]$AudioQualityMode = [RDPAudioQualityMode]::new()
+	[String]$ConnectionID = $null
+	[String]$CredentialConnectionID = ''
+	[String]$CredentialDynamicValue = ''
+	[String]$CredentialDynamicDescription = ''
+	[CredentialUsernamePassword]$Credentials = [CredentialUsernamePassword]::new()
+	[int]$CustomHeight = 0
+	[int]$CustomWidth = 0
+	[ConnectionDisplayMode]$Display = [ConnectionDisplayMode]::new()
+	[DisplayMonitor]$DisplayMonitor = [DisplayMonitor]::new()
+	[DisplayVirtualDesktop]$DisplayVirtualDesktop = [DisplayVirtualDesktop]::new()
+	[String]$Domain = ''
+	[String]$GatewayCredentialConnectionID = ''
+	[String]$GatewayCredentialDynamicValue = ''
+	[String]$GatewayCredentialDynamicDescription = ''
+	[String]$GatewayDomain = ''
+	[String]$GatewayPassword = ''
+	[String]$GatewayPersonalConnectionID = ''
+	[String]$GatewayUserName = ''
+	[String]$GatewayPamCredentialId = ''
+	[String]$GatewayPamCredentialName = ''
+	[JumpConnection]$Jump = [JumpConnection]::new()
+	[KeyboardHook]$KeyboardHook = [KeyboardHook]::new()
+	[boolean]$MultiMonitors = $false
+	[boolean]$OverrideCameras = $false
+	[boolean]$OverrideCredential = $false
+	[boolean]$OverrideDisplay = $false
+	[boolean]$OverrideGateway = $false
+	[boolean]$OverrideJump = $false
+	[boolean]$OverrideKeyboardHook = $false
+	[boolean]$OverrideMore = $false
+	[boolean]$OverridePrinters = $false
+	[boolean]$OverridePrivateKey = $false
+	[boolean]$OverrideRemoteSound = $false
+	[boolean]$OverrideResources = $false
+	[boolean]$OverrideScreenSize = $false
+	[boolean]$OverrideToolCredential = $false
+	[boolean]$OverrideVPNCredential = $false
+	[boolean]$OverrideWebBrowserApplication = $false
+	[String]$PamCredentialId = ''
+	[String]$PamCredentialName = ''
+	[String]$Password = ''
+	[String]$PersonalCredentialConnectionID = ''
+	[DefaultBoolean]$PinEmbeddedMode = [DefaultBoolean]::new()
+	[String]$PrivateKeyConnectionID = ''
+	[SensitiveItem]$PrivateKeyData = [SensitiveItem]::new()
+	[String]$PrivateKeyFileName = ''
+	[String]$PrivateKeyOverrideUsername = ''
+	[SensitiveItem]$PrivateKeyPassPhraseItem = [SensitiveItem]::new()
+	[boolean]$PrivateKeyPromptForPassPhrase = $true
+	[PrivateKeyType]$PrivateKeyType = [PrivateKeyType]::new()
+	[RDPScreenSizingMode]$RDPScreenSizingMode = [RDPScreenSizingMode]::new()
+	[string[]]$RedirectedDrives = [string[]]::new()
+	[SoundHook]$RemoteComputerSound = [SoundHook]::new()
+	[ScreenSize]$ScreenSize = [ScreenSize]::new()
+	[String]$SelectedMonitors = ''
+	[boolean]$Span = $false
+	[String]$ToolCredentialConnectionGroup = ''
+	[String]$ToolCredentialConnectionID = ''
+	[String]$ToolCredentialDynamicValue = ''
+	[String]$ToolCredentialDynamicDescription = ''
+	[String]$ToolDomain = ''
+	[String]$ToolPassword = ''
+	[String]$ToolPersonalConnectionID = ''
+	[String]$ToolUserName = ''
+	[String]$ToolPamCredentialId = ''
+	[String]$ToolPamCredentialName = ''
+	[String]$UserName = ''
+	[boolean]$UsesCameras = $false
+	[boolean]$UsesHardDrives = $false
+	[boolean]$UsesPrinters = $false
+	[String]$VPNCredentialConnectionGroup = ''
+	[String]$VPNCredentialConnectionID = ''
+	[String]$VPNCredentialDynamicValue = ''
+	[String]$VPNCredentialDynamicDescription = ''
+	[String]$VPNDomain = ''
+	[String]$VPNPassword = ''
+	[String]$VPNPersonalConnectionID = ''
+	[String]$VPNUserName = ''
+	[String]$VPNPamCredentialId = ''
+	[String]$VPNPamCredentialName = ''
+	[WebBrowserApplication]$WebBrowserApplication = [WebBrowserApplication]::new()
+}

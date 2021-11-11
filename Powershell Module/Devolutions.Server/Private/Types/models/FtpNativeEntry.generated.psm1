@@ -1,0 +1,54 @@
+using module '..\models\BaseSessionEntry.generated.psm1'
+using module '..\enums\FtpAllowedSuite.generated.psm1'
+using module '..\enums\FtpProxyType.generated.psm1'
+using module '..\enums\FtpSecurityType.generated.psm1'
+using module '..\enums\PrivateKeyType.generated.psm1'
+using module '..\models\SensitiveItem.generated.psm1'
+
+class FtpNativeEntry : BaseSessionEntry 
+{
+	[FtpAllowedSuite]$AllowedSuite = [FtpAllowedSuite]::new()
+	[boolean]$AlwaysAskForPassword = $false
+	[String]$CertificatePath = ''
+	[boolean]$ClearCommandChannel = $true
+	[boolean]$CommandReplyLogEnabled = $false
+	[String]$Directory = ''
+	[String]$Domain = ''
+	[boolean]$FtpSshAlwaysAskForPassword = $false
+	[String]$FtpSshHost = ''
+	[SensitiveItem]$FtpSshPasswordItem = [SensitiveItem]::new()
+	[int]$FtpSshPort = 22
+	[String]$FtpSshUserName = ''
+	[String]$Host = ''
+	[String]$LocalPath = ''
+	[String]$LogPath = ''
+	[boolean]$LogToFile = $false
+	[boolean]$PassiveMode = $true
+	[SensitiveItem]$PasswordItem = [SensitiveItem]::new()
+	[int]$Port = 21
+	[String]$PrivateKeyConnectionID = ''
+	[SensitiveItem]$PrivateKeyData = [SensitiveItem]::new()
+	[String]$PrivateKeyFileName = ''
+	[SensitiveItem]$PrivateKeyPassPhraseItem = [SensitiveItem]::new()
+	[boolean]$PrivateKeyPromptForPassPhrase = $true
+	[PrivateKeyType]$PrivateKeyType = [PrivateKeyType]::new()
+	[String]$PrivateKeyPrivateVaultString = ''
+	[boolean]$ProxyBypassOnLocal = $false
+	[String]$ProxyDomain = ''
+	[SensitiveItem]$ProxyPasswordItem = [SensitiveItem]::new()
+	[int]$ProxyPort = 3128
+	[FtpProxyType]$ProxyType = [FtpProxyType]::new()
+	[String]$ProxyUrl = ''
+	[String]$ProxyUserName = ''
+	[boolean]$SecureTransfers = $false
+	[FtpSecurityType]$SecurityType = [FtpSecurityType]::new()
+	[boolean]$ShowFilesInTreeView = $false
+	[boolean]$ShowLocalFiles = $true
+	[boolean]$SSL = $true
+	[boolean]$TLS = $true
+	[boolean]$UseFtpOverSsh = $false
+	[boolean]$UseProxy = $false
+	[String]$Username = ''
+	[boolean]$UseSshAuthenticationAgent = $false
+	[int]$VerboseLevel = 0
+}
