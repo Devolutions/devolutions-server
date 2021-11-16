@@ -136,7 +136,7 @@ function New-DSCredentialEntry {
                 expiration        = $ParamList.Expiration
             }
 
-            $res = New-DSEntryBase -Body $CredentialBody
+            $res = New-DSEntryBase (ConvertTo-Json $CredentialBody)
             return $res
         }
         catch {
@@ -150,7 +150,6 @@ function New-DSCredentialEntry {
         }
         else {
             Write-Verbose "[New-DSCredentialEntry] Ended with errors..."
-            Write-Error $Exception.Message
         }
     } 
 }
