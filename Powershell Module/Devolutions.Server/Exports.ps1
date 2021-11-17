@@ -1,3 +1,5 @@
+using module '.\Private\Types\AD\ValueResolver.psm1'
+using module '.\Private\Types\models\MsDomainConfiguration.generated.psm1'
 using module '.\Private\Types\models\BaseConnection.generated.psm1'
 using module '.\Private\Types\models\ConnectionPermission.generated.psm1'
 using module '.\Private\Types\models\DataSourcePermission.generated.psm1'
