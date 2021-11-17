@@ -77,7 +77,10 @@
         'Convert-XMLToPSCustomObject', 'Convert-PSCustomObjectToXML', 'Convert-XMLToSerializedString',
         'Get-DSPasswordsReport', 'Invoke-DSResetServerCache',
         'Invoke-DSPamCheckout', 'Invoke-DSPamCheckin', 'Get-DSPamCheckout', 'Get-DSPamCredential', 'Invoke-DSPamCheckoutPending', 'Get-DSPamPassword',
-        'Enable-DSUser2FA', 'Disable-DSUser2FA'
+        'Enable-DSUser2FA', 'Disable-DSUser2FA',
+
+        #Domain
+        'Get-DSAuthenticationModes', 'Set-DSAuthenticationModes'
     )
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
