@@ -80,7 +80,9 @@
         'Enable-DSUser2FA', 'Disable-DSUser2FA',
 
         #Domain
-        'Get-DSAuthenticationModes', 'Set-DSAuthenticationModes', 'New-DSAdDomain'
+        'Get-DSAuthenticationModes', 'Set-DSAuthenticationModes', 
+        'New-DSAdDomain',
+        'Get-DSDomainUsers', 'Import-DSAdUsers'
     )
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
