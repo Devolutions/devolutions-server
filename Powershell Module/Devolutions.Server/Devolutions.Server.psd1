@@ -81,7 +81,7 @@
 
         #Domain
         'Get-DSAuthenticationModes', 'Set-DSAuthenticationModes', 
-        'New-DSAdDomain',
+        'Get-DSAdDomain', 'New-DSAdDomain', 'Update-DSAdDomain', 'Remove-DSAdDomain',
         'Get-DSDomainUsers', 'Import-DSAdUsers'
     )
     
