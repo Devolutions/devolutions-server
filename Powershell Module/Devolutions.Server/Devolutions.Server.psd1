@@ -82,7 +82,9 @@
         #Domain
         'Get-DSAuthenticationModes', 'Set-DSAuthenticationModes', 
         'Get-DSAdDomain', 'New-DSAdDomain', 'Update-DSAdDomain', 'Remove-DSAdDomain',
-        'Get-DSDomainUsers', 'Import-DSAdUsers'
+        'Get-DSDomainUsers', 'Import-DSAdUsers',
+        
+        'Set-DSEntityPermissions'
     )
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
