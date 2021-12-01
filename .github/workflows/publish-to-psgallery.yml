@@ -1,0 +1,28 @@
+name: Publish to PS Gallery
+
+on:
+  workflow_dispatch:
+
+jobs:
+  psgallery-publish:
+    name: Publish to PS Gallery
+    runs-on: ubuntu-latest
+    environment: psgallery-publish
+
+    steps:
+      - name: Check out ${{ github.repository }}
+        uses: actions/checkout@v2
+
+      - name: Check out Devolutions/actions
+        uses: actions/checkout@v2
+        with:
+          repository: Devolutions/actions
+          ref: master
+          token: ${{ secrets.DEVOLUTIONSBOT_TOKEN }}
+          path: ./.github/workflows
+
+      - name: Publish to PS Gallery
+        uses: ./.github/workflows/powershell-publish
+        with:
+          nugetApiKey: ${{ secrets.PSGALLERY_API_KEY }}
+          modulePath: "'Powershell Module/Devolutions.Server'"
