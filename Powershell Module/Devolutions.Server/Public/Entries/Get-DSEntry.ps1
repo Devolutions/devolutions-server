@@ -49,7 +49,7 @@ function Get-DSEntry {
         [Parameter(ParameterSetName = 'Filter')]
         [string]$FilterValue,
         [Parameter(ParameterSetName = 'Filter')]
-        [ValidateSet('Name', 'Username', 'Folder', 'Description', 'Tag', ErrorMessage = 'Filtering by {0} is not yet supported. Please use one of the following filters: {1}')]
+        [ValidateSet('Name', 'Username', 'Folder', 'Description', 'Keywords', ErrorMessage = 'Filtering by {0} is not yet supported. Please use one of the following filters: {1}')]
         [SearchItemType]$FilterBy = [SearchItemType]::Name,
 
         [Parameter(ParameterSetName = 'GetPage')]
@@ -107,7 +107,7 @@ function GetAll {
     $Folders = @()
 
     if ($SearchAllVaults) {
-        $VaultIDs = ($res = Get-DSVault -All).isSuccess ? ($res.Body.data | Select-Object -ExpandProperty id) : (throw 'error no vaults found')
+        $VaultIDs = ($res = Get-DSVault -All).isSuccess ? ($res.Body.data | Select-Object -ExpandProperty id) : (throw 'Could not fetch vaults.')
         $VaultIDs | ForEach-Object {
             $Folders += ($res = Get-DSFolders $_ -IncludeSubFolders).isSuccess ? ($res.Body.data) : (throw 'Could not fetch the list of folders for this vault. Please make sure you have a valid vault ID.')
         }
@@ -148,7 +148,7 @@ function GetByFilter {
     )
 
     if ($SearchAllVaults) {
-        $VaultIDs = ($res = Get-DSVault -All).isSuccess ? ($res.Body.data | Select-Object -ExpandProperty id) : (throw 'error no vaults found')
+        $VaultIDs = ($res = Get-DSVault -All).isSuccess ? ($res.Body.data | Select-Object -ExpandProperty id) : (throw 'Could not fetch vaults.')
 
         $Body = @{
             repositoryIds    = $VaultIDs
