@@ -6,7 +6,7 @@
     RootModule           = 'Devolutions.Server.psm1'
     
     # Version number of this module.
-    ModuleVersion        = '2021.7.0'
+    ModuleVersion        = '2021.6.1'
 
     # Supported PSEditions
     CompatiblePSEditions = 'Core'
@@ -84,7 +84,11 @@
         'Get-DSAdDomain', 'New-DSAdDomain', 'Update-DSAdDomain', 'Remove-DSAdDomain',
         'Get-DSDomainUsers', 'Import-DSAdUsers',
         
-        'Set-DSEntityPermissions'
+        'Set-DSEntityPermissions',
+
+        #Gateway
+        'New-DSGateway', 'Get-DSGateway', 'Update-DSGateway', 'Remove-DSGateway',
+        'Get-DSGatewayLogs', 'Test-DSGateway', 'Get-DSGatewaySessions'
     )
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
