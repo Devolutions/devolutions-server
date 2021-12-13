@@ -91,6 +91,10 @@ function Set-DSEntityPermissions {
             }
         }
 
+        if ($Entry.connectionType -eq ([ConnectionType]::Group)) {
+            $Entry.group = $Entry.group -match '\\' ? $Entry.group.Substring(0, $Entry.group.lastIndexOf('\')) : ''
+        }
+
         $Entry.data = (Protect-ResourceToHexString (ConvertTo-Json $Entry.data))
 
         $RequestParams = @{
