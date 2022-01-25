@@ -73,9 +73,10 @@ $Vaults = if (($res = Get-DSVault -All).isSuccess) { $res.Body.data } else { thr
 #now that we have all vaults, we must get the assigned permissions by distinct Vaults
 $vaultsSummary = @()
 $EntriesSummary = @()
-foreach ($vault in $vaults.data) {
+
+foreach ($Vault in $Vaults) {
     SetIndent($Indent++)
-    WriteIndentedOutput "Processing vault : $($vault.Name)"
+    WriteIndentedOutput "Processing vault : $($Vault.Name)"
 
     SetIndent($Indent++)
     WriteIndentedOutput '... permissions'
