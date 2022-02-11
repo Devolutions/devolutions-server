@@ -323,7 +323,7 @@ function New-DSSSHShellEntry {
                 }
             }
 
-            $res = New-DSEntryBase $SSHShell
+            $res = New-DSEntryBase -JsonBody (ConvertTo-Json $SSHShell)
             return $res
         }
         catch {
