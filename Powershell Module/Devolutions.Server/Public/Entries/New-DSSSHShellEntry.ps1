@@ -36,7 +36,7 @@ function New-DSSSHShellEntry {
         [DisplayMonitor]$DisplayMonitor = [DisplayMonitor]::Primary,
         #Virtual desktop used by SSHShell
         [DisplayVirtualDesktop]$DisplayVirtualDesktop = [DisplayVirtualDesktop]::Default,
-    
+        [Guid]$VaultId,
         #If it should always ask for password when checking out
         [bool]$AlwaysAskForPassword = $false,
         #Entry's username
@@ -187,6 +187,7 @@ function New-DSSSHShellEntry {
                 displayMode           = $DisplayMode
                 DisplayMonitor        = $DisplayMonitor
                 displayVirtualDesktop = $DisplayVirtualDesktop
+                repositoryID = $VaultId
                 data                  = @{
                     alwaysAskForPassword                   = $AlwaysAskForPassword
                     username                               = $Username

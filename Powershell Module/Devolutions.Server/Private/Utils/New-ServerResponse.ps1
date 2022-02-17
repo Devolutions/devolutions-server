@@ -20,7 +20,13 @@ to be found.
         [string]$method
     )
     PROCESS {
-        $responseContentJson = $response.Content | ConvertFrom-Json
+        if (($null -ne $response.Content) -and (Test-Json $response.Content)) {
+            $responseContentJson = $response.Content | ConvertFrom-Json
+        }
+        else {
+            throw 'Could not parse the reponse content to JSON.'
+        }
+        
         if ($null -eq $responseContentJson) {
             $HasResult = $false
         }
@@ -42,7 +48,7 @@ to be found.
                 9 { $responseContentJson.result = [SaveResult]::TwoFactorTypeNotConfigured; break; }
                 10 { $responseContentJson.result = [SaveResult]::WebApiRedirectToLogin; break; }
                 11 { $responseContentJson.result = [SaveResult]::DuplicateLoginEmail; break; }
-                Default { throw "Assertion: Unhandled server result error." }
+                Default { throw 'Assertion: Unhandled server result error.' }
             }
         }
 
@@ -52,7 +58,7 @@ to be found.
                 if (($null -ne $responseContentJson) -and ($HasResult)) {
                     switch ($responseContentJson.result) {
                         ( [SaveResult]::Error ) { 
-                            return [ServerResponse]::new($false , $response, $null, $null, "TODO: Unhandled error.", 500) 
+                            return [ServerResponse]::new($false , $response, $null, $null, 'TODO: Unhandled error.', 500) 
                         }
                         ( [SaveResult]::Success ) { 
                             return [ServerResponse]::new($true , $response, $responseContentJson, $null, $null, 200) 
@@ -61,7 +67,7 @@ to be found.
                             return [ServerResponse]::new($false , $response, $null, $null, "Resource couldn't be found.", 404) 
                         }
                         ( [SaveResult]::AccessDenied ) { 
-                            return [ServerResponse]::new($false , $response, $responseContentJson, $null, "You lack the authorization to view this resource.", 401) 
+                            return [ServerResponse]::new($false , $response, $responseContentJson, $null, 'You lack the authorization to view this resource.', 401) 
                         }
                         Default { return [ServerResponse]::new($false , $response, $null, $null, '[GET] Unhandled error. If you see this, please contact your system administrator for help.', 200) }
                     }
@@ -89,10 +95,10 @@ to be found.
                             return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode)
                         }
                         ([SaveResult]::NotFound) {
-                            return [ServerResponse]::new($false, $response, $responseContentJson, $null, "Resource could not be found. Please make sure you are using an existing ID.", 404)
+                            return [ServerResponse]::new($false, $response, $responseContentJson, $null, 'Resource could not be found. Please make sure you are using an existing ID.', 404)
                         }
                         ([SaveResult]::InvalidData) {
-                            return [ServerResponse]::new($false, $response, $responseContentJson, $null, "The data you submitted was invalid. Please refer to the CMDlet help section for guidance.", 200)
+                            return [ServerResponse]::new($false, $response, $responseContentJson, $null, 'The data you submitted was invalid. Please refer to the CMDlet help section for guidance.', 200)
                         }
                         ([SaveResult]::Error) {
                             if ($responseContentJson.errorMessage) {
@@ -144,7 +150,7 @@ to be found.
                         ([SaveResult]::Success) { return [ServerResponse]::new($true, $response, $responseContentJson, $null, $null, $response.StatusCode); break }
                         ([SaveResult]::Error) { return [ServerResponse]::new($false, $response, $responseContentJson, $null, $responseContentJson.errorMessage, 400); break }
                         ([SaveResult]::AlreadyExists) { return [ServerResponse]::new($false, $response, $responseContentJson, $null, "The resource you are trying to create seems to already exist. Please provide a unique name/username for the resource you're trying to create.", 409); break }
-                        Default { return [ServerResponse]::new($false, $response, $responseContentJson, $null, "[PUT] Unhandled error. If you see this, please contact your system administrator for help.", 500); break }
+                        Default { return [ServerResponse]::new($false, $response, $responseContentJson, $null, '[PUT] Unhandled error. If you see this, please contact your system administrator for help.', 500); break }
                     }
                 }
                 else {
