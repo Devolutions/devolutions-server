@@ -88,7 +88,10 @@
 
         #Gateway
         'New-DSGateway', 'Get-DSGateway', 'Update-DSGateway', 'Remove-DSGateway',
-        'Get-DSGatewayLogs', 'Test-DSGateway', 'Get-DSGatewaySessions'
+        'Get-DSGatewayLogs', 'Test-DSGateway', 'Get-DSGatewaySessions',
+
+        #OAuth
+        'New-DSSessionOAuth'
     )
     
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
