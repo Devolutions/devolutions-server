@@ -37,7 +37,7 @@ function New-DSRole {
 
     BEGIN {
         Write-Verbose '[New-DSRole] Beginning...'
-        $URI = "$Script:DSBaseURI/api/security/role/save?csToXml=1"
+        $URI = "$Script:DSBaseURI/api/security/role/save"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw 'Session invalid. Please call New-DSSession.'

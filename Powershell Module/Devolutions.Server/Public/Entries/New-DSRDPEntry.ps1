@@ -237,6 +237,7 @@ function New-DSRDPEntry {
                     closeCommentIsRequired                   = $CloseCommentIsRequired
                     ticketNumberIsRequiredOnClose            = $TicketNumberIsRequiredOnClose
                 }
+                repositoryID = $VaultID
             }
 
             #Create passwordItem if password is present and not null
