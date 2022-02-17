@@ -23,8 +23,8 @@ function New-DSSession {
     [CmdletBinding()]
     PARAM (
         #PSCredential with your Devolutions Server username and password
-        [ValidateNotNull()]
-        [pscredential]$Credential = [pscredential]::Empty,
+        #[ValidateNotNull()]
+        [object]$Credential = $null,
         #URL to your Devolutions Server instance
         [ValidateNotNullOrEmpty()]
         [string]$BaseUri = $(throw "You must provide your DVLS instance's URI."),
@@ -33,6 +33,7 @@ function New-DSSession {
     
     BEGIN {
         Write-Verbose '[Login] Beginning...'
+
     }
     
     PROCESS {
@@ -66,58 +67,73 @@ function New-DSSession {
         Set-Variable -Name DSInstanceName -Value $ServerResponse.data.serverName -Scope Global
 
         #3. Fetching token information (Actually logging in to DVLS)
-        $SafePassword = Protect-ResourceToHexString $Credential.GetNetworkCredential().Password
-        $ModuleVersion = (Get-Module Devolutions.Server).Version.ToString()
+        if ($null -eq $Credential) {
+            $LoginResponse = New-DSSessionOAuth $BaseUri
 
-        $RequestParams = @{
-            URI         = "$BaseUri/api/login/partial"
-            Method      = 'POST'
-            ContentType = 'application/json'
-            WebSession  = $Global:WebSession
-            Body        = ConvertTo-Json @{
-                userName            = $Credential.UserName
-                RDMOLoginParameters = @{
-                    SafePassword     = $SafePassword
-                    SafeSessionKey   = $Global:DSSafeSessionKey
-                    Client           = $AsApplication ? [ApplicationSource]::Cli : [ApplicationSource]::Scripting
-                    Version          = $ModuleVersion
-                    LocalMachineName = [System.Environment]::MachineName
-                    LocalUserName    = [System.Environment]::UserName
-                }
-            } -Depth 3
-        }
-
-        try {
-            $LoginResponse = Invoke-WebRequest @RequestParams
-
-            if ((Test-Json $LoginResponse.Content -ErrorAction SilentlyContinue) -and (@(Compare-Object (ConvertFrom-Json $LoginResponse.Content).PSObject.Properties.Name @('data', 'result')).Length -eq 0)) {
-                $LoginContent = ConvertFrom-Json $LoginResponse.Content
-
-                if ($LoginContent.result -ne [SaveResult]::Success) {
-                    throw $LoginContent.data.message
-                }
-            }
-            else {
+            if ($null -eq $LoginResponse.access_token) {
                 throw '[New-DSSession] Unhandled error while logging in. Please submit a ticket if problem persists.'
             }
-        }
-        catch {
-            throw $_.Exception.Message
-        }
-        
-        Set-Variable -Name DSSessionToken -Value $LoginContent.data.tokenId -Scope Global
-        $Global:WebSession.Headers.Add('tokenId', $LoginContent.data.tokenId)
 
-        $NewResponse = New-ServerResponse -response $LoginResponse -method 'POST'
-        return $NewResponse
+            return $LoginResponse
+        }
+        else {
+            $SafePassword = Protect-ResourceToHexString $Credential.GetNetworkCredential().Password
+            $ModuleVersion = (Get-Module Devolutions.Server).Version.ToString()
+    
+            $RequestParams = @{
+                URI         = "$BaseUri/api/login/partial"
+                Method      = 'POST'
+                ContentType = 'application/json'
+                WebSession  = $Global:WebSession
+                Body        = ConvertTo-Json @{
+                    userName            = $Credential.UserName
+                    RDMOLoginParameters = @{
+                        SafePassword     = $SafePassword
+                        SafeSessionKey   = $Global:DSSafeSessionKey
+                        Client           = $AsApplication ? [ApplicationSource]::Cli : [ApplicationSource]::Scripting
+                        Version          = $ModuleVersion
+                        LocalMachineName = [System.Environment]::MachineName
+                        LocalUserName    = [System.Environment]::UserName
+                    }
+                } -Depth 3
+            }
+    
+            try {
+                $LoginResponse = Invoke-WebRequest @RequestParams
+    
+                if ((Test-Json $LoginResponse.Content -ErrorAction SilentlyContinue) -and (@(Compare-Object (ConvertFrom-Json $LoginResponse.Content).PSObject.Properties.Name @('data', 'result')).Length -eq 0)) {
+                    $LoginContent = ConvertFrom-Json $LoginResponse.Content
+    
+                    if ($LoginContent.result -ne [SaveResult]::Success) {
+                        throw $LoginContent.data.message
+                    }
+                }
+                else {
+                    throw '[New-DSSession] Unhandled error while logging in. Please submit a ticket if problem persists.'
+                }
+            }
+            catch {
+                throw $_.Exception.Message
+            }
+            
+            Set-Variable -Name DSSessionToken -Value $LoginContent.data.tokenId -Scope Global
+            $Global:WebSession.Headers.Add('tokenId', $LoginContent.data.tokenId)
+    
+            $NewResponse = New-ServerResponse -response $LoginResponse -method 'POST'
+            return $NewResponse
+        }
     }
     
     END {
-        if ($NewResponse.isSuccess) {
-            Write-Verbose "[New-DSSession] Successfully logged in to $($ServerResponse.data.servername)"
+        if (Get-Variable -Name NewResponse -ErrorAction SilentlyContinue) {
+            $Success = $NewResponse.isSuccess
         }
         else {
-            Write-Verbose '[New-DSSession] Could not log in. Please verify URL and credential.'
+            $Success = $null -ne $LoginResponse.access_token
         }
+
+        Write-Verbose ($Success ? 
+            "[New-DSSession] Successfully logged in to $($ServerResponse.data.servername)" : 
+            '[New-DSSession] Could not log in. Please verify URL and credential.')
     }
 }
