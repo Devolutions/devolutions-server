@@ -1,6 +1,6 @@
 ﻿function Install-PSModules {
     $nuGet = Test-Path -Path 'C:\Program Files\PackageManagement\ProviderAssemblies\nuget\2.8.5.208\Microsoft.PackageManagement.NuGetProvider.dll'
-    $SQLmod = Get-InstalledModule -Name SQlServer -ErrorAction:SilentlyContinue
+    $SQLmod = Get-InstalledModule -Name SqlServer -ErrorAction:SilentlyContinue
     if (Test-Network) {
         if (!($nuGet)) {
             try { Install-PackageProvider -Name NuGet -Force -Confirm:$False } catch [System.Exception] { Write-LogEvent $_ -Errors }
