@@ -9,24 +9,6 @@ function Install-DevolutionsServer {
         [parameter(HelpMessage = 'Disables the use of HTTP(s) on your Devolutions Server.', Position = 5)][switch]$DisableHttps,
         [parameter(Mandatory, HelpMessage = 'Include full format of your license key from email.', Position = 1)][string]$LicenseKey
     )
-    <#
-    #Handles missing SQL and SSMS switches in case of user error
-    if (!($SQLServer) -and !($SSMS)) {
-        $choices = New-Object Collections.ObjectModel.Collection[Management.Automation.Host.ChoiceDescription]
-        $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&MS SQL Server'))
-        $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&SQL Studio'))
-        $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&Both'))
-        $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&None'))
-
-        $decision = $Host.UI.PromptForChoice('SQL Installation Choices', 'Do you want to install MS SQL Server, MS SQL Server Management Studio, Both or None?', $choices, 2)
-
-        if ($decision -eq 0) { $SQLServer = $true }
-        if ($decision -eq 1) { $SSMS = $true }
-        if ($decision -eq 2) {
-            $SQLServer = $true
-            $SSMS = $true
-        }
-    }#>
     $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
     $dvlszip = "$Scriptpath\Packages\DVLS.Instance.zip"
 

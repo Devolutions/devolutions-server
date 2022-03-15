@@ -13,15 +13,5 @@
             Write-LogEvent "Removing $path\$Installer from $env:COMPUTERNAME"
             Remove-Item "$path\$Installer"
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
-        <#Shortcut for DVLS
-        $DevoPath = "${env:ProgramFiles(x86)}\Devolutions\Devolutions Server Console\DPS.Console.UI.exe"
-        try {
-            Write-LogEvent 'Creating shortcut for Devolutions Console.'
-            $WshShell = New-Object -ComObject WScript.Shell
-            $Shortcut = $WshShell.CreateShortcut("$Home\Desktop\DVLS Console.lnk")
-            $Shortcut.TargetPath = $DevoPath
-            $Shortcut.Save()
-            Write-LogEvent 'Shortcut for Devolutions Console has been created.'
-        } catch [System.Exception] { Write-LogEvent $_ -Errors } #>
     }
 }
