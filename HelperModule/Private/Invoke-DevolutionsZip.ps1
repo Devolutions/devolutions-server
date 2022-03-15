@@ -1,4 +1,9 @@
 ﻿function Invoke-DevolutionsZip {
+    [CmdletBinding(DefaultParameterSetName = 'GA')]
+    param (
+        [Parameter(ParameterSetName = 'GA', Position = 0)][switch]$GA,
+        [Parameter(ParameterSetName = 'LTS', Position = 0)][switch]$LTS
+    )
     $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
     $path = "$Scriptpath\Packages"
     if (!(Test-Path $path)) { New-Item -Path $path -ItemType Directory }
