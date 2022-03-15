@@ -3,6 +3,25 @@ function Install-IisApplicationRequestRouting {
     $path = "$Scriptpath\Packages"
     $url1 = "$path\requestRouter_amd64.msi"
     $ExitCode = 0
+    $requestRouter = Test-Path $url1
+    $AppRequestRouting = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/f19f07f3-5ea4-436d-a3ba-4bb69d373321'
+
+    if (Test-Path 'HKLM:\SOFTWARE\Microsoft\IIS Extensions\Application Request Routing\') {
+        Write-LogEvent 'Checking if IIS Application Request Routing (AAR) is installed'
+        $Appregkey = Get-ItemProperty -Path 'HKLM:\SOFTWARE\Microsoft\IIS Extensions\Application Request Routing\'
+        if ($Appregkey.Version -ge 3.0) {
+            Write-LogEvent 'IIS Application Request Routing (AAR) is already installed'
+            return
+        }
+    } elseif (!($requestRouter)) {
+        Write-LogEvent 'Downloading IIS Application Request Routing (AAR)'
+        try {
+            Start-BitsTransfer -Source $AppRequestRouting -Destination "$path\requestRouter_amd64.msi"
+            Write-LogEvent 'Successfully downloaded IIS Application Request Routing (AAR)'
+        } catch [System.Exception] { Write-LogEvent $_ -Errors }
+    } else {
+        Write-LogEvent 'Application Request Routing (AAR) package EXE already present in folder'
+    }
 
     Write-LogEvent 'Installing Application Request Routing (AAR)'
     $Exitcode = (Start-Process -FilePath 'msiexec.exe' -ArgumentList "/I $url1 /q" -Wait -PassThru).ExitCode
@@ -20,3 +39,4 @@ function Install-IisApplicationRequestRouting {
         Write-LogEvent "Removing $url1 from $Env:COMPUTERNAME" -Output
     } catch [System.Exception] { Write-LogEvent $_ -Errors }
 }
+

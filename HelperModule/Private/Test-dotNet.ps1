@@ -7,6 +7,5 @@ function Test-dotNet {
         return $true
     } else {
         return $false
-        Write-LogEvent '.Net Framework is already installed'
     }
 }
