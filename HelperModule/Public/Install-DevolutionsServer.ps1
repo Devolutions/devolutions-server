@@ -1,4 +1,4 @@
-﻿function Install-DevolutionsServer {
+function Install-DevolutionsServer {
     [CmdletBinding(DefaultParameterSetName = 'GA')]
     param (
         [Parameter(Mandatory, ParameterSetName = 'GA', Position = 0)][switch]$GA,
@@ -32,7 +32,11 @@
 
     New-EventSource
 
-    if (($SQLServer)) { if ($IntegratedSecurity) { Install-SqlServer -SQLIntegrated } else { Install-SqlServer } }
+    if (Test-dotNet) {
+        Write-LogEvent '.NET Framework 4.8 is not installed, please use Install-IISPrerequisites then rerun this command' -Output
+        return
+    }
+
     if (($SSMS)) { Install-SqlStudio }
 
     if ($GA) { Install-DevolutionsConsole -GA }

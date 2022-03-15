@@ -5,6 +5,11 @@
         [Parameter(Mandatory, ParameterSetName = 'LTS', Position = 0)][switch]$LTS
     )
     New-EventSource
+
+    if (Test-dotNet) {
+        Write-LogEvent '.NET Framework 4.8 is not installed, please use Install-IISPrerequisites then rerun this script' -Output
+        return
+    }
     if (Test-Programs -DevoConsole) {
         Write-LogEvent "Devolutions Server Console is already present on the $env:COMPUTERNAME."
         return

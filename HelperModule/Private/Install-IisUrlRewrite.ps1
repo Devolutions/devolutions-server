@@ -4,7 +4,6 @@
     $url1 = "$path\rewrite_amd64_en-US.msi"
     $ExitCode = 0
 
-    Write-LogEvent 'IIS URL Rewrite Module is not present'
     Write-LogEvent 'Installing IIS URL Rewrite Module'
     $Exitcode = (Start-Process -FilePath 'msiexec.exe' -ArgumentList "/I $url1 /q" -Wait -PassThru).ExitCode
 

@@ -1,9 +1,10 @@
 ﻿function New-OfflineServer {
     [CmdletBinding(DefaultParameterSetName = 'GA')]
     param (
-        [Parameter(Mandatory, ParameterSetName = 'GA', Position = 0)][switch]$GA,
-        [Parameter(Mandatory, ParameterSetName = 'LTS', Position = 0)][switch]$LTS
+        [Parameter(ParameterSetName = 'GA', Position = 0)][switch]$GA,
+        [Parameter(ParameterSetName = 'LTS', Position = 0)][switch]$LTS
     )
+    #TODO Need to add license key and Integrated security
     $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
     $path = "$Scriptpath\Packages"
     Write-LogEvent "Checking if $path\Packages exists" -Output
@@ -11,8 +12,9 @@
         New-Item $path -ItemType Directory -Force
         Write-LogEvent "Created folder $path\Packages" -Output
     }
-    $vnet = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/bd59d20f-6bd9-40d4-b742-b892a3f2df15'
+    $vnet = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/e37e3ab5-37ba-4f9d-af4d-b3ed6fcb1178'	
     $IISurl = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/58da94c9-2de7-4e33-809a-4610edcfad99'
+    $AppRequestRouting = Get-RedirectedUrl -Url 'https://api.devolutions.net/redirection/f19f07f3-5ea4-436d-a3ba-4bb69d373321'
     if ($GA) {
         $PatternEXE = 'DPSConsole.Exe'
         $PatternZip = 'DPS.Url'
@@ -28,20 +30,23 @@
         "$path\Setup.DPS.Console.exe"
         "$path\DVLS.Instance.zip"
         "$path\rewrite_amd64_en-US.msi"
-        "$path\NDP472-KB4054530-x86-x64-AllOS-ENU.exe"
+        "$path\NDP48-x86-x64-AllOS-ENU.exe"
+        "$path\requestRouter_amd64.msi"
     )
     $source = @(
         $DevoConsole
         $DevoZIP
         $IISurl
         $vnet
+        $AppRequestRouting
     )
 
     try {
         Write-LogEvent 'Downloading Devolutions Server Console' -Output
         Write-LogEvent 'Downloading Devolutions Server Instance zip' -Output
         Write-LogEvent 'Downloading IIS URL Rewrite Module' -Output
-        Write-LogEvent 'Downloading .Net 4.7.2' -Output
+        Write-LogEvent 'Downloading .Net' -Output
+        Write-LogEvent 'Downloading Application Request Routing (ARR)' -Output
         Start-BitsTransfer $source -Destination $destination
     } catch [System.Exception] { Write-LogEvent $_ -Errors }
 
