@@ -1,7 +1,11 @@
 name: Publish to PS Gallery
 
 on:
+  release:
+    types: [published]
   workflow_dispatch:
+
+concurrency: publish_ps_gallery
 
 jobs:
   psgallery-publish:
@@ -13,16 +17,8 @@ jobs:
       - name: Check out ${{ github.repository }}
         uses: actions/checkout@v2
 
-      - name: Check out Devolutions/actions
-        uses: actions/checkout@v2
-        with:
-          repository: Devolutions/actions
-          ref: master
-          token: ${{ secrets.DEVOLUTIONSBOT_TOKEN }}
-          path: ./.github/workflows
-
       - name: Publish to PS Gallery
-        uses: ./.github/workflows/powershell-publish
+        uses: devolutions/actions/powershell-publish@master
         with:
           nugetApiKey: ${{ secrets.PSGALLERY_API_KEY }}
           modulePath: "'Powershell Module/Devolutions.Server'"
