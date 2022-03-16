@@ -87,7 +87,7 @@ function New-DSSession {
                 WebSession  = $Global:WebSession
                 Body        = ConvertTo-Json @{
                     userName            = $Credential.UserName
-                    RDMOLoginParameters = @{
+                    LoginParameters = @{
                         SafePassword     = $SafePassword
                         SafeSessionKey   = $Global:DSSafeSessionKey
                         Client           = $AsApplication ? [ApplicationSource]::Cli : [ApplicationSource]::Scripting
