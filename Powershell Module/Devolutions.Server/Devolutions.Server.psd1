@@ -6,7 +6,7 @@
     RootModule           = 'Devolutions.Server.psm1'
     
     # Version number of this module.
-    ModuleVersion        = '2021.6.4'
+    ModuleVersion        = '2022.1.10.0'
 
     # Supported PSEditions
     CompatiblePSEditions = 'Core'
