@@ -1,7 +1,17 @@
 ﻿function Install-SqlServer {
+    [CmdletBinding(DefaultParameterSetName = 'SQLAccounts')]
     param(
-        [parameter(HelpMessage = 'Used to set SQL Server to use Advanced settings')][switch]$AdvancedDB,
-        [parameter(HelpMessage = 'Used to set SQL Server to use Integrated security')][switch]$SQLIntegrated,
+        [Parameter(Mandatory, ParameterSetName = 'SQLAccounts', Position = 0)]
+        [System.Management.Automation.PSCredential]$SQLOwnerAccount,
+    
+        [Parameter(ParameterSetName = 'SQLAccounts', Position = 1)]
+        [System.Management.Automation.PSCredential]$SQLSchedulerAccount,
+    
+        [Parameter(ParameterSetName = 'SQLAccounts', Position = 2)]
+        [System.Management.Automation.PSCredential]$SQLAppPoolAccount,
+        [parameter(Mandatory, ParameterSetName = 'Integrated', HelpMessage = 'Used to set SQL Server to use Integrated security', Position = 0)]
+        [switch]$SQLIntegrated,
+        [parameter(HelpMessage = 'Used for Advanced settings for SQL Server installation')][switch]$AdvancedDB,
         [parameter(HelpMessage = 'Used to enable TCP on your SQL Server Configuration')][switch]$TCPProtocol,
         [parameter(HelpMessage = 'Used to enable Named Pipes on your SQL Server Configuration')][switch]$NamedPipe
     )
@@ -17,13 +27,15 @@
             if ($SQLIntegrated) { 
                 if ($AdvancedDB) { Invoke-SqlServer -SQLIntegrated -AdvancedDB } else { Invoke-SqlServer -SQLIntegrated }
             } else {
-                if ($AdvancedDB) { Invoke-SqlServer -AdvancedDB } else { Invoke-SqlServer }         
+                if ($AdvancedDB) { Invoke-SqlServer -SQLOwnerAccount $SQLOwnerAccount -SQLSchedulerAccount $SQLSchedulerAccount  -SQLAppPoolAccount $SQLAppPoolAccount -AdvancedDB 
+                } else { Invoke-SqlServer -SQLOwnerAccount $SQLOwnerAccount -SQLSchedulerAccount $SQLSchedulerAccount  -SQLAppPoolAccount $SQLAppPoolAccount }         
             }
         } elseif (Test-SQL -SQLServer) {
             if ($SQLIntegrated) { 
                 if ($AdvancedDB) { Install-SQL -SQLIntegrated -AdvancedDB } else { Install-SQL -SQLIntegrated }
             } else {
-                if ($AdvancedDB) { Install-SQL -AdvancedDB } else { Install-SQL }         
+                if ($AdvancedDB) { Install-SQL -SQLOwnerAccount $SQLOwnerAccount -SQLSchedulerAccount $SQLSchedulerAccount  -SQLAppPoolAccount $SQLAppPoolAccount -AdvancedDB 
+                } else { Install-SQL -SQLOwnerAccount $SQLOwnerAccount -SQLSchedulerAccount $SQLSchedulerAccount  -SQLAppPoolAccount $SQLAppPoolAccount }         
             }
         }
         try {
@@ -51,10 +63,8 @@
             }
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
     } elseif (!(Test-Network)) {
-        if ((Test-SQL -SQLServer)) { Install-SQL } else {
-            Write-LogEvent "Installation files for Sql Server are not present on $env:COMPUTERNAME `nin $path folder for offline installation.`n" -Output
-
+        if ((Test-SQL -SQLServer)) { Install-SQL -SQLOwnerAccount $SQLOwnerAccount -SQLSchedulerAccount $SQLSchedulerAccount  -SQLAppPoolAccount $SQLAppPoolAccount 
+        } else { Write-LogEvent "Installation files for Sql Server are not present on $env:COMPUTERNAME `nin $path folder for offline installation.`n" -Output
         }
     }
-
 }

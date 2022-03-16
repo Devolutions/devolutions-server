@@ -1,6 +1,17 @@
 ﻿function New-DatabaseStandard {
+    [CmdletBinding(DefaultParameterSetName = 'SQLAccounts')]
     param(
-        [parameter(HelpMessage = 'Used to set SQL Server to use Integrated security')][switch]$SQLIntegrated
+        [Parameter(Mandatory, ParameterSetName = 'SQLAccounts', Position = 0)]
+        [System.Management.Automation.PSCredential]$SQLOwnerAccount,
+
+        [Parameter(ParameterSetName = 'SQLAccounts', Position = 1)]
+        [System.Management.Automation.PSCredential]$SQLSchedulerAccount,
+    
+        [Parameter(ParameterSetName = 'SQLAccounts', Position = 2)]
+        [System.Management.Automation.PSCredential]$SQLAppPoolAccount,
+
+        [parameter(Mandatory, ParameterSetName = 'Integrated', HelpMessage = 'Used to set SQL Server to use Integrated security', Position = 0)]
+        [switch]$SQLIntegrated
     )
     New-EventSource
 
@@ -8,8 +19,9 @@
     Install-PSModules
     if (Get-Module SqlServer) {
         if (!($SQLIntegrated)) {
-            $SQLAccount = Get-Credential -Message 'Please enter the credentials you would like to use for your SQL Account: '
-            $SQLUser = $SQLAccount.GetNetworkCredential().UserName
+            $SQLOwner = $SQLOwnerAccount.GetNetworkCredential().UserName
+            $SQLScheduler = $SQLSchedulerAccount.GetNetworkCredential().UserName
+            $SQLAppPool = $SQLAppPoolAccount.GetNetworkCredential().UserName
         }
         # DB Installation Standard
         try {
@@ -67,14 +79,26 @@
                 $logfile.Alter()
                 Write-LogEvent 'DB log file size configured with default settings' -Output
             }
+            $Svr = New-Object ('Microsoft.SqlServer.Management.Smo.Server') $SqlInstance
             #SQL DB Permissions
             if ($SQLIntegrated) {
                 #Add Integrated sql permissions for db
+                $svrole = $Svr.Roles | Where-Object {$_.Name -eq 'sysadmin'}
+                $svrole.AddMember("$env:USERDOMAIN\$env:USERNAME")
+                Write-LogEvent "$env:USERDOMAIN\$env:USERNAME was added to sysadmin Server Roles" -Output
                 Add-UserToRole -server $SqlInstance -Database $dbname -User "$env:USERDOMAIN\$env:USERNAME" -Role 'db_owner'
             } else {
                 #create sql login for db
-                Add-SqlLogin -LoginPSCredential $SQLAccount -LoginType 'SqlLogin' -Enable -GrantConnectSql
-                Add-UserToRole -server $SqlInstance -Database $dbname -User $SQLUser -Role 'db_owner'
+                Add-SqlLogin -LoginPSCredential $SQLOwnerAccount -LoginType 'SqlLogin' -Enable -GrantConnectSql
+                $svrole = $Svr.Roles | Where-Object {$_.Name -eq 'sysadmin'}
+                $svrole.AddMember($SQLOwner)
+                Write-LogEvent "$SQlOwnerAccount was added to sysadmin Server Roles" -Output
+                Add-UserToRole -server $SqlInstance -Database $dbname -User $SQLOwner -Role 'db_owner'
+                Add-SqlLogin -LoginPSCredential $SQLSchedulerAccount -LoginType 'SqlLogin' -Enable -GrantConnectSql
+                Add-UserToRole -server $SqlInstance -Database $dbname -User $SQLScheduler -Role 'db_backupoperator'
+                Add-SqlLogin -LoginPSCredential $SQLAppPoolAccount -LoginType 'SqlLogin' -Enable -GrantConnectSql
+                Add-UserToRole -server $SqlInstance -Database $dbname -User $SQLAppPool -Role 'db_datareader'
+                Add-UserToRole -server $SqlInstance -Database $dbname -User $SQLAppPool -Role 'db_datawriter'
             }
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
     } else {

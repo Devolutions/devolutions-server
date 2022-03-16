@@ -1,18 +1,31 @@
 ﻿function New-DatabaseAdvanced {
+    [CmdletBinding(DefaultParameterSetName = 'SQLAccounts')]
     param(
+        [Parameter(Mandatory, ParameterSetName = 'SQLAccounts', Position = 0)]
+        [System.Management.Automation.PSCredential]$SQLOwnerAccount,
+    
+        [Parameter(ParameterSetName = 'SQLAccounts', Position = 1)]
+        [System.Management.Automation.PSCredential]$SQLSchedulerAccount,
+        
+        [Parameter(ParameterSetName = 'SQLAccounts', Position = 2)]
+        [System.Management.Automation.PSCredential]$SQLAppPoolAccount,
+    
+        [parameter(Mandatory, ParameterSetName = 'Integrated', HelpMessage = 'Used to set SQL Server to use Integrated security', Position = 0)]
+        [switch]$SQLIntegrated,
         [parameter(Mandatory, HelpMessage = 'Used to set SQL Database Name')][string]$DatabaseName,
-        [parameter(HelpMessage = 'Used to set SQL Server to use Integrated security')][switch]$SQLIntegrated,
         [parameter(Mandatory, HelpMessage = 'SQL Database Recovery model setting.')]
         [ValidateSet('BulkLogged', 'Full', 'Simple')][string]$RecoveryModel
 
     )
+    #TODO redo this section
     New-EventSource
     #modules required for the DB creation and setting the login rights
     Install-PSModules
     if (!(Get-Module SqlServer)) {
         if (!($SQLIntegrated)) {
-            $SQLAccount = Get-Credential -Message 'Please enter the credentials you would like to use for your SQL Account: '
-            $SQLUser = $SQLAccount.GetNetworkCredential().UserName
+            $SQLOwner = $SQLOwnerAccount.GetNetworkCredential().UserName
+            $SQLScheduler = $SQLSchedulerAccount.GetNetworkCredential().UserName
+            $SQLAppPool = $SQLAppPoolAccount.GetNetworkCredential().UserName
         }
         try {
             $comp = $env:ComputerName
@@ -26,7 +39,7 @@
 
             # set instance and database name variables
             $dbname = $DatabaseName
-            $SqlInstance = "localhost\SQLEXPRESS"
+            $SqlInstance = 'localhost\SQLEXPRESS'
 
             # change to SQL Server instance directory
             Set-Location SQLSERVER:\SQL\$SqlInstance
@@ -70,12 +83,17 @@
                 Write-LogEvent 'DB log file size configured to default settings' -Output
             }
             if ($SQLIntegrated) {
+                #Add Integrated sql permissions for db
                 Add-UserToRole -server $SqlInstance -Database $dbname -User "$env:USERDOMAIN\$env:USERNAME" -Role 'db_owner'
-                Write-LogEvent "$env:USERDOMAIN\$env:USERNAME set as db_owner on $dbname in $SqlInstance" -Output
             } else {
                 #create sql login for db
-                Add-SqlLogin -LoginPSCredential $SQLAccount -LoginType 'SqlLogin' -Enable -GrantConnectSql
-                Add-UserToRole -server $SqlInstance -Database $dbname -User $SQLUser -Role 'db_owner'
+                Add-SqlLogin -LoginPSCredential $SQLOwnerAccount -LoginType 'SqlLogin' -Enable -GrantConnectSql
+                Add-UserToRole -server $SqlInstance -Database $dbname -User $SQLOwner -Role 'db_owner'
+                Add-SqlLogin -LoginPSCredential $SQLSchedulerAccount -LoginType 'SqlLogin' -Enable -GrantConnectSql
+                Add-UserToRole -server $SqlInstance -Database $dbname -User $SQLScheduler -Role 'db_backupoperator'
+                Add-SqlLogin -LoginPSCredential $SQLAppPoolAccount -LoginType 'SqlLogin' -Enable -GrantConnectSql
+                Add-UserToRole -server $SqlInstance -Database $dbname -User $SQLAppPool -Role 'db_datareader'
+                Add-UserToRole -server $SqlInstance -Database $dbname -User $SQLAppPool -Role 'db_datawriter'
             }
         } catch [System.Exception] { Write-LogEvent $_ -Errors }
     } else {

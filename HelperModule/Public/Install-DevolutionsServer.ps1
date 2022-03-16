@@ -1,13 +1,14 @@
-function Install-DevolutionsServer {
+﻿function Install-DevolutionsServer {
     [CmdletBinding(DefaultParameterSetName = 'GA')]
     param (
         [Parameter(Mandatory, ParameterSetName = 'GA', Position = 0)][switch]$GA,
         [Parameter(Mandatory, ParameterSetName = 'LTS', Position = 0)][switch]$LTS,
-        [parameter(HelpMessage = 'Used to set Integrated security for both SQL and Devolutions Console', Position = 2)][switch]$IntegratedSecurity,
+        [parameter(Mandatory, HelpMessage = 'Include full format of your license key from email.', Position = 1)][string]$LicenseKey,
+        [Parameter(Mandatory, HelpMessage = 'Email that will be stored on Devolutions Server first time login account.')]
+        [string]$DevolutionsAdminEmail,
+        [parameter(HelpMessage = 'Used to set Integrated security for both SQL and Devolutions Console', Position = 2)][switch]$IntegratedSecurity,        
         [parameter(HelpMessage = 'Used to install an SQL Server', Position = 3)][switch]$SQLServer,
-        [parameter(HelpMessage = 'Used to install SQL Server Management Studio', Position = 4)][switch]$SSMS,
-        [parameter(HelpMessage = 'Disables the use of HTTP(s) on your Devolutions Server.', Position = 5)][switch]$DisableHttps,
-        [parameter(Mandatory, HelpMessage = 'Include full format of your license key from email.', Position = 1)][string]$LicenseKey
+        [parameter(HelpMessage = 'Used to install SQL Server Management Studio', Position = 4)][switch]$SSMS
     )
     $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
     $dvlszip = "$Scriptpath\Packages\DVLS.Instance.zip"
@@ -19,6 +20,15 @@ function Install-DevolutionsServer {
         return
     }
 
+    if (!($IntegratedSecurity)) {
+        $SQLOwnerAccount = Get-Credential -Message 'Please enter the credentials you would like to use for your the Database Owner: '
+        $SQLSchedulerAccount = Get-Credential -Message 'Please enter the credentials you would like to use for your the Scheduler Service: '
+        $SQLAppPoolAccount = Get-Credential -Message 'Please enter the credentials you would like to use for your the App Pool: '
+    }
+    $DvlsAdminAccount = Get-Credential -Message "Please enter the credentials you would like to use for your Devolutions Admin Account: `nNote this is a custom account, not a Domain account"
+    if (($SQLServer)) {
+        if ($IntegratedSecurity) { Install-SqlServer -SQLIntegrated } else { Install-SqlServer -SQLOwnerAccount $SQLOwnerAccount -SQLSchedulerAccount $SQLSchedulerAccount -SQLAppPoolAccount $SQLAppPoolAccount } 
+    }
     if (($SSMS)) { Install-SqlStudio }
 
     if ($GA) { Install-DevolutionsConsole -GA }
@@ -27,34 +37,26 @@ function Install-DevolutionsServer {
     if (Test-Network) {
         if (!(Test-DevoZip)) {
             if ($IntegratedSecurity) {
-                if ($DisableHttps) { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip }
-                else { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -ZipFileLocation $dvlszip }
+                New-ResponseFile -IntegratedSecurity -DevolutionsAdminAccount $DvlsAdminAccount -DevolutionsAdminEmail $DevolutionsAdminEmail -LicenseKey $LicenseKey -ZipFileLocation $dvlszip
             } else {
-                if ($DisableHttps) { New-ResponseFile -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip }
-                else { New-ResponseFile -LicenseKey $LicenseKey -ZipFileLocation $dvlszip }
+                New-ResponseFile -SQLOwnerAccount $SQLOwnerAccount -SQLSchedulerAccount $SQLSchedulerAccount  -SQLAppPoolAccount $SQLAppPoolAccount -DevolutionsAdminAccount $DvlsAdminAccount -DevolutionsAdminEmail $DevolutionsAdminEmail -LicenseKey $LicenseKey  -ZipFileLocation $dvlszip
             }
             if ($GA) { Invoke-DevolutionsZip -GA }
             if ($LTS) { Invoke-DevolutionsZip -LTS }
         } else {
             if ($IntegratedSecurity) {
-                if ($DisableHttps) { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip }
-                else { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -ZipFileLocation $dvlszip }
+                New-ResponseFile -IntegratedSecurity -DevolutionsAdminAccount $DvlsAdminAccount -DevolutionsAdminEmail $DevolutionsAdminEmail -LicenseKey $LicenseKey -ZipFileLocation $dvlszip
             } else {
-                if ($DisableHttps) { New-ResponseFile -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip } else {
-                    New-ResponseFile -LicenseKey $LicenseKey -ZipFileLocation $dvlszip
-                }
+                New-ResponseFile -SQLOwnerAccount $SQLOwnerAccount -SQLSchedulerAccount $SQLSchedulerAccount  -SQLAppPoolAccount $SQLAppPoolAccount -DevolutionsAdminAccount $DvlsAdminAccount -DevolutionsAdminEmail $DevolutionsAdminEmail -LicenseKey $LicenseKey -ZipFileLocation $dvlszip
             }
             Install-DevolutionsInstance
         }
     } elseif (!(Test-Network)) {
         if ((Test-DevoZip)) {
             if ($IntegratedSecurity) {
-                if ($DisableHttps) { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip }
-                else { New-ResponseFile -IntegratedSecurity -LicenseKey $LicenseKey -ZipFileLocation $dvlszip }
+                New-ResponseFile -IntegratedSecurity -DevolutionsAdminAccount $DvlsAdminAccount -DevolutionsAdminEmail $DevolutionsAdminEmail -LicenseKey $LicenseKey -ZipFileLocation $dvlszip 
             } else {
-                if ($DisableHttps) { New-ResponseFile -LicenseKey $LicenseKey -DisabledHttps -ZipFileLocation $dvlszip } else {
-                    New-ResponseFile -LicenseKey $LicenseKey -ZipFileLocation $dvlszip
-                }
+                New-ResponseFile -SQLOwnerAccount $SQLOwnerAccount -SQLSchedulerAccount $SQLSchedulerAccount  -SQLAppPoolAccount $SQLAppPoolAccount -DevolutionsAdminAccount $DvlsAdminAccount -DevolutionsAdminEmail $DevolutionsAdminEmail -LicenseKey $LicenseKey -ZipFileLocation $dvlszip
             }
             Install-DevolutionsInstance
         } else {

@@ -1,7 +1,19 @@
 ﻿function Install-SQL {
+    [CmdletBinding(DefaultParameterSetName = 'SQLAccounts')]
     param(
-        [parameter(HelpMessage = 'Used to set SQL Server to use Integrated security')][switch]$SQLIntegrated,
-        [parameter(HelpMessage = 'Used to set SQL Server to use Advanced settings')][switch]$AdvancedDB
+        [Parameter(Mandatory, ParameterSetName = 'SQLAccounts', Position = 0)]
+        [System.Management.Automation.PSCredential]$SQLOwnerAccount,
+
+        [Parameter(ParameterSetName = 'SQLAccounts', Position = 1)]
+        [System.Management.Automation.PSCredential]$SQLSchedulerAccount,
+    
+        [Parameter(ParameterSetName = 'SQLAccounts', Position = 2)]
+        [System.Management.Automation.PSCredential]$SQLAppPoolAccount,
+        
+        [parameter(Mandatory, ParameterSetName = 'Integrated', HelpMessage = 'Used to set SQL Server to use Integrated security', Position = 0)]
+        [switch]$SQLIntegrated,
+
+        [parameter(HelpMessage = 'Used for Advanced settings for SQL Server installation')][switch]$AdvancedDB
     )
 
     $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
@@ -21,7 +33,13 @@
         if ($SQLIntegrated) {
             New-DatabaseStandard -SQLIntegrated
         } else {
-            New-DatabaseStandard
+            New-DatabaseStandard -SQLOwnerAccount $SQLOwnerAccount -SQLSchedulerAccount $SQLSchedulerAccount  -SQLAppPoolAccount $SQLAppPoolAccount
+        }
+    } elseif ($AdvancedDB) {
+        if ($SQLIntegrated) {
+            New-DatabaseAdvanced -SQLIntegrated
+        } else {
+            New-DatabaseAdvanced -SQLOwnerAccount $SQLOwnerAccount -SQLSchedulerAccount $SQLSchedulerAccount  -SQLAppPoolAccount $SQLAppPoolAccount
         }
     } else {
         Write-Output "SQL Server has been installed but missing Database for Devolutions Server installation.`n"

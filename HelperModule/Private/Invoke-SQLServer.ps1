@@ -1,7 +1,19 @@
 function Invoke-SQLServer {
-    param (
-        [parameter(HelpMessage = 'Used to set SQL Server to use Integrated security')][switch]$SQLIntegrated,
-        [parameter(HelpMessage = 'Used to set SQL Server to use Advanced settings')][switch]$AdvancedDB
+    [CmdletBinding(DefaultParameterSetName = 'SQLAccounts')]
+    param(
+        [Parameter(Mandatory, ParameterSetName = 'SQLAccounts', Position = 0)]
+        [System.Management.Automation.PSCredential]$SQLOwnerAccount,
+
+        [Parameter(ParameterSetName = 'SQLAccounts', Position = 1)]
+        [System.Management.Automation.PSCredential]$SQLSchedulerAccount,
+    
+        [Parameter(ParameterSetName = 'SQLAccounts', Position = 2)]
+        [System.Management.Automation.PSCredential]$SQLAppPoolAccount,
+        
+        [parameter(Mandatory, ParameterSetName = 'Integrated', HelpMessage = 'Used to set SQL Server to use Integrated security', Position = 0)]
+        [switch]$SQLIntegrated,
+
+        [parameter(HelpMessage = 'Used for Advanced settings for SQL Server installation')][switch]$AdvancedDB
     )
 
     $Scriptpath = Split-Path -Path $PSScriptRoot -Parent
@@ -20,10 +32,10 @@ function Invoke-SQLServer {
     if ($AdvancedDB) {
         if ($SQLIntegrated) {
             Install-SQL -SQLIntegrated -AdvancedDB
-        } else { Install-SQL -AdvancedDB }
+        } else { Install-SQL -SQLOwnerAccount $SQLOwnerAccount -SQLSchedulerAccount $SQLSchedulerAccount  -SQLAppPoolAccount $SQLAppPoolAccount -AdvancedDB }
     } else { 
         if ($SQLIntegrated) {
             Install-SQL -SQLIntegrated
-        } else { Install-SQL }
+        } else { Install-SQL -SQLOwnerAccount $SQLOwnerAccount -SQLSchedulerAccount $SQLSchedulerAccount  -SQLAppPoolAccount $SQLAppPoolAccount }
     }
 }
