@@ -3,6 +3,7 @@ function Update-DSUser {
     PARAM (
         [ValidateNotNullOrEmpty()]
         [guid]$UserID,
+        [string[]]$CustomRoles,
 
         #General tab
         [UserType]$UserType = [UserType]::User, #TODO Maybe not needed
@@ -59,7 +60,7 @@ function Update-DSUser {
         $UserProfileParams = @('CompanyName', 'JobTitle', 'Department', 'GravatarEmail', 'Address', 'State', 'Country', 'Phone', 'Workphone', 'CellPhone', 'Fax', 'FirstName', 'LastName')
         $UserAccountParams = @('Password', 'UserMustChangePasswordAtNextLogin', 'Email')
         $UserSecurityParams = @('UserType', 'HasAccessRDM', 'HasAccessWebLogin', 'HasAccessLauncher', 'HasAccessWeb', 'HasAccessCLI')
-        $CustomSecurityParams = @('AllowDragAndDrop', 'CanViewInformations', 'CanViewGlobalLogs', 'CanImport', 'CanExport', 'OfflineMode')
+        $CustomSecurityParams = @('AllowDragAndDrop', 'CanViewInformations', 'CanViewGlobalLogs', 'CanImport', 'CanExport', 'OfflineMode', 'CustomRoles')
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
