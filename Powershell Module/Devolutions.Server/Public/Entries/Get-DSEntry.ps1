@@ -51,6 +51,9 @@ function Get-DSEntry {
         [Parameter(ParameterSetName = 'Filter')]
         [ValidateSet('Name', 'Username', 'Folder', 'Description', 'Keywords', ErrorMessage = 'Filtering by {0} is not yet supported. Please use one of the following filters: {1}')]
         [SearchItemType]$FilterBy = [SearchItemType]::Name,
+        [Parameter(ParameterSetName = 'Filter')]
+        [ValidateSet('Contains', 'StartsWith', 'EndsWith', 'ExactExpression', ErrorMessage = 'Filtering by {0} is not yet supported. Please use one of the following filters: {1}')]
+        [SearchItemText]$FilterMatch = [SearchItemText]::Contains,
 
         [Parameter(ParameterSetName = 'GetPage')]
         [int]$PageSize = 25,
@@ -169,8 +172,9 @@ function GetByFilter {
             searchParameters = @{
                 data                = @(
                     @{
-                        searchItemType = $FilterBy
-                        value          = $FilterValue
+                        searchItemType    = $FilterBy
+                        value             = $FilterValue
+                        expressionOption = $FilterMatch
                     }
                 )
                 includePrivateVault = $false
