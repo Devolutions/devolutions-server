@@ -1,4 +1,4 @@
-function Refresh-DSOAuthToken {
+function Invoke-DSOAuthRefreshToken {
     [CmdletBinding()]
     param (
         [string]$DeviceCode,
@@ -28,15 +28,17 @@ function Refresh-DSOAuthToken {
 
         $TokenResponse = Invoke-WebRequest @RequestParams -SessionVariable Global:WebSession -SkipHttpErrorCheck
 
-        if ($TokenResponse.StatusCode -ne [System.Net.HttpStatusCode]::OK) {
+        if (($TokenResponse.StatusCode -ne [System.Net.HttpStatusCode]::OK) -or !(Test-Json $TokenResponse.Content)) {
             throw 'Error while refreshing tokens.'
         }
 
-        Set-Variable DSSessionToken $TokenResponse.access_token -Scope Global
-        Set-Variable DSRefreshToken $TokenResponse.refresh_token -Scope Global
-        $Global:WebSession.Headers.Add('tokenId', $TokenResponse.access_token)
+        $jsonContent = ConvertFrom-Json $TokenResponse.Content
 
-        return ConvertFrom-Json $TokenResponse.Content
+        Set-Variable DSSessionToken $jsonContent.access_token -Scope Global -Force
+        Set-Variable DSRefreshToken $jsonContent.refresh_token -Scope Global -Force
+        $Global:WebSession.Headers.Add('Authorization', "bearer $($jsonContent.access_token)")
+
+        return $jsonContent
     }
     
     end {

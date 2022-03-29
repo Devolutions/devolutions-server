@@ -17,9 +17,14 @@ function Request-DSOAuthConfiguration {
         
         $ConfigResponse = Invoke-WebRequest @RequestParams
         
-        if ($ConfigResponse.StatusCode -ne [System.Net.HttpStatusCode]::OK) {
-            throw 'Error while fetching OpenID configuration'
+        if (($ConfigResponse.StatusCode -ne [System.Net.HttpStatusCode]::OK) -or (!(Test-Json $ConfigResponse.Content))) {
+            throw '[Request-DSOAuthConfiguration] Error while fetching OpenID configuration'
         }
+
+        $jsonContent = ConvertFrom-Json $ConfigResponse.Content
+        
+        Set-Variable DSDeviceCode $jsonContent.device_code -Scope Global
+        Set-Variable DSVerificationUriComplete $jsonContent.verification_uri_complete -Scope Global
 
         return ConvertFrom-Json $ConfigResponse.Content
     }
