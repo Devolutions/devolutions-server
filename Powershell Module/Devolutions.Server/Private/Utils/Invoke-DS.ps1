@@ -43,12 +43,7 @@ function Invoke-DS {
         try {
             $response = Invoke-WebRequest @PSBoundParameters -ErrorAction Stop
 
-            if ($LegacyResponse) {
-                $res = Convert-LegacyResponse $response
-            }
-            else {
-                $res = New-ServerResponse -response $response -method $method
-            }
+            $res = $LegacyResponse ? (Convert-LegacyResponse $response) : (New-ServerResponse -response $response -method $method)
     
             return $res
         }
@@ -57,6 +52,16 @@ function Invoke-DS {
         }
         catch {
             $exc = $_.Exception
+
+            #If unauthorized (in most cases), refresh token and re-execute command
+            if (($_.Exception.Response.StatusCode -eq ([System.Net.HttpStatusCode]::Unauthorized)) -and (Get-Variable -Name DSRefreshToken -Scope Global)) {
+                Invoke-DSOAuthRefreshToken -DeviceCode $Global:DSDeviceCode -VerifCompleteURI $Global:DSVerificationUriComplete
+                
+                $RequestParams = $PSBoundParameters
+                $RequestParams.Remove('WebSession')
+                return Invoke-DS @RequestParams
+            }
+
             If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
                 Write-Debug "[Exception] $exc"
             }
