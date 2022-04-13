@@ -20,7 +20,7 @@ function Get-DSPasswordsReport {
 
         try {
             do {
-                $res = Invoke-DS -URI "$env:DS_URL/api/v3/reports/password-analyzer?vaultId=$VaultID&pageNumber=$currentPage&pageSize=100" -method 'GET' -Verbose
+                $res = Invoke-DS -URI "$Script:DSBaseURI/api/v3/reports/password-analyzer?vaultId=$VaultID&pageNumber=$currentPage&pageSize=100" -method 'GET' -Verbose
                 $TotalPages = $res.Body.totalPage
                 $EntriesWithPassword += $res.Body.data
                 $CurrentPage++
