@@ -40,7 +40,7 @@ else {
 
 $BaseEntryConnectionInfo = if (($res = Get-DSEntry -EntryId $BaseEntryID -AsRDMConnection).isSuccess) {
     # Cannot export classes from module. This format returns a ConnectionInfoEntity object made from the server response.
-    & (Get-Module 'Devolutions.Server') { [ConnectionInfoEntity]$Response.Body.data.connectionInfo }
+    & (Get-Module 'Devolutions.Server') { [ConnectionInfoEntity]$res.Body.data.connectionInfo }
 }
 else {
     throw 'Could not find an entry matching the provided ID.'

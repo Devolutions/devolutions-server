@@ -54,7 +54,7 @@ function Invoke-DS {
             $exc = $_.Exception
 
             #If unauthorized (in most cases), refresh token and re-execute command
-            if (($_.Exception.Response.StatusCode -eq ([System.Net.HttpStatusCode]::Unauthorized)) -and (Get-Variable -Name DSRefreshToken -Scope Global)) {
+            if (($_.Exception.Response.StatusCode -eq ([System.Net.HttpStatusCode]::Unauthorized)) -and (Get-Variable -Name DSRefreshToken -Scope Global -ErrorAction Ignore)) {
                 Invoke-DSOAuthRefreshToken -DeviceCode $Global:DSDeviceCode -VerifCompleteURI $Global:DSVerificationUriComplete
                 
                 $RequestParams = $PSBoundParameters
