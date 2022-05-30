@@ -44,7 +44,7 @@ function Recursive {
             $Node.AppendChild($NewNode)
         }
         else {
-            $null = Recursive $Node $NodePropert
+            $null = Recursive $Node $NodeProperty
         }
     }
 
