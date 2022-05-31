@@ -29,7 +29,7 @@ function New-DSSessionOAuth {
         Test-DSOAuthConnected
 
         #5. Fetch tokens
-        Request-DSOAuthAccessToken $Global:DSDeviceCode $Global:DSVerificationUriComplete
+        Request-DSOAuthAccessToken
     }
     
     end {

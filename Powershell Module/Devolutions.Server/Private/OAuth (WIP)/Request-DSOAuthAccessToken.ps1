@@ -15,7 +15,7 @@ function Request-DSOAuthAccessToken {
             Body   = @{
                 grant_type  = 'urn:ietf:params:oauth:grant-type:device_code'
                 client_id   = 'rdm'
-                device_code = $DeviceCode
+                device_code = $Global:DSDeviceCode
             }
         }
 
