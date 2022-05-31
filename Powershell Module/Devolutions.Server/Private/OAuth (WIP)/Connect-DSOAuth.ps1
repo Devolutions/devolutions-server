@@ -20,7 +20,7 @@ function Connect-DSOAuth {
                 loginParameters = @{
                     client         = 'Web'
                     platform       = 'Web'
-                    safePassword   = (Protect-ResourceToHexString $Password)
+                    password       = $Password
                     safeSessionKey = $Global:DSSafeSessionKey
                     version        = $Global:DSInstanceVersion
                 }
