@@ -21,11 +21,6 @@ function Request-DSOAuthConfiguration {
             throw '[Request-DSOAuthConfiguration] Error while fetching OpenID configuration'
         }
 
-        $jsonContent = ConvertFrom-Json $ConfigResponse.Content
-        
-        Set-Variable DSDeviceCode $jsonContent.device_code -Scope Global
-        Set-Variable DSVerificationUriComplete $jsonContent.verification_uri_complete -Scope Global
-
         return ConvertFrom-Json $ConfigResponse.Content
     }
     

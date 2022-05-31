@@ -67,8 +67,8 @@ function New-DSSession {
         Set-Variable -Name DSInstanceName -Value $ServerResponse.data.serverName -Scope Global
 
         #3. Fetching token information (Actually logging in to DVLS)
-        if ($null -eq $Credential) {
-            $LoginResponse = New-DSSessionOAuth $BaseUri
+        if (!$AsApplication) {
+            $LoginResponse = New-DSSessionOAuth $Credential $BaseUri
 
             if ($null -eq $LoginResponse.access_token) {
                 throw '[New-DSSession] Unhandled error while logging in. Please submit a ticket if problem persists.'

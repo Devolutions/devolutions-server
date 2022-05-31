@@ -1,16 +1,9 @@
 function Invoke-DSOAuthRefreshToken {
     [CmdletBinding()]
-    param (
-        [string]$DeviceCode,
-        [string]$VerifCompleteURI 
-    )
+    param ()
     
     begin {
         Write-Verbose '[Refresh-DSOAuthToken] Beginning...'
-
-        #if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
-        #    throw "Session does not seem authenticated, call New-DSSession."
-        #}
 
         [string]$TokenURI = '/api/connect/token'
     }
@@ -42,6 +35,8 @@ function Invoke-DSOAuthRefreshToken {
     }
     
     end {
-        
+        $TokenResponse.StatusCode -eq [System.Net.HttpStatusCode]::OK ? 
+        (Write-Verbose '[Refresh-DSOAuthToken] Token refreshed successfully!') : 
+        (Write-Verbose '[Refresh-DSOAuthToken] Could not refresh your authentication token.')
     }
 }

@@ -6,10 +6,6 @@ function Request-DSOAuthDeviceInfo {
     
     begin {
         Write-Verbose '[Get-DSOAuthDeviceInfo] Beginning...'
-
-        #if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
-        #    throw "Session does not seem authenticated, call New-DSSession."
-        #}
     }
     
     process {
@@ -26,14 +22,19 @@ function Request-DSOAuthDeviceInfo {
 
         $RequestResponse = Invoke-WebRequest @RequestParams
 
-        if ($RequestResponse.StatusCode -ne [System.Net.HttpStatusCode]::OK) {
-            throw 'Error while fetching device authorization info.'
+        if (($RequestResponse.StatusCode -ne [System.Net.HttpStatusCode]::OK) -or (!(Test-Json $RequestResponse.Content))) {
+            throw '[Request-DSOAuthDeviceInfo] Error while fetching device info'
         }
 
-        return ConvertFrom-Json $RequestResponse.Content
+        $JsonContent = ConvertFrom-Json $RequestResponse.Content
+
+        Set-Variable DSDeviceCode $JsonContent.device_code -Scope Global
+        Set-Variable DSVerificationUriComplete $JsonContent.verification_uri_complete -Scope Global
     }
     
     end {
-        
+        $RequestResponse.StatusCode -eq [System.Net.HttpStatusCode]::OK ? 
+        (Write-Verbose '[Request-DSOAuthDeviceInfo] Completed successfully!') : 
+        (Write-Verbose '[Request-DSOAuthDeviceInfo] Could not get your device info.')
     }
 }
