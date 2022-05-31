@@ -7,13 +7,17 @@ function Test-DSOAuthConnected {
     }
     
     process {
+        $ReturnUrl = $Global:DSVerificationUriComplete.Replace($Global:DSBaseURI, '')
+        $ReturnUrlClean = $ReturnUrl.Replace('/', '%2F').Replace('=', '%3D').Replace('?', '%3F')
+
         $VerifyParams = @{
-            Method             = 'GET' 
-            Uri                = $Global:DSVerificationUriComplete
-            MaximumRedirection = 0
+            Method          = 'GET' 
+            Uri             = $Global:DSVerificationUriComplete
+            WebSession      = $Global:WebSession
+            MaximumRedirect = 0
         }
 
-        $VerifyResponse = Invoke-WebRequest @VerifyParams -WebSession $Global:WebSession -UseBasicParsing -SkipHttpErrorCheck -ErrorAction SilentlyContinue
+        $VerifyResponse = Invoke-WebRequest @VerifyParams -UseBasicParsing -SkipHttpErrorCheck -ErrorAction SilentlyContinue
 
         if (($Global:WebSession.Cookies.Count -gt 0) -and
             ($VerifyResponse.StatusCode -ne 302 -or !$VerifyResponse.Headers.Location[0] -like '*login-success')) {
@@ -24,7 +28,7 @@ function Test-DSOAuthConnected {
     }
     
     end {
-        $RequestResponse.StatusCode -eq [System.Net.HttpStatusCode]::OK ? 
+        $VerifyResponse.StatusCode -eq [System.Net.HttpStatusCode]::OK ? 
         (Write-Verbose '[Request-DSOAuthDeviceInfo] Connection is successful!') : 
         (Write-Verbose '[Request-DSOAuthDeviceInfo] Error while connecting to DVLS...')
     }
