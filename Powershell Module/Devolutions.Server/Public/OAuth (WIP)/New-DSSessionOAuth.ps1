@@ -1,6 +1,7 @@
 function New-DSSessionOAuth {
     [CmdletBinding()]
     param (
+        [pscredential]$Credential = $null,
         [string]$BaseURI = $(throw '[New-DSSessionOAuth] You must provide a base URI.')
     )
     
@@ -18,14 +19,17 @@ function New-DSSessionOAuth {
         #1. Fetch config
         $Config = Request-DSOAuthConfiguration
 
-        #2. Fetch device authorization info
-        $DeviceAuthInfo = Request-DSOAuthDeviceInfo $Config.device_authorization_endpoint
-        
-        #3. Prompt user
-        Start-Process $DeviceAuthInfo.verification_uri_complete
+        #2. Fetch device authorization info (device code and verif complete uri set as global vars)
+        Request-DSOAuthDeviceInfo $Config.device_authorization_endpoint
 
-        #3. Fetch tokens
-        Request-DSOAuthAccessToken -DeviceCode $DeviceAuthInfo.device_code -VerifCompleteURI $DeviceAuthInfo.verification_uri_complete
+        #3. Connection
+        Connect-DSOAuth $Credential.UserName $Credential.GetNetworkCredential().Password
+
+        #4. Verify connection
+        Test-DSOAuthConnected
+
+        #5. Fetch tokens
+        Request-DSOAuthAccessToken $Global:DSDeviceCode $Global:DSVerificationUriComplete
     }
     
     end {

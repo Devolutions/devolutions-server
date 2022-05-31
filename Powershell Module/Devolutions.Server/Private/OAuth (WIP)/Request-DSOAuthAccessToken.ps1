@@ -1,16 +1,9 @@
 function Request-DSOAuthAccessToken {
     [CmdletBinding()]
-    param (
-        [string]$DeviceCode,
-        [string]$VerifCompleteURI 
-    )
+    param ()
     
     begin {
         Write-Verbose '[Request-DSOAuthAccessToken] Beginning...'
-
-        #if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
-        #    throw "Session does not seem authenticated, call New-DSSession."
-        #}
 
         [string]$TokenURI = '/api/connect/token'
     }
@@ -28,18 +21,6 @@ function Request-DSOAuthAccessToken {
 
         $TokenResponse = Invoke-WebRequest @RequestParams -SessionVariable Global:WebSession -SkipHttpErrorCheck
 
-        while (!$TokenResponse -or ($TokenResponse.StatusCode -ne [System.Net.HttpStatusCode]::OK)) {
-            Start-Sleep 3
-            $TokenResponse = Invoke-WebRequest @RequestParams -SkipHttpErrorCheck
-
-            $OAuthWindow = Get-Process 'chrome' | Where-Object { $_.MainWindowTitle -like 'Devolutions Server*' } -ErrorAction SilentlyContinue
-
-            #User closed window without logging in
-            if ($null -eq $OAuthWindow -and $TokenResponse.StatusCode -ne [System.Net.HttpStatusCode]::OK) {
-                Start-Process $VerifCompleteURI
-            }
-        }
-
         if ($TokenResponse.StatusCode -ne [System.Net.HttpStatusCode]::OK) {
             throw 'Error while retreiving tokens.'
         }
@@ -56,6 +37,8 @@ function Request-DSOAuthAccessToken {
     }
     
     end {
-        
+        $TokenResponse.StatusCode -eq [System.Net.HttpStatusCode]::OK ? 
+        (Write-Verbose '[Request-DSOAuthAccessToken] Completed successfully!') : 
+        (Write-Verbose '[Request-DSOAuthAccessToken] Could not get your access token.')
     }
 }
