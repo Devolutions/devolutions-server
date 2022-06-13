@@ -49,7 +49,7 @@ function Update-DSVault {
     
     PROCESS {
         try {
-            if (!($res = Get-DSVault $VaultID).isSuccess) {
+            if (!($res = Get-DSVault -VaultID $VaultID).isSuccess) {
                 throw "Vault could not be found. Make sure you are using a valid vault ID or try creating a new one instead (New-DSVault)."
             }
 
