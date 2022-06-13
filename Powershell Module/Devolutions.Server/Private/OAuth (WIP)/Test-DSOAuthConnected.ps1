@@ -28,8 +28,8 @@ function Test-DSOAuthConnected {
     }
     
     end {
-        $VerifyResponse.StatusCode -eq [System.Net.HttpStatusCode]::OK ? 
-        (Write-Verbose '[Request-DSOAuthDeviceInfo] Connection is successful!') : 
-        (Write-Verbose '[Request-DSOAuthDeviceInfo] Error while connecting to DVLS...')
+        $VerifyResponse.StatusCode -eq [System.Net.HttpStatusCode]::Redirect ? 
+        (Write-Verbose '[Test-DSOAuthConnected] Connection is successful!') : 
+        (Write-Verbose '[Test-DSOAuthConnected] Error while connecting to DVLS...')
     }
 }
