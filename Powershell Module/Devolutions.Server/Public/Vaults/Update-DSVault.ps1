@@ -16,7 +16,7 @@ function Update-DSVault {
                 AllowedApplicationList = @("App1")
             }
 
-            Update-DSVault @NewVault -Verbose
+            Update-DSVault @UpdatedVault -Verbose
     #>
     [CmdletBinding()]
     PARAM (
