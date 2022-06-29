@@ -123,7 +123,7 @@ function Update-DSSSHShellEntry {
             [ProxyTunnelType]::Socks4,
             [ProxyTunnelType]::Http
         )]
-         #Proxy type
+        #Proxy type
         [string]$ProxyType,
         #Proxy Hostname
         [string]$ProxyHost,
@@ -169,9 +169,9 @@ function Update-DSSSHShellEntry {
     BEGIN {
         Write-Verbose '[Update-DSSSHShellEntry] Beginning...'
 
-        $PSBoundParameters.Remove('EntryID')
-        $PSBoundParameters.Remove('Verbose')
-        $PSBoundParameters.Remove('NewFieldsList')
+        $PSBoundParameters.Remove('EntryID') | Out-Null
+        $PSBoundParameters.Remove('Verbose') | Out-Null
+        $PSBoundParameters.Remove('NewFieldsList') | Out-Null
 
         $RootProperties = @('Group', 'Name', 'DisplayMode', 'DisplayMonitor', 'DisplayVirtualDesktop', 'Description', 'Keywords')
         $EventsProperties = @('WarnIfAlreadyOpened', 'OpenCommentPrompt', 'OpenCommentIsRequired', 'TicketNumberIsRequiredOnOpen', 'CloseCommentPrompt', 'CloseCommentIsRequired', 'TicketNumberIsRequiredOnClose', 'CredentialViewedPrompt', 'CredentialViewedCommentIsRequired', 'TicketNumberIsRequiredOnCredentialViewed')
@@ -179,7 +179,7 @@ function Update-DSSSHShellEntry {
     
     PROCESS {
         try {
-            if (($EntryCtx = Get-DSEntry $EntryID -IncludeAdvancedProperties).isSuccess) {
+            if (($EntryCtx = Get-DSEntry -EntryId $EntryID).isSuccess) {
                 $SSHShellEntry = $EntryCtx.Body.data
 
                 if ($SSHShellEntry.connectionType -ne [ConnectionType]::SSHShell) {
@@ -278,24 +278,26 @@ function Update-DSSSHShellEntry {
                 }
             }
 
-            foreach ($Param in $NewFieldsList.GetEnumerator()) {
-                switch ($Param.Depth) {
-                    'root' { $SSHShellEntry | Add-Member -NotePropertyName $param.Name -NotePropertyValue $param.Value -Force } 
-                }
-                default {
-                    if ($SSHShellEntry.($Param.Depth)) {
-                        $SSHShellEntry.($param.Depth) | Add-Member -NotePropertyName $param.Name -NotePropertyValue $param.Value -Force
+            if ($null -ne $NewFieldsList) {
+                foreach ($Param in $NewFieldsList.GetEnumerator()) {
+                    switch ($Param.Depth) {
+                        'root' { $SSHShellEntry | Add-Member -NotePropertyName $param.Name -NotePropertyValue $param.Value -Force } 
                     }
-                    else {
-                        $SSHShellEntry | c Add-Member -NotePropertyName $param.Depth -NotePropertyValue $null -Force
-                        $SSHShellEntry.($param.Depth) | Add-Member -NotePropertyName $param.Name -NotePropertyValue $param.Value -Force
+                    default {
+                        if ($SSHShellEntry.($Param.Depth)) {
+                            $SSHShellEntry.($param.Depth) | Add-Member -NotePropertyName $param.Name -NotePropertyValue $param.Value -Force
+                        }
+                        else {
+                            $SSHShellEntry | c Add-Member -NotePropertyName $param.Depth -NotePropertyValue $null -Force
+                            $SSHShellEntry.($param.Depth) | Add-Member -NotePropertyName $param.Name -NotePropertyValue $param.Value -Force
+                        }
                     }
                 }
             }
 
             $SSHShellEntry.data = Protect-ResourceToHexString (ConvertTo-Json $SSHShellEntry.data)
 
-            $res = Update-DSEntryBase -jsonBody (ConvertTo-Json $SSHShellEntry)
+            $res = Update-DSEntryBase -jsonBody (ConvertTo-Json $SSHShellEntry -Depth 10)
             return $res
         }
         catch {
@@ -306,7 +308,6 @@ function Update-DSSSHShellEntry {
     END {
         if ($res.isSuccess) {
             Write-Verbose '[Update-DSSSHShellEntry] Completed successfully!'
-
         }
         else {
             Write-Verbose '[Update-DSSSHShellEntry] Ended with errors...'
