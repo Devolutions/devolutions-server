@@ -12,17 +12,19 @@ function Connect-DSOAuth {
     }
     
     process {
+        $ModuleVersion = (Get-Module Devolutions.Server).Version.ToString()
+
         $ConnectRequestParams = @{
             URI    = "${Global:DSBaseURI}/api/login-oauth?csFromXml=1&returnUrl=%2F${InstanceName}${ReturnUrlClean}"
             Method = 'POST'
             Body   = @{
                 TwoFactorInfo   = $null
                 loginParameters = @{
-                    client         = 'Web'
+                    client         = 'Powershell'
                     platform       = 'Web'
                     password       = $Password
                     safeSessionKey = $Global:DSSafeSessionKey
-                    version        = $Global:DSInstanceVersion
+                    version        = $ModuleVersion
                 }
                 userName        = $Username
             } | ConvertTo-Json -Depth 10
