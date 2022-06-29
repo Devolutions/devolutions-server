@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - name: Check out ${{ github.repository }}
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Check out Devolutions/actions
         uses: actions/checkout@v3
@@ -28,4 +28,4 @@ jobs:
         uses: ./.github/workflows/powershell-publish
         with:
           nugetApiKey: ${{ secrets.PSGALLERY_API_KEY }}
-          modulePath: Powershell Module/Devolutions.Server
+          modulePath: "'Powershell Module/Devolutions.Server'"
