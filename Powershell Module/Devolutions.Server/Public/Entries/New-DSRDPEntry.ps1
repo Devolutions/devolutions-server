@@ -197,6 +197,7 @@ function New-DSRDPEntry {
                 connectionType        = 1
                 group                 = $Group
                 name                  = $Name
+                description           = $Description
                 displayMode           = $DisplayMode
                 DisplayMonitor        = $DisplayMonitor
                 displayVirtualDesktop = $DisplayVirtualDesktop
