@@ -19,6 +19,15 @@ function New-DSSession {
 		$BaseURI = "Your/DVLS/Instance/URL"
 
 		> New-DSSession -Credentials $Credentials -baseURI $URI
+
+        .EXAMPLE
+        # Authenticate using an application user
+
+		$SecurePassword = ConvertTo-SecureString $YourApplicationSecret -AsPlainText -Force
+		$Credentials = New-Object System.Management.Automation.PSCredential ($YourApplicationKey, $SecurePassword)
+		$BaseURI = "Your/DVLS/Instance/URL"
+
+		> New-DSSession -Credentials $Credentials -baseURI $URI -AsApplication
     #>
     [CmdletBinding()]
     PARAM (
@@ -28,6 +37,7 @@ function New-DSSession {
         #URL to your Devolutions Server instance
         [ValidateNotNullOrEmpty()]
         [string]$BaseUri = $(throw "You must provide your DVLS instance's URI."),
+        #Required when using an application user to authenticate
         [switch]$AsApplication
     )
     
