@@ -38,7 +38,8 @@ function New-DSSession {
         [ValidateNotNullOrEmpty()]
         [string]$BaseUri = $(throw "You must provide your DVLS instance's URI."),
         #Required when using an application user to authenticate
-        [switch]$AsApplication
+        [switch]$AsApplication,
+        [string]$DomainId
     )
     
     BEGIN {
@@ -78,7 +79,7 @@ function New-DSSession {
 
         #3. Fetching token information (Actually logging in to DVLS)
         if (!$AsApplication) {
-            $LoginResponse = New-DSSessionOAuth $Credential $BaseUri
+            $LoginResponse = New-DSSessionOAuth $Credential $BaseUri $DomainId
 
             if ($null -eq $LoginResponse.access_token) {
                 throw '[New-DSSession] Unhandled error while logging in. Please submit a ticket if problem persists.'
