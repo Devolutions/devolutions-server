@@ -14,7 +14,7 @@ function Request-DSOAuthAccessToken {
             Method = 'POST'
             Body   = @{
                 grant_type  = 'urn:ietf:params:oauth:grant-type:device_code'
-                client_id   = 'rdm'
+                client_id   = 'powershell'
                 device_code = $Global:DSDeviceCode
             }
         }

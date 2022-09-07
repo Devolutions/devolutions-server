@@ -2,7 +2,8 @@ function Connect-DSOAuth {
     [CmdletBinding()]
     param (
         [string]$Username,
-        [string]$Password
+        [string]$Password,
+        [string]$DomainId    
     )
     
     begin {
@@ -14,20 +15,27 @@ function Connect-DSOAuth {
     process {
         $ModuleVersion = (Get-Module Devolutions.Server).Version.ToString()
 
+        $Body = @{
+            TwoFactorInfo   = $null
+            loginParameters = @{
+                client         = 'Powershell'
+                platform       = 'Web'
+                password       = $Password
+                safeSessionKey = $Global:DSSafeSessionKey
+                version        = $ModuleVersion
+            }
+            userName        = $Username
+        }
+
+        if (![string]::IsNullOrWhiteSpace($DomainId)) {
+            $Body.loginParameters.authenticationMethod = 3
+            $Body.loginParameters.domainId = $DomainId
+        }
+
         $ConnectRequestParams = @{
             URI    = "${Global:DSBaseURI}/api/login-oauth?csFromXml=1&returnUrl=%2F${InstanceName}${ReturnUrlClean}"
             Method = 'POST'
-            Body   = @{
-                TwoFactorInfo   = $null
-                loginParameters = @{
-                    client         = 'Powershell'
-                    platform       = 'Web'
-                    password       = $Password
-                    safeSessionKey = $Global:DSSafeSessionKey
-                    version        = $ModuleVersion
-                }
-                userName        = $Username
-            } | ConvertTo-Json -Depth 10
+            Body   = $Body | ConvertTo-Json -Depth 10
         }
 
         $ConnectResponse = Invoke-WebRequest @ConnectRequestParams -SessionVariable Global:WebSession -ContentType 'application/json' -SkipHttpErrorCheck

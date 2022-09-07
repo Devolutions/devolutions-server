@@ -13,10 +13,10 @@ function Request-DSOAuthDeviceInfo {
             URI    = $DeviceAuthURI
             Method = 'POST'
             Body   = @{
-                client_id = 'rdm'
+                client_id = 'powershell'
                 scope     = 'openid offline_access'
                 platform  = 'Windows'
-                client    = 'RDM'
+                client    = 'Powershell'
             }
         }
 

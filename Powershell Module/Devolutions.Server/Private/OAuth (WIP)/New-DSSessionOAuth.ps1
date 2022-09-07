@@ -2,7 +2,8 @@ function New-DSSessionOAuth {
     [CmdletBinding()]
     param (
         [pscredential]$Credential = $null,
-        [string]$BaseURI = $(throw '[New-DSSessionOAuth] You must provide a base URI.')
+        [string]$BaseURI = $(throw '[New-DSSessionOAuth] You must provide a base URI.'),
+        [string]$DomainId
     )
     
     begin {
@@ -23,7 +24,7 @@ function New-DSSessionOAuth {
         Request-DSOAuthDeviceInfo $Config.device_authorization_endpoint
 
         #3. Connection
-        Connect-DSOAuth $Credential.UserName $Credential.GetNetworkCredential().Password
+        Connect-DSOAuth $Credential.UserName $Credential.GetNetworkCredential().Password $DomainId
 
         #4. Verify connection
         Test-DSOAuthConnected
