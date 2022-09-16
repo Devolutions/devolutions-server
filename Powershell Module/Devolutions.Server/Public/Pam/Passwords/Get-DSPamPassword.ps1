@@ -31,7 +31,7 @@ function Get-DSPamPassword {
 
         try {
             $res = Invoke-DS @RequestParams
-            if ($Decrypted) { $res.Body = (Decrypt-String $Global:DSSessionKey $res.Body) }
+            if ($Decrypted) { $res.Body = (Decrypt-String $Global:DSSessionKey $res.Body.data) }
             return $res
         }
         catch { throw $_.ErrorDetails }
