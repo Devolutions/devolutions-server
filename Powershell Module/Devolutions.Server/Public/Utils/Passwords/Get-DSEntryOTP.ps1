@@ -20,7 +20,6 @@ function Get-DSEntryOTP {
             }
 
             $res = Invoke-DS @RequestParams
-            $res.Body.data.code = Decrypt-String $Global:DSSessionKey $res.Body.data.code
 
             return $res
         }

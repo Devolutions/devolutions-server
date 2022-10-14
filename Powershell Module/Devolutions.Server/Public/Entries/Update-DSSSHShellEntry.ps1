@@ -295,7 +295,7 @@ function Update-DSSSHShellEntry {
                 }
             }
 
-            $SSHShellEntry.data = Protect-ResourceToHexString (ConvertTo-Json $SSHShellEntry.data)
+            $SSHShellEntry.data = (ConvertTo-Json $SSHShellEntry.data)
 
             $res = Update-DSEntryBase -jsonBody (ConvertTo-Json $SSHShellEntry -Depth 10)
             return $res

@@ -21,7 +21,6 @@ function Connect-DSOAuth {
                 client         = 'Powershell'
                 platform       = 'Web'
                 password       = $Password
-                safeSessionKey = $Global:DSSafeSessionKey
                 version        = $ModuleVersion
             }
             userName        = $Username

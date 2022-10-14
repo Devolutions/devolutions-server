@@ -133,7 +133,7 @@ function Update-UsernamePassword {
         }
     }
     
-    $EntryResolvedVariables.data = Protect-ResourceToHexString ($EntryResolvedVariables.data | ConvertTo-Json)
+    $EntryResolvedVariables.data = ($EntryResolvedVariables.data | ConvertTo-Json)
 }
 
 function Update-PrivateKey {
@@ -206,5 +206,5 @@ function Update-PrivateKey {
         }
     }
 
-    $EntryResolvedVariables.data = Protect-ResourceToHexString ($EntryResolvedVariables.data | ConvertTo-Json)
+    $EntryResolvedVariables.data = ($EntryResolvedVariables.data | ConvertTo-Json)
 }

@@ -92,7 +92,7 @@ function Update-DSVault {
                     $NewVault.repositorySettings.masterPasswordHash = $VaultCtx.repositorySettings.masterPasswordHash
                 }
                 else {
-                    $EncryptedPassword = Protect-ResourceToHexString $Password
+                    $EncryptedPassword = $Password
                     $NewVault += @{"password" = $EncryptedPassword }
                     $NewVault.repositorySettings.masterPasswordHash = ""
                 }

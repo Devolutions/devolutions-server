@@ -40,8 +40,9 @@ function New-DSConnectionPartial {
             $entryDataEncrypted = Protect-ResourceToHexString ($CredentialSegment | ConvertTo-Json)
 
             #must be conform with ToConnectionInfoEntity (ID and SecurityGroup omitted)
-            $Connection['data'] = $entryDataEncrypted
-           
+            #$Connection['data'] = $entryDataEncrypted
+            $Connection['data'] = ($CredentialSegment | ConvertTo-Json)
+
             $params = @{
                 Uri = $URI
                 Method = 'POST'

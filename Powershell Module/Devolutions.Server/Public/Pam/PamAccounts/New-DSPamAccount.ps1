@@ -31,7 +31,7 @@ function New-DSPamAccount {
     }
     PROCESS {
         if (![string]::IsNullOrEmpty($password)) {
-            $password = Protect-ResourceToHexString $password
+            $password = $password
         }
 
         $PamCredentials = @{

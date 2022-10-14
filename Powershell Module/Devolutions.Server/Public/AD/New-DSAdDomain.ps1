@@ -29,7 +29,7 @@ function New-DSAdDomain {
         $MsDomainConfiguration.DomainName = $DomainName
         $MsDomainConfiguration.DisplayName = $DisplayName
         $MsDomainConfiguration.AdministrationUsername.Set($AdministrationUsername)
-        $MsDomainConfiguration.AdministrationPassword.Set((Protect-ResourceToHexString $AdministrationPassword))
+        $MsDomainConfiguration.AdministrationPassword.Set($AdministrationPassword)
 
         if ($PSBoundParameters.ContainsKey('IsLdaps')) {
             $MsDomainConfiguration.IsLdaps.Set($IsLDAPS)

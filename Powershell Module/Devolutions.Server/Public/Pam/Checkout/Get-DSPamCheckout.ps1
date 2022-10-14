@@ -7,7 +7,7 @@ function Get-DSPamCheckout {
     #>
     [CmdletBinding()]
     PARAM (
-        [guid]$PamCredentialID
+        [guid]$PamCheckoutId
     )
     
     BEGIN {
@@ -20,7 +20,7 @@ function Get-DSPamCheckout {
     
     PROCESS {
         $RequestParams = @{
-            URI    = "$Script:DSBaseURI/api/pam/checkouts/$PamCredentialID"
+            URI    = "$Script:DSBaseURI/api/pam/checkouts/$PamCheckoutId"
             Method = 'GET' 
         }
         

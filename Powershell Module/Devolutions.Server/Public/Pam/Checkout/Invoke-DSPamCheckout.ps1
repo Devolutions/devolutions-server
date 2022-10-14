@@ -63,13 +63,10 @@ function Invoke-DSPamCheckout {
             Write-Verbose '[Invoke-DSPamCheckout] The checkout is already completed since this credential does not require an approval.'
 
             #3. Get Password
-            $EncryptedPassword = ($res = Get-DSPamPassword $PamCredentialID).isSuccess ? ($res.Body) : ($res.ErrorMessage ? $(throw $res.ErrorMessage): $(throw 'Failed while fetching password. See logs for information.'))
+            $Password = ($res = Get-DSPamPassword $PamCredentialID).isSuccess ? ($res.Body) : ($res.ErrorMessage ? $(throw $res.ErrorMessage): $(throw 'Failed while fetching password. See logs for information.'))
 
-            #4. Decrypt password
-            $DecryptedPassword = Decrypt-String $Global:DSSessionKey $EncryptedPassword
-
-            #5. Return checkout info and decrypted password
-            $CheckoutRes.Body = @{CheckoutInfo = [pscustomobject]$CheckoutRes.Body; Password = $DecryptedPassword}
+            #4. Return checkout info and decrypted password
+            $CheckoutRes.Body = @{CheckoutInfo = [pscustomobject]$CheckoutRes.Body; Password = $Password.data}
         }
         
         return $CheckoutRes

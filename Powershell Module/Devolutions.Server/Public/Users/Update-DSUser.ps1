@@ -79,7 +79,7 @@ function Update-DSUser {
             $PSBoundParameters.GetEnumerator() | ForEach-Object {
                 if ($_.Key -notin @("UserID", "Verbose")) {
                     if ($_.Key -eq "Password") {
-                        Set-DSUserPassword $User.display (Protect-ResourceToHexString $_.Value)
+                        Set-DSUserPassword $User.display ($_.Value)
                     }
 
                     #Key is in UserAccount segment

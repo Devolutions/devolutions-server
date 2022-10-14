@@ -324,7 +324,7 @@ function Update-DSRDPEntry {
                 }
             }
     
-            $RDPEntry.data = Protect-ResourceToHexString (ConvertTo-Json $RDPEntry.data)
+            $RDPEntry.data = (ConvertTo-Json $RDPEntry.data)
 
             $res = Update-DSEntryBase -jsonBody (ConvertTo-Json $RDPEntry)
             return $res

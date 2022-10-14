@@ -42,11 +42,6 @@ function Get-DSSecureMessages{
                 { 
                     Write-Verbose "[Get-DSSecureMessage] was successfull"
                 }
-
-                foreach ($item in $response.Body.data) {
-                    $decryptedinfo = Decrypt-String $Global:DSSessionKey $item.JsonData
-                    $item.JsonData = $decryptedinfo
-                }
                 
                 If ([System.Management.Automation.ActionPreference]::SilentlyContinue -ne $DebugPreference) {
                         Write-Debug "[Response.Body] $($response.Body)"

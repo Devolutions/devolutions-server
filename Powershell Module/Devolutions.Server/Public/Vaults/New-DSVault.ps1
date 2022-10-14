@@ -79,7 +79,7 @@ function New-DSVault {
 
             #Encryp password, if need be
             if ($Password) {
-                $EncryptedPassword = Protect-ResourceToHexString $Password
+                $EncryptedPassword = $Password
                 $NewVault | Add-Member -NotePropertyName "password" -NotePropertyValue $EncryptedPassword
                 $NewVault | Add-Member -NotePropertyName "passwordDisplayValue" -NotePropertyValue "●●●●●●"
             }

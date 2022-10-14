@@ -99,7 +99,7 @@ function Custom {
         }
 
         #Encrypt data for sending to backend
-        $FolderCtx.data = Protect-ResourceToHexString ($NewData | ConvertTo-Json)
+        $FolderCtx.data = ($NewData | ConvertTo-Json)
         #Empty group or else it places itself in a subfolder with same name
         $FolderCtx.group = $FolderCtx.group = $FolderCtx.group.Contains('\') ? ($FolderCtx.group.Substring(0, $FolderCtx.group.LastIndexOf('\'))) : ('')
 
@@ -127,7 +127,7 @@ function Inherited {
         $Entry.data | Add-Member -NotePropertyName 'credentialConnectionId' -NotePropertyValue '1310CF82-6FAB-4B7A-9EEA-3E2E451CA2CF' -Force
         $Entry.data | Add-Member -NotePropertyName 'credentialMode' -NotePropertyValue '4' -Force
 
-        $Entry.data = Protect-ResourceToHexString (ConvertTo-Json $Entry.Data -Depth 5)
+        $Entry.data = (ConvertTo-Json $Entry.Data -Depth 5)
         $Entry.group = $Entry.group.Contains('\') ? ($Entry.group.Substring(0, $Entry.group.LastIndexOf('\'))) : ('')
 
         return Update-DSEntryBase (ConvertTo-Json $Entry)

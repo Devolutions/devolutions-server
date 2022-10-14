@@ -40,7 +40,7 @@ function Update-DSAdDomain {
             switch ($Param.Key) {
                 'DisplayName' { $Domain.DisplayName = $Param.Value }
                 'DomainName' { $Domain.DomainName = $Param.Value }
-                'AdministrationPassword' { $Domain | Add-Member -NotePropertyName AdministrationPassword -NotePropertyValue (@{value = (Protect-ResourceToHexString $AdministrationPassword) }) }            
+                'AdministrationPassword' { $Domain | Add-Member -NotePropertyName AdministrationPassword -NotePropertyValue (@{value = ($AdministrationPassword) }) }            
                 Default { $Domain | Add-Member -NotePropertyName ($Param.Key) -NotePropertyValue (@{value = $Param.Value }) -Force }
             }
         }

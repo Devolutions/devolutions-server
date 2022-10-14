@@ -36,7 +36,7 @@ function Enable-DSUser2FA {
             isPreConfigured    = $true;
         } | ConvertTo-Json
 
-        $Safe2FAInfo = Protect-ResourceToHexString ($2FAUserInfo.ToString())
+        $Safe2FAInfo = ($2FAUserInfo.ToString())
 
         # 4. Save 2FA user info
         $RequestParams = @{

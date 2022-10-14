@@ -50,7 +50,7 @@ function New-DSSession {
     PROCESS {
         #1. Fetch server information
         try {
-            $ServerResponse = Invoke-WebRequest -Uri "$BaseURI/api/server-information" -Method 'GET' -SessionVariable Global:WebSession
+            $ServerResponse = Invoke-WebRequest -Uri "$BaseURI/api/public-instance-information" -Method 'GET' -SessionVariable Global:WebSession
 
             if ((Test-Json $ServerResponse.Content -ErrorAction SilentlyContinue) -and (@(Compare-Object (ConvertFrom-Json $ServerResponse.Content).PSObject.Properties.Name @('data', 'result')).Length -eq 0)) {
                 $ServerResponse = ConvertFrom-Json $ServerResponse.Content
@@ -68,14 +68,13 @@ function New-DSSession {
         }
 
         #2. Setting server related variables
-        $SessionKey = New-CryptographicKey
-        $SafeSessionKey = Encrypt-RSA $ServerResponse.data.publicKey.modulus $ServerResponse.data.publicKey.exponent $SessionKey
+        #$SessionKey = New-CryptographicKey
+        #$SafeSessionKey = Encrypt-RSA $ServerResponse.data.publicKey.modulus $ServerResponse.data.publicKey.exponent $SessionKey
         
         Set-Variable -Name DSBaseURI -Value $BaseUri -Scope Script
-        Set-Variable -Name DSSessionKey -Value $SessionKey -Scope Global
-        Set-Variable -Name DSSafeSessionKey -Value $SafeSessionKey -Scope Global
+        #Set-Variable -Name DSSessionKey -Value $SessionKey -Scope Global
+        #Set-Variable -Name DSSafeSessionKey -Value $SafeSessionKey -Scope Global
         Set-Variable -Name DSInstanceVersion -Value $ServerResponse.data.version -Scope Global
-        Set-Variable -Name DSInstanceName -Value $ServerResponse.data.serverName -Scope Global
 
         #3. Fetching token information (Actually logging in to DVLS)
         if (!$AsApplication) {
@@ -88,7 +87,6 @@ function New-DSSession {
             return $LoginResponse
         }
         else {
-            $SafePassword = Protect-ResourceToHexString $Credential.GetNetworkCredential().Password
             $ModuleVersion = (Get-Module Devolutions.Server).Version.ToString()
     
             $RequestParams = @{
@@ -97,10 +95,9 @@ function New-DSSession {
                 ContentType = 'application/json'
                 WebSession  = $Global:WebSession
                 Body        = ConvertTo-Json @{
-                    userName            = $Credential.UserName
+                    userName        = $Credential.UserName
                     LoginParameters = @{
-                        SafePassword     = $SafePassword
-                        SafeSessionKey   = $Global:DSSafeSessionKey
+                        Password         = $Credential.GetNetworkCredential().Password
                         Client           = $AsApplication ? [ApplicationSource]::Cli : [ApplicationSource]::Scripting
                         Version          = $ModuleVersion
                         LocalMachineName = [System.Environment]::MachineName
@@ -144,7 +141,7 @@ function New-DSSession {
         }
 
         Write-Verbose ($Success ? 
-            "[New-DSSession] Successfully logged in to $($ServerResponse.data.servername)" : 
+            "[New-DSSession] Successfully logged in to Devolutions Server" : 
             '[New-DSSession] Could not log in. Please verify URL and credential.')
     }
 }

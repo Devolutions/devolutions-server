@@ -75,7 +75,7 @@ function New-DSUser {
         }
 
         if (Get-Variable -Name Password) {
-            $Password = Protect-ResourceToHexString $Password
+            $Password = $Password
         }
 
         $Parameters = Get-ParameterValues
