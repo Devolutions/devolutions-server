@@ -59,17 +59,12 @@ function Update-DSRole {
         $URI = "$Script:DSBaseURI/api/security/role/save?csToXml=1"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
-            throw "Session does not seem authenticated, call New-DSSession."
+            throw 'Session does not seem authenticated, call New-DSSession.'
         }
     }
     PROCESS {
         try {
-            $currentRole = foreach ($role in (Get-DSRoles).Body.data) {
-                if ($role.id -eq $candidRoleId) {
-                    $role
-                    break
-                }
-            }
+            $currentRole = (Get-DSRole -Id $candidRoleId).Body.data
 
             if ($currentRole) {
                 $possibleParam = @('candidRoleId', 'displayName', 'description', 'isAdministrator', 'allowDragAndDrop', 'canAdd', 'canEdit' , 'canDelete', 'canImport', 'canExport', 'denyAddInRoot', 'offlineMode')
@@ -83,11 +78,11 @@ function Update-DSRole {
                 foreach ($param in $PSBoundParameters.GetEnumerator()) {
                     if ($possibleParam.Contains($param.Key)) {
                         switch ($param) {
-                            { $param.Key -eq "candidRoleId" } { $updatedRoleData.userSecurity["ID"] = $param.Value }
-                            { $param.Key -eq "description" } { $updatedRoleData.userAccount["fullName"] = $param.Value }
+                            { $param.Key -eq 'candidRoleId' } { $updatedRoleData.userSecurity['ID'] = $param.Value }
+                            { $param.Key -eq 'description' } { $updatedRoleData.userAccount['fullName'] = $param.Value }
                             { $param.Key -in ('allowDragAndDrop', 'canImport', 'canExport', 'offlineMode', 'denyAddInRoot') } { $updatedRoleData.userSecurity.customSecurityEntity[$param.Key] = $param.Value }
                             Default { 
-                                if ($param.Key -eq "displayName") { $updatedRoleData.userSecurity["name"] = $param.Value }
+                                if ($param.Key -eq 'displayName') { $updatedRoleData.userSecurity['name'] = $param.Value }
                                 else { $updatedRoleData.userSecurity[$param.Key] = $param.Value }
                             }
                         }

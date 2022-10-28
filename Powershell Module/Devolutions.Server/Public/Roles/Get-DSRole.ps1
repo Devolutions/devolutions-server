@@ -19,13 +19,21 @@ function Get-DSRole {
     param(
         [Parameter(ParameterSetName = 'GetAll')]
         [switch]$GetAll,
+        [Parameter(ParameterSetName = 'Paging')]
         [int]$PageSize = 100,
-        [int]$PageNumber = 1
+        [Parameter(ParameterSetName = 'Paging')]
+        [int]$PageNumber = 1,
+        [Parameter(ParameterSetName = 'GetById')]
+        [string]$Id
     )
 
     BEGIN {
         Write-Verbose '[Get-DSRoles] Beginning...'
-        $URI = "$Script:DSBaseURI/api/v3/usergroups?pageSize=$PageSize&pageNumber=$PageNumber&sortOrder=1"
+        
+        $URI = switch ($PSCmdlet.ParameterSetName) {
+            { $_ -in 'GetAll', 'Paging' } { "$Script:DSBaseURI/api/v3/usergroups?pageSize=$PageSize&pageNumber=$PageNumber&sortOrder=1" }
+            'GetById' { "$Script:DSBaseURI/api/security/roles/$Id" }
+        }
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw 'Session invalid. Please call New-DSSession.'
