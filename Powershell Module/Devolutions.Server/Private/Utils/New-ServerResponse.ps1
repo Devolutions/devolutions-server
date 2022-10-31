@@ -20,10 +20,11 @@ to be found.
         [string]$method
     )
     PROCESS {
-        if (($null -ne $response.Content) -and (Test-Json $response.Content)) {
-            $responseContentJson = $response.Content | ConvertFrom-Json
+    
+        $responseContentJson = try { 
+            $response.Content | ConvertFrom-Json -ErrorAction SilentlyContinue
         }
-        else {
+        catch { 
             throw 'Could not parse the reponse content to JSON.'
         }
         
