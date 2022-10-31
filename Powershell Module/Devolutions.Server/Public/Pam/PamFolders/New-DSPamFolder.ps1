@@ -4,8 +4,8 @@ function New-DSPamFolder {
         [string]$Name = $(throw 'You must provide a name for the new folder.'),
         [parameter(ParameterSetName = 'Default')]
         [guid]$ParentFolderId,
-        [parameter(ParameterSetName = 'Root')]
-        [switch]$AtRoot
+        [parameter(ParameterSetName = 'NewVault')]
+        [switch]$AsNewVault
     )
     
     begin {
@@ -34,7 +34,7 @@ function New-DSPamFolder {
             encryptedOtpSettings = ''
         }
 
-        if ($PSCmdlet.ParameterSetName -eq 'Root' ) {
+        if ($PSCmdlet.ParameterSetName -eq 'NewVault' ) {
             $RootFolder = (Get-DSPamFolder -Root).Body
             $NewFolder.folderId = $RootFolder.id
         }
