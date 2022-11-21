@@ -2,23 +2,34 @@ function New-DSPamAccount {
     <#
     .SYNOPSIS
     Creates a new PAM account
+    .EXAMPLE
+    $RequestParams = @{
+        credentialType = [PamCredentialType]::LocalUser
+        folderID       = $ParentFolderId
+        name          = 'NewPamAccount'
+        username       = 'Username'
+        password       = $null
+        providerId     = $ProviderId
+    }
+
+    > New-DSPamAccount @RequestParams
     #>
     [CmdletBinding()]
     #TODO Check credentialType & protectedDataType once PAM enums are added.
     param(
         [ValidateNotNullOrEmpty()]
-        [int]$credentialType,
-        [ValidateNotNullOrEmpty()]
-        [int]$protectedDataType,
+        #Account's credential type
+        [PamCredentialType]$credentialType,
         [ValidateNotNullOrEmpty()]
         [guid]$folderID,
         [ValidateNotNullOrEmpty()]
-        [string]$label,
+        [string]$name,
         [ValidateNotNullOrEmpty()]
         [string]$username,
         [string]$password,
         [ValidateNotNullOrEmpty()]
-        [guid]$adminCredentialID
+        #Provider's ID
+        [guid]$providerId
     )
 
     BEGIN {
@@ -26,12 +37,18 @@ function New-DSPamAccount {
         $URI = "$Script:DSBaseURI/api/pam/credentials"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
-            throw "Session invalid. Please call New-DSSession."
+            throw 'Session invalid. Please call New-DSSession.'
         }
     }
     PROCESS {
         if (![string]::IsNullOrEmpty($password)) {
             $password = $password
+        }
+
+        $protectedDataType = switch ($credentialType) {
+            ([PamCredentialType]::Unknown) { [PamProtectedDataType]::Unknown }
+            ([PamCredentialType]::Certificate) { [PamProtectedDataType]::Certificate }
+            Default { [PamProtectedDataType]::Password }
         }
 
         $PamCredentials = @{
@@ -40,7 +57,7 @@ function New-DSPamAccount {
             folderID          = $folderID
             label             = $label
             username          = $username
-            adminCredentialID = $adminCredentialID
+            adminCredentialID = $providerId
             password          = $password
         }
 
