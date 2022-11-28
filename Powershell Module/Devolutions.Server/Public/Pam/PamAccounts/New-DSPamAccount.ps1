@@ -55,7 +55,7 @@ function New-DSPamAccount {
             credentialType    = $credentialType
             protectedDataType = $protectedDataType
             folderID          = $folderID
-            label             = $label
+            label             = $name
             username          = $username
             adminCredentialID = $providerId
             password          = $password
