@@ -14,7 +14,7 @@ function Invoke-DSOAuthRefreshToken {
             Method = 'POST'
             Body   = @{
                 grant_type    = 'refresh_token'
-                client_id     = 'rdm'
+                client_id     = 'powershell'
                 refresh_token = $Global:DSRefreshToken
             }
         }
