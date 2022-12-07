@@ -74,7 +74,9 @@ function New-DSSession {
         Set-Variable -Name DSBaseURI -Value $BaseUri -Scope Script
         #Set-Variable -Name DSSessionKey -Value $SessionKey -Scope Global
         #Set-Variable -Name DSSafeSessionKey -Value $SafeSessionKey -Scope Global
-        Set-Variable -Name DSInstanceVersion -Value $ServerResponse.data.version -Scope Global
+
+        $jsonData = ConvertFrom-Json $ServerResponse.Content -Depth 10
+        Set-Variable -Name DSInstanceVersion -Value $jsonData.data.version -Scope Global
 
         #3. Fetching token information (Actually logging in to DVLS)
         if (!$AsApplication) {
