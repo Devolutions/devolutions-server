@@ -44,7 +44,6 @@ function New-DSSession {
     
     BEGIN {
         Write-Verbose '[Login] Beginning...'
-
     }
     
     PROCESS {
@@ -52,8 +51,9 @@ function New-DSSession {
         try {
             $ServerResponse = Invoke-WebRequest -Uri "$BaseURI/api/public-instance-information" -Method 'GET' -SessionVariable Global:WebSession
 
-            if ((Test-Json $ServerResponse.Content -ErrorAction SilentlyContinue) -and (@(Compare-Object (ConvertFrom-Json $ServerResponse.Content).PSObject.Properties.Name @('data', 'result')).Length -eq 0)) {
-                $ServerResponse = ConvertFrom-Json $ServerResponse.Content
+            if ((Test-Json $ServerResponse.Content -ErrorAction SilentlyContinue) -and 
+                -not @(@('data', 'result') | Where-Object { (ConvertFrom-Json $ServerResponse.Content).PSObject.Properties.Name -notcontains $_ }).Count) {
+                $ServerResponse = ConvertFrom-Json $ServerResponse.Content -Depth 10
 
                 if ($ServerResponse.result -ne [SaveResult]::Success) {
                     throw '[New-DSSession] Unhandled error while fetching server information. Please submit a ticket if problem persists.'
@@ -64,19 +64,12 @@ function New-DSSession {
             }
         }
         catch {
-            Write-Error $_.Exception.Message
+            Write-Error $_.Exception.Message -ErrorAction Stop
         }
 
         #2. Setting server related variables
-        #$SessionKey = New-CryptographicKey
-        #$SafeSessionKey = Encrypt-RSA $ServerResponse.data.publicKey.modulus $ServerResponse.data.publicKey.exponent $SessionKey
-        
         Set-Variable -Name DSBaseURI -Value $BaseUri -Scope Script
-        #Set-Variable -Name DSSessionKey -Value $SessionKey -Scope Global
-        #Set-Variable -Name DSSafeSessionKey -Value $SafeSessionKey -Scope Global
-
-        $jsonData = ConvertFrom-Json $ServerResponse.Content -Depth 10
-        Set-Variable -Name DSInstanceVersion -Value $jsonData.data.version -Scope Global
+        Set-Variable -Name DSInstanceVersion -Value $ServerResponse.data.version -Scope Global
 
         #3. Fetching token information (Actually logging in to DVLS)
         if (!$AsApplication) {
@@ -111,7 +104,8 @@ function New-DSSession {
             try {
                 $LoginResponse = Invoke-WebRequest @RequestParams
     
-                if ((Test-Json $LoginResponse.Content -ErrorAction SilentlyContinue) -and (@(Compare-Object (ConvertFrom-Json $LoginResponse.Content).PSObject.Properties.Name @('data', 'result')).Length -eq 0)) {
+                if ((Test-Json $LoginResponse.Content -ErrorAction SilentlyContinue) -and 
+                    -not @(@('data', 'result') | Where-Object { (ConvertFrom-Json $LoginResponse.Content).PSObject.Properties.Name -notcontains $_ }).Count) {
                     $LoginContent = ConvertFrom-Json $LoginResponse.Content
     
                     if ($LoginContent.result -ne [SaveResult]::Success) {
@@ -143,7 +137,7 @@ function New-DSSession {
         }
 
         Write-Verbose ($Success ? 
-            "[New-DSSession] Successfully logged in to Devolutions Server" : 
+            '[New-DSSession] Successfully logged in to Devolutions Server' : 
             '[New-DSSession] Could not log in. Please verify URL and credential.')
     }
 }
