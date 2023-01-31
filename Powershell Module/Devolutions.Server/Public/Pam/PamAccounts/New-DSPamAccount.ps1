@@ -29,7 +29,8 @@ function New-DSPamAccount {
         [string]$password,
         [ValidateNotNullOrEmpty()]
         #Provider's ID
-        [guid]$providerId
+        [guid]$providerId,
+        [string]$description
     )
 
     BEGIN {

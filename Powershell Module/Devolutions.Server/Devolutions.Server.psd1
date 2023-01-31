@@ -70,7 +70,7 @@
         'New-DSCredentialEntry', 'Update-DSCredentialEntry',
         'Get-DSPamProviders', 'New-DSPamProvider', 'Remove-DSPamProvider', 'Update-DSPamProvider', 
         'Get-DSPamFolders', 'Get-DSPamFolder', 'New-DSPamFolder', 'Remove-DSPamFolder', 'Update-DSPamFolder',
-        'Get-DSPamAccounts', 'New-DSPamAccount', 'Remove-DSPamAccount', 
+        'Get-DSPamAccounts', 'Get-DSPamAccount', 'New-DSPamAccount', 'Remove-DSPamAccount', 'Update-DSPamAccountBase', 'Get-DSPamAccountSyncStatus',
         'New-DSRole', 'Get-DSRole', 'Update-DSRole', 'Remove-DSRole',
         'New-DSUser', 'Update-DSUser', 'Remove-DSUser', 'Get-DSUsers',
         'New-DSEntryBase', 'Update-DSEntryBase', 'New-DSRDPEntry', 'Update-DSRDPEntry', 'New-DSSSHShellEntry', 'Update-DSSSHShellEntry',
