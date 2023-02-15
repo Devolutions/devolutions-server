@@ -2,7 +2,8 @@ function Get-DSEntrySubConnections {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory)]
-        [guid]$EntryID
+        [guid]$EntryID,
+        [switch]$AsRDMConnections
     )
     
     begin {
@@ -14,7 +15,7 @@ function Get-DSEntrySubConnections {
     
     process {
         $RequestParams = @{
-            URI = "$($Script:DSBaseURI)/api/connections/partial/$($EntryID)/sub-connections"
+            URI = $AsRDMConnections ? "$($Script:DSBaseURI)/api/connections/$($EntryID)/sub-connections" : "$($Script:DSBaseURI)/api/connections/partial/$($EntryID)/sub-connections"
             Method = 'GET'
         }
 
