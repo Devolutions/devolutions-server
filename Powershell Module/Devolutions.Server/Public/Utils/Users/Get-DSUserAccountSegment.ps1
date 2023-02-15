@@ -24,7 +24,7 @@ function Get-DSUserAccountSegment {
                 data                              = ""
                 email                             = $ParamList.Email
                 fullName                          = ""
-                id                                = ""
+                id                                = $null
                 isOwner                           = $false
                 isTemplate                        = $false
                 lastLoginDate                     = $null

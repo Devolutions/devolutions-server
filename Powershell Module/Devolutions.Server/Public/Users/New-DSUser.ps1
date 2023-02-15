@@ -10,7 +10,7 @@ function New-DSUser {
     [CmdletBinding()]
     PARAM (
         #General tab
-        [ValidateSet([ServerUserType]::Builtin, [ServerUserType]::Domain)]
+        [ValidateSet([ServerUserType]::Builtin, [ServerUserType]::Domain, [ServerUserType]::AzureAD)]
         [string]$AuthenticationType = [ServerUserType]::Builtin,
         [UserType]$UserType = [UserType]::User, #TODO Maybe not needed
         [UserLicenceTypeMode]$UserLicenseType = [UserLicenceTypeMode]::Default,
@@ -62,7 +62,7 @@ function New-DSUser {
     BEGIN {
         Write-Verbose "[New-DSUser] Beginning..."
 
-        $URI = "$Script:DSBaseURI/api/security/user/save?csToXml=1"
+        $URI = "$Script:DSBaseURI/api/security/user/save"
 
         if ([string]::IsNullOrWhiteSpace($Global:DSSessionToken)) {
             throw "Session invalid. Please call New-DSSession."
