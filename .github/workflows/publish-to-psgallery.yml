@@ -1,8 +1,9 @@
 name: Publish to PS Gallery
+run-name: Publishing ${{ inputs.ref != '' && inputs.ref || github.ref_name }} to PS Gallery
 
 on:
   release:
-    types: [published]
+    types: published
   workflow_dispatch:
 
 concurrency: publish_ps_gallery
@@ -10,12 +11,11 @@ concurrency: publish_ps_gallery
 jobs:
   psgallery-publish:
     environment: psgallery-publish
-    name: Publish to PS Gallery
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Check out ${{ github.repository }}
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Publish to PS Gallery
         run: Publish-Module -Path 'Powershell Module/Devolutions.Server' -NuGetApiKey ${{ secrets.PSGALLERY_API_KEY }} -Verbose
