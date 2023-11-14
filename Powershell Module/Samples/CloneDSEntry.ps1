@@ -20,7 +20,7 @@ Import-Module -Name $ModulePath -Force
 [securestring]$SecPassword = ConvertTo-SecureString $Password -AsPlainText -Force
 [pscredential]$Creds = New-Object System.Management.Automation.PSCredential ($Username, $SecPassword)
 
-$Response = New-DSSession -Credential $Creds -BaseURI $DVLSUrl 
+$Response = New-DSSession -Credential $Creds -BaseURI $DVLSUrl -AsApplication
 
 if ($null -eq $Response.Body.data.tokenId) {
     Write-Error "Unable to authenticate to DVLS instance: $DVLSUrl"
